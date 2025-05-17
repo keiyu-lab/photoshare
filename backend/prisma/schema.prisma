@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  cognito_sub String   @unique
+  albums      Album[]  @relation("UserAlbums")
+  photos      Photo[]  @relation("UserPhotos")
+  albumMembers  AlbumMember[] 
+}
+
+model Album {
+  id              String   @id @default(uuid())
+  name            String
+  parent_album_id String?
+  parent_album    Album?   @relation("ParentAlbum", fields: [parent_album_id], references: [id])
+  sub_albums      Album[]  @relation("ParentAlbum")
+  owner_user_id   String
+  owner           User     @relation("UserAlbums", fields: [owner_user_id], references: [id])
+  photos          Photo[]
+  sharedUsers     AlbumMember[]  
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  is_deleted      Boolean   @default(false)
+}
+
+
+model AlbumMember {
+  id        String   @id @default(uuid())
+  album     Album    @relation(fields: [album_id], references: [id])
+  album_id  String
+  user      User     @relation(fields: [user_id], references: [id])
+  user_id   String
+  role      String  
+}
+
+
+model Photo {
+  id                  String     @id @default(uuid())
+  album_id            String
+  album               Album      @relation(fields: [album_id], references: [id])
+  s3_key              String
+  uploaded_by_user_id String
+  uploader            User       @relation("UserPhotos", fields: [uploaded_by_user_id], references: [id])
+  tags                PhotoTag[]
+  created_at          DateTime   @default(now())
+  updated_at      DateTime @updatedAt
+  is_deleted      Boolean   @default(false)
+}
+
+model PhotoTag {
+  id       String   @id @default(uuid())
+  photo_id String
+  photo    Photo    @relation(fields: [photo_id], references: [id])
+  tag      String
+}
