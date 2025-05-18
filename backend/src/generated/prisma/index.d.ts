@@ -1373,40 +1373,40 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
+    name: string | null
     email: string | null
-    cognito_sub: string | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
+    name: string | null
     email: string | null
-    cognito_sub: string | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
+    name: number
     email: number
-    cognito_sub: number
     _all: number
   }
 
 
   export type UserMinAggregateInputType = {
     id?: true
+    name?: true
     email?: true
-    cognito_sub?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
+    name?: true
     email?: true
-    cognito_sub?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
+    name?: true
     email?: true
-    cognito_sub?: true
     _all?: true
   }
 
@@ -1484,8 +1484,8 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
+    name: string | null
     email: string
-    cognito_sub: string
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1507,8 +1507,8 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    name?: boolean
     email?: boolean
-    cognito_sub?: boolean
     albums?: boolean | User$albumsArgs<ExtArgs>
     photos?: boolean | User$photosArgs<ExtArgs>
     albumMembers?: boolean | User$albumMembersArgs<ExtArgs>
@@ -1517,23 +1517,23 @@ export namespace Prisma {
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    name?: boolean
     email?: boolean
-    cognito_sub?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    name?: boolean
     email?: boolean
-    cognito_sub?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
+    name?: boolean
     email?: boolean
-    cognito_sub?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "cognito_sub", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     albums?: boolean | User$albumsArgs<ExtArgs>
     photos?: boolean | User$photosArgs<ExtArgs>
@@ -1552,8 +1552,8 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      name: string | null
       email: string
-      cognito_sub: string
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1981,8 +1981,8 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
+    readonly name: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
-    readonly cognito_sub: FieldRef<"User", 'String'>
   }
     
 
@@ -6881,8 +6881,8 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    email: 'email',
-    cognito_sub: 'cognito_sub'
+    name: 'name',
+    email: 'email'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -7019,8 +7019,8 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
+    name?: StringNullableFilter<"User"> | string | null
     email?: StringFilter<"User"> | string
-    cognito_sub?: StringFilter<"User"> | string
     albums?: AlbumListRelationFilter
     photos?: PhotoListRelationFilter
     albumMembers?: AlbumMemberListRelationFilter
@@ -7028,8 +7028,8 @@ export namespace Prisma {
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
+    name?: SortOrderInput | SortOrder
     email?: SortOrder
-    cognito_sub?: SortOrder
     albums?: AlbumOrderByRelationAggregateInput
     photos?: PhotoOrderByRelationAggregateInput
     albumMembers?: AlbumMemberOrderByRelationAggregateInput
@@ -7038,19 +7038,19 @@ export namespace Prisma {
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     email?: string
-    cognito_sub?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    name?: StringNullableFilter<"User"> | string | null
     albums?: AlbumListRelationFilter
     photos?: PhotoListRelationFilter
     albumMembers?: AlbumMemberListRelationFilter
-  }, "id" | "email" | "cognito_sub">
+  }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
+    name?: SortOrderInput | SortOrder
     email?: SortOrder
-    cognito_sub?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -7061,8 +7061,8 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
+    name?: StringNullableWithAggregatesFilter<"User"> | string | null
     email?: StringWithAggregatesFilter<"User"> | string
-    cognito_sub?: StringWithAggregatesFilter<"User"> | string
   }
 
   export type AlbumWhereInput = {
@@ -7312,18 +7312,18 @@ export namespace Prisma {
   }
 
   export type UserCreateInput = {
-    id?: string
+    id: string
+    name?: string | null
     email: string
-    cognito_sub: string
     albums?: AlbumCreateNestedManyWithoutOwnerInput
     photos?: PhotoCreateNestedManyWithoutUploaderInput
     albumMembers?: AlbumMemberCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
-    id?: string
+    id: string
+    name?: string | null
     email: string
-    cognito_sub: string
     albums?: AlbumUncheckedCreateNestedManyWithoutOwnerInput
     photos?: PhotoUncheckedCreateNestedManyWithoutUploaderInput
     albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutUserInput
@@ -7331,8 +7331,8 @@ export namespace Prisma {
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUpdateManyWithoutOwnerNestedInput
     photos?: PhotoUpdateManyWithoutUploaderNestedInput
     albumMembers?: AlbumMemberUpdateManyWithoutUserNestedInput
@@ -7340,29 +7340,29 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUncheckedUpdateManyWithoutOwnerNestedInput
     photos?: PhotoUncheckedUpdateManyWithoutUploaderNestedInput
     albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
-    id?: string
+    id: string
+    name?: string | null
     email: string
-    cognito_sub: string
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
   }
 
   export type AlbumCreateInput = {
@@ -7620,6 +7620,21 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type AlbumListRelationFilter = {
     every?: AlbumWhereInput
     some?: AlbumWhereInput
@@ -7638,6 +7653,11 @@ export namespace Prisma {
     none?: AlbumMemberWhereInput
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type AlbumOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -7652,20 +7672,20 @@ export namespace Prisma {
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
+    name?: SortOrder
     email?: SortOrder
-    cognito_sub?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
+    name?: SortOrder
     email?: SortOrder
-    cognito_sub?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
+    name?: SortOrder
     email?: SortOrder
-    cognito_sub?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -7686,7 +7706,7 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -7698,7 +7718,10 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -7725,11 +7748,6 @@ export namespace Prisma {
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type AlbumCountOrderByAggregateInput = {
@@ -7760,24 +7778,6 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     is_deleted?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -7935,6 +7935,10 @@ export namespace Prisma {
 
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type AlbumUpdateManyWithoutOwnerNestedInput = {
@@ -8143,10 +8147,6 @@ export namespace Prisma {
     deleteMany?: AlbumMemberScalarWhereInput | AlbumMemberScalarWhereInput[]
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type AlbumUncheckedUpdateManyWithoutParent_albumNestedInput = {
     create?: XOR<AlbumCreateWithoutParent_albumInput, AlbumUncheckedCreateWithoutParent_albumInput> | AlbumCreateWithoutParent_albumInput[] | AlbumUncheckedCreateWithoutParent_albumInput[]
     connectOrCreate?: AlbumCreateOrConnectWithoutParent_albumInput | AlbumCreateOrConnectWithoutParent_albumInput[]
@@ -8315,6 +8315,20 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -8343,36 +8357,6 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedDateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -8399,6 +8383,22 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -8657,17 +8657,17 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutAlbumsInput = {
-    id?: string
+    id: string
+    name?: string | null
     email: string
-    cognito_sub: string
     photos?: PhotoCreateNestedManyWithoutUploaderInput
     albumMembers?: AlbumMemberCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAlbumsInput = {
-    id?: string
+    id: string
+    name?: string | null
     email: string
-    cognito_sub: string
     photos?: PhotoUncheckedCreateNestedManyWithoutUploaderInput
     albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutUserInput
   }
@@ -8793,16 +8793,16 @@ export namespace Prisma {
 
   export type UserUpdateWithoutAlbumsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
     photos?: PhotoUpdateManyWithoutUploaderNestedInput
     albumMembers?: AlbumMemberUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAlbumsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
     photos?: PhotoUncheckedUpdateManyWithoutUploaderNestedInput
     albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -8869,17 +8869,17 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutAlbumMembersInput = {
-    id?: string
+    id: string
+    name?: string | null
     email: string
-    cognito_sub: string
     albums?: AlbumCreateNestedManyWithoutOwnerInput
     photos?: PhotoCreateNestedManyWithoutUploaderInput
   }
 
   export type UserUncheckedCreateWithoutAlbumMembersInput = {
-    id?: string
+    id: string
+    name?: string | null
     email: string
-    cognito_sub: string
     albums?: AlbumUncheckedCreateNestedManyWithoutOwnerInput
     photos?: PhotoUncheckedCreateNestedManyWithoutUploaderInput
   }
@@ -8937,16 +8937,16 @@ export namespace Prisma {
 
   export type UserUpdateWithoutAlbumMembersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUpdateManyWithoutOwnerNestedInput
     photos?: PhotoUpdateManyWithoutUploaderNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAlbumMembersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUncheckedUpdateManyWithoutOwnerNestedInput
     photos?: PhotoUncheckedUpdateManyWithoutUploaderNestedInput
   }
@@ -8981,17 +8981,17 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutPhotosInput = {
-    id?: string
+    id: string
+    name?: string | null
     email: string
-    cognito_sub: string
     albums?: AlbumCreateNestedManyWithoutOwnerInput
     albumMembers?: AlbumMemberCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPhotosInput = {
-    id?: string
+    id: string
+    name?: string | null
     email: string
-    cognito_sub: string
     albums?: AlbumUncheckedCreateNestedManyWithoutOwnerInput
     albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutUserInput
   }
@@ -9069,16 +9069,16 @@ export namespace Prisma {
 
   export type UserUpdateWithoutPhotosInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUpdateManyWithoutOwnerNestedInput
     albumMembers?: AlbumMemberUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPhotosInput = {
     id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
-    cognito_sub?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUncheckedUpdateManyWithoutOwnerNestedInput
     albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
   }

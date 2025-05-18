@@ -15,9 +15,9 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
+  id           String        @id // congito_subを使う
+  name         String?
   email        String        @unique
-  cognito_sub  String        @unique
   albums       Album[]       @relation("UserAlbums")
   photos       Photo[]       @relation("UserPhotos")
   albumMembers AlbumMember[]

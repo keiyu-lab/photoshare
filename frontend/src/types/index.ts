@@ -1,9 +1,9 @@
-export interface Album {
+export interface AlbumType {
   id: string;
   name: string;
   parentAlbumId: string | null;
   ownerUserId: string;
-  children?: Album[];
+  children?: AlbumType[];
 }
 
 export interface Photo {

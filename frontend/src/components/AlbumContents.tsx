@@ -1,7 +1,7 @@
-import type { Album, Photo } from "../types";
+import type { AlbumType, Photo } from "../types";
 
 type AlbumContentsProps = {
-  album: Album | null;
+  album: AlbumType | null;
   photos: Photo[];
   keyword: string;
 };

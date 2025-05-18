@@ -3,82 +3,112 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { SidebarTrigger,  SidebarProvider} from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import Header from '../components/Header';
-import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
-import type { Album, Photo } from '@/types';
+import type { AlbumType, Photo } from '@/types';
 import { Authenticator } from '@aws-amplify/ui-react';
 import AlbumContents from './AlbumContents';
-
-
+import { createAlbum, deleteAlbum, fetchAlbums, renameAlbum, syncUserToBackend } from '@/api/api';
+import { buildAlbumTree, findAlbumById, flattenAlbums, normailzeRowAlbum } from '@/components/Album';
 
 export function AppLayout() {
 
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [albums, setAlbums] = useState<Album[]>([]);
-  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
+  const [albumTree, setAlbumTree] = useState<AlbumType[]>([]);
+  const [selectedAlbum, setSelectedAlbum] = useState<AlbumType | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
-
-
-    // cognitoの認証後ユーザ情報をバックエンドに送信
-    const syncUserToBackend = async () => {
-        try {
-            const userAttributes = await fetchUserAttributes();
-            const {idToken} = (await fetchAuthSession()).tokens ?? {};
-            const sub = userAttributes.sub;
-            const email = userAttributes.email;
-           
-            await fetch(`http://localhost:3001/users/sync`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${idToken}`,
-                },
-                body: JSON.stringify({
-                    cognito_sub: sub,
-                    email: email,
-                }),
-            });
-        }
-        catch (e) { console.log(e); }
+  
+  useEffect(() => {
+    const initialize = async () => {
+      await syncUserToBackend();
+      const albumList = await fetchAlbums();
+      const normalizedAlbums = normailzeRowAlbum(albumList);
+      setAlbumTree(buildAlbumTree(normalizedAlbums));
     };
+    initialize();
+  }, []);
 
-    const handleAddAlbum = () => {
-        alert('アルバム追加機能');
-    };
-
-    const handleAddPhoto = () => {
-        alert('写真追加機能');
-    };
+  // アルバム追加
+  const handleAddAlbum = async (albumId?: string) => {
+    const name = prompt("アルバム名を入力してください");
+    if (!name) return;
     
-    useEffect(() =>{
-        syncUserToBackend();
-    }, []);
+    const parentAlbum = selectedAlbum ? findAlbumById(albumTree, selectedAlbum?.id) : null;
+    const parentAlbumId = albumId ? albumId: (parentAlbum ? parentAlbum.id : "");
+    try {
+      await createAlbum(name, parentAlbumId);
+      const albumList = await fetchAlbums();
+      const normalizedAlbums = normailzeRowAlbum(albumList);
+      setAlbumTree(buildAlbumTree(normalizedAlbums));
+    } catch (e) {
+      alert("アルバムの作成に失敗しました");
+    }
+  };
 
-  // フォルダデータ
-  const myFolders = [
-    { id: '1', name: 'Travel' },
-    { id: '2', name: 'Work' },
-    { id: '3', name: 'Family' },
-  ];
+  const handleRenameAlbum = async (albumId: string) => {
+    const found = findAlbumById(albumTree, albumId);
+    if (!found) return;
+    
+    const newName = prompt("新しいアルバム名を入力してください", found.name);
+    if (!newName || newName === found.name) return;
+    
+    try {
+      await renameAlbum(albumId, newName);
+      
+      const albumList = await fetchAlbums();
+      const normalizedAlbums = normailzeRowAlbum(albumList);
+      setAlbumTree(buildAlbumTree(normalizedAlbums));
+    } catch (e) {
+      alert("アルバム名の変更に失敗しました");
+    }
+  };
+
+  // アルバム削除
+  const handleDeleteAlbum = async (albumId: string) => {
+    if (!confirm("このアルバムを削除してもよろしいですか？")) return;
+    
+    try {
+      await deleteAlbum(albumId);
+      
+      const albumList = await fetchAlbums();
+      const normalizedAlbums = normailzeRowAlbum(albumList);
+      setAlbumTree(buildAlbumTree(normalizedAlbums));
+      
+      // 選択中のアルバムだった場合、選択解除
+      if (selectedAlbum?.id === albumId) {
+        setSelectedAlbum(null);
+      }
+    } catch (e) {
+      alert("アルバムの削除に失敗しました");
+    }
+  };
+
+  const handleAddPhoto = () => {
+    alert('写真追加機能');
+  };
+
+  const handleSelectFolder = (id: string) => {
+    const found = findAlbumById(albumTree, id);
+    if (found) setSelectedAlbum(found);
+  };
+
   
   const sharedFolders = [
     { id: '10', name: 'Team Project' },
     { id: '11', name: 'Events' },
   ];
 
-  const handleSelectFolder = (id: string) => {
-    console.log('Selected folder:', id);
-    // 実際のフォルダ選択ロジックをここに記述
-  };
-  
   return (
   <Authenticator socialProviders={['google']}>
     {({ signOut, user }) => (
       <div className="flex h-screen">
         <SidebarProvider>
           <AppSidebar  
-            myFolders={myFolders}
+            albumTree={albumTree}
             sharedFolders={sharedFolders}
             onSelectFolder={handleSelectFolder}
+            onAddAlbum={handleAddAlbum}
+            onAddPhoto={handleAddPhoto}
+            onRenameAlbum={handleRenameAlbum}
+            onDeleteAlbum={handleDeleteAlbum}
           />
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="border-b p-2 flex items-center">

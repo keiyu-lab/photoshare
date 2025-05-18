@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { PrismaClient } from '../src/generated/prisma/client';
 import { verifyJwt } from "./middleware/jwt";
+import albumRoutes from './routes/album';
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -12,8 +13,6 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = 3001;
-
-
 
 /**
  * ユーザがDBに登録されているか確認
@@ -25,14 +24,14 @@ app.post('/users/sync', verifyJwt, async (req, res) => {
   try {
     // すでに登録されているか確認
     const existing = await prisma.user.findUnique({
-      where: { cognito_sub },
+      where: { id: cognito_sub },
     });
 
     if (!existing) {
       await prisma.user.create({
         data: {
-          cognito_sub,
-          email,
+          id:cognito_sub,
+          email: email,
         },
       });
     }
@@ -44,6 +43,8 @@ app.post('/users/sync', verifyJwt, async (req, res) => {
   }
 });
 
+// アルバムルート登録
+app.use('/albums', albumRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

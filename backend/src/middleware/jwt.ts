@@ -8,7 +8,7 @@ export const verifyJwt = (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
   const client = jwksRsa({
-    jwksUri: `https://cognito-idp.${process.env.COGNITO_REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}/.well-known/jwks.json`
+    jwksUri: `https://cognito-idp.${process.env.AWS_REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}/.well-known/jwks.json`
   });
 
   const getKey = (header, callback) => {
@@ -20,7 +20,7 @@ export const verifyJwt = (req, res, next) => {
 
   jwt.verify(token, getKey, {
     audience: undefined,
-    issuer: `https://cognito-idp.${process.env.COGNITO_REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}`,
+    issuer: `https://cognito-idp.${process.env.AWS_REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}`,
     algorithms: ["RS256"]
   }, (err, decoded) => {
     if (err) return res.status(401).send("Invalid token");

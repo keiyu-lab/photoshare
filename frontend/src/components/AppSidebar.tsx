@@ -10,20 +10,48 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { AlbumTreeNode } from "./Album";
+import type { AlbumType } from "@/types";
 
-// フォルダタイプの定義
-type FolderItem = {
-  id: string;
-  name: string;
-};
 
 type AppSidebarProps = {
-  myFolders: FolderItem[];
-  sharedFolders: FolderItem[];
+  albumTree: AlbumType[];
+  sharedFolders: AlbumType[];
   onSelectFolder: (id: string) => void;
+  onAddAlbum?: (parentId: string) => void;
+  onAddPhoto?: (albumId: string) => void;
+  onRenameAlbum?: (albumId: string) => void;
+  onDeleteAlbum?: (albumId: string) => void;
 };
 
-export function AppSidebar({ myFolders, sharedFolders, onSelectFolder }: AppSidebarProps) {
+export function AppSidebar({ 
+  albumTree, 
+  sharedFolders, 
+  onSelectFolder,
+  onAddAlbum,
+  onAddPhoto,
+  onRenameAlbum,
+  onDeleteAlbum
+}: AppSidebarProps) {
+  console.log(albumTree)
+
+  const handleAddAlbum = (parentId: string) => {
+    if (onAddAlbum) onAddAlbum(parentId);
+  };
+  
+  const handleAddPhoto = (albumId: string) => {
+    if (onAddPhoto) onAddPhoto(albumId);
+  };
+  
+  const handleRenameAlbum = (albumId: string) => {
+    if (onRenameAlbum) onRenameAlbum(albumId);
+  };
+  
+  const handleDeleteAlbum = (albumId: string) => {
+    if (onDeleteAlbum) onDeleteAlbum(albumId);
+  };
+
+
   return (
     <Sidebar className="border-r border-border bg-card w-64">
       <SidebarContent>
@@ -33,7 +61,7 @@ export function AppSidebar({ myFolders, sharedFolders, onSelectFolder }: AppSide
           <h2 className="text-lg font-semibold">PhotoShare</h2>
         </div>
 
-        {/* 自分のフォルダ */}
+        {/* 自分のフォルダ - 階層表示 */}
         <SidebarGroup>
           <SidebarGroupLabel className="flex justify-between items-center px-2 py-1.5 text-muted-foreground text-xs uppercase font-medium">
             <span>My Albums</span>
@@ -43,20 +71,21 @@ export function AppSidebar({ myFolders, sharedFolders, onSelectFolder }: AppSide
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {myFolders.map((folder) => (
-                <SidebarMenuItem key={folder.id}>
-                  <SidebarMenuButton onClick={() => onSelectFolder(folder.id)} 
-                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <Folder className="h-4 w-4" />
-                    <span>{folder.name}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+              {albumTree.map((album) => (
+                <AlbumTreeNode
+                  key={album.id}
+                  album={album}
+                  onSelectFolder={onSelectFolder}
+                  onAddAlbum={handleAddAlbum}
+                  onAddPhoto={handleAddPhoto}
+                  onRenameAlbum={handleRenameAlbum}
+                  onDeleteAlbum={handleDeleteAlbum}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
+        
         {/* 共有フォルダ */}
         <SidebarGroup>
           <SidebarGroupLabel className="px-2 py-1.5 text-muted-foreground text-xs uppercase font-medium">
