@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { PrismaClient } from '../src/generated/prisma/client';
 import { verifyJwt } from "./middleware/jwt";
 import albumRoutes from './routes/album';
+import imageRoutes from './routes/image';
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -43,8 +44,9 @@ app.post('/users/sync', verifyJwt, async (req, res) => {
   }
 });
 
-// アルバムルート登録
+
 app.use('/albums', albumRoutes);
+app.use('/images', imageRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

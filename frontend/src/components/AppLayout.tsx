@@ -6,8 +6,10 @@ import Header from '../components/Header';
 import type { AlbumType, Photo } from '@/types';
 import { Authenticator } from '@aws-amplify/ui-react';
 import AlbumContents from './AlbumContents';
-import { createAlbum, deleteAlbum, fetchAlbums, renameAlbum, syncUserToBackend } from '@/api/api';
+import { createAlbum, deleteAlbum, fetchAlbums, fetchImages, renameAlbum, syncUserToBackend } from '@/api/api';
 import { buildAlbumTree, findAlbumById, flattenAlbums, normailzeRowAlbum } from '@/components/Album';
+import PhotoUploadModal from './Modal/PhotoUploadModal';
+import '@aws-amplify/ui-react/styles.css';
 
 export function AppLayout() {
 
@@ -15,6 +17,7 @@ export function AppLayout() {
   const [albumTree, setAlbumTree] = useState<AlbumType[]>([]);
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumType | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   
   useEffect(() => {
     const initialize = async () => {
@@ -30,7 +33,7 @@ export function AppLayout() {
   const handleAddAlbum = async (albumId?: string) => {
     const name = prompt("アルバム名を入力してください");
     if (!name) return;
-    
+    console.log(albumId)
     const parentAlbum = selectedAlbum ? findAlbumById(albumTree, selectedAlbum?.id) : null;
     const parentAlbumId = albumId ? albumId: (parentAlbum ? parentAlbum.id : "");
     try {
@@ -82,12 +85,28 @@ export function AppLayout() {
   };
 
   const handleAddPhoto = () => {
-    alert('写真追加機能');
+    if (!selectedAlbum) {
+      alert('写真をアップロードするアルバムを選択してください');
+      return;
+    }
+    setIsUploadModalOpen(true);
   };
 
   const handleSelectFolder = (id: string) => {
     const found = findAlbumById(albumTree, id);
     if (found) setSelectedAlbum(found);
+  };
+
+  const handleUploadComplete = async () => {
+    // アップロード完了後に写真を再読み込み
+    if (selectedAlbum) {
+      try {
+        const albumPhotos = await fetchImages(selectedAlbum.id);
+        setPhotos(albumPhotos);
+      } catch (error) {
+        console.error('Error refreshing photos after upload:', error);
+      }
+    }
   };
 
   
@@ -127,7 +146,7 @@ export function AppLayout() {
                   keyword={searchKeyword}
                 />
               </div>
-              <footer className="p-2 text-xs text-center text-gray-400 border-t">
+              <footer className="p-2 text-xs text-center text-gray-400 border-t min-h-[40px]">
                 Logged in as {user?.userId ?? 'unknown'}
                 <button className="ml-4 text-blue-500" onClick={signOut}>
                   Sign out
@@ -135,6 +154,13 @@ export function AppLayout() {
               </footer>
             </main>
           </div>
+ 
+          <PhotoUploadModal
+            isOpen={isUploadModalOpen}
+            onClose={() => setIsUploadModalOpen(false)}
+            albumId={selectedAlbum?.id || null}
+            onUploadComplete={handleUploadComplete}
+          />
         </SidebarProvider>
       </div>
     )}

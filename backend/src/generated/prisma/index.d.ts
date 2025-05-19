@@ -33,11 +33,6 @@ export type AlbumMember = $Result.DefaultSelection<Prisma.$AlbumMemberPayload>
  * 
  */
 export type Photo = $Result.DefaultSelection<Prisma.$PhotoPayload>
-/**
- * Model PhotoTag
- * 
- */
-export type PhotoTag = $Result.DefaultSelection<Prisma.$PhotoTagPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -203,16 +198,6 @@ export class PrismaClient<
     * ```
     */
   get photo(): Prisma.PhotoDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.photoTag`: Exposes CRUD operations for the **PhotoTag** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more PhotoTags
-    * const photoTags = await prisma.photoTag.findMany()
-    * ```
-    */
-  get photoTag(): Prisma.PhotoTagDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -656,8 +641,7 @@ export namespace Prisma {
     User: 'User',
     Album: 'Album',
     AlbumMember: 'AlbumMember',
-    Photo: 'Photo',
-    PhotoTag: 'PhotoTag'
+    Photo: 'Photo'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -676,7 +660,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "album" | "albumMember" | "photo" | "photoTag"
+      modelProps: "user" | "album" | "albumMember" | "photo"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -976,80 +960,6 @@ export namespace Prisma {
           }
         }
       }
-      PhotoTag: {
-        payload: Prisma.$PhotoTagPayload<ExtArgs>
-        fields: Prisma.PhotoTagFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.PhotoTagFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.PhotoTagFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload>
-          }
-          findFirst: {
-            args: Prisma.PhotoTagFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.PhotoTagFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload>
-          }
-          findMany: {
-            args: Prisma.PhotoTagFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload>[]
-          }
-          create: {
-            args: Prisma.PhotoTagCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload>
-          }
-          createMany: {
-            args: Prisma.PhotoTagCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.PhotoTagCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload>[]
-          }
-          delete: {
-            args: Prisma.PhotoTagDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload>
-          }
-          update: {
-            args: Prisma.PhotoTagUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload>
-          }
-          deleteMany: {
-            args: Prisma.PhotoTagDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.PhotoTagUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.PhotoTagUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload>[]
-          }
-          upsert: {
-            args: Prisma.PhotoTagUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PhotoTagPayload>
-          }
-          aggregate: {
-            args: Prisma.PhotoTagAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregatePhotoTag>
-          }
-          groupBy: {
-            args: Prisma.PhotoTagGroupByArgs<ExtArgs>
-            result: $Utils.Optional<PhotoTagGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.PhotoTagCountArgs<ExtArgs>
-            result: $Utils.Optional<PhotoTagCountAggregateOutputType> | number
-          }
-        }
-      }
     }
   } & {
     other: {
@@ -1138,7 +1048,6 @@ export namespace Prisma {
     album?: AlbumOmit
     albumMember?: AlbumMemberOmit
     photo?: PhotoOmit
-    photoTag?: PhotoTagOmit
   }
 
   /* Types for Logging */
@@ -1323,37 +1232,6 @@ export namespace Prisma {
    */
   export type AlbumCountOutputTypeCountSharedUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AlbumMemberWhereInput
-  }
-
-
-  /**
-   * Count Type PhotoCountOutputType
-   */
-
-  export type PhotoCountOutputType = {
-    tags: number
-  }
-
-  export type PhotoCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tags?: boolean | PhotoCountOutputTypeCountTagsArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * PhotoCountOutputType without action
-   */
-  export type PhotoCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoCountOutputType
-     */
-    select?: PhotoCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * PhotoCountOutputType without action
-   */
-  export type PhotoCountOutputTypeCountTagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PhotoTagWhereInput
   }
 
 
@@ -4725,6 +4603,8 @@ export namespace Prisma {
     id: string | null
     album_id: string | null
     s3_key: string | null
+    name: string | null
+    meta: string | null
     uploaded_by_user_id: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -4735,6 +4615,8 @@ export namespace Prisma {
     id: string | null
     album_id: string | null
     s3_key: string | null
+    name: string | null
+    meta: string | null
     uploaded_by_user_id: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -4745,6 +4627,8 @@ export namespace Prisma {
     id: number
     album_id: number
     s3_key: number
+    name: number
+    meta: number
     uploaded_by_user_id: number
     created_at: number
     updated_at: number
@@ -4757,6 +4641,8 @@ export namespace Prisma {
     id?: true
     album_id?: true
     s3_key?: true
+    name?: true
+    meta?: true
     uploaded_by_user_id?: true
     created_at?: true
     updated_at?: true
@@ -4767,6 +4653,8 @@ export namespace Prisma {
     id?: true
     album_id?: true
     s3_key?: true
+    name?: true
+    meta?: true
     uploaded_by_user_id?: true
     created_at?: true
     updated_at?: true
@@ -4777,6 +4665,8 @@ export namespace Prisma {
     id?: true
     album_id?: true
     s3_key?: true
+    name?: true
+    meta?: true
     uploaded_by_user_id?: true
     created_at?: true
     updated_at?: true
@@ -4860,6 +4750,8 @@ export namespace Prisma {
     id: string
     album_id: string
     s3_key: string
+    name: string
+    meta: string | null
     uploaded_by_user_id: string
     created_at: Date
     updated_at: Date
@@ -4887,20 +4779,22 @@ export namespace Prisma {
     id?: boolean
     album_id?: boolean
     s3_key?: boolean
+    name?: boolean
+    meta?: boolean
     uploaded_by_user_id?: boolean
     created_at?: boolean
     updated_at?: boolean
     is_deleted?: boolean
     album?: boolean | AlbumDefaultArgs<ExtArgs>
     uploader?: boolean | UserDefaultArgs<ExtArgs>
-    tags?: boolean | Photo$tagsArgs<ExtArgs>
-    _count?: boolean | PhotoCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["photo"]>
 
   export type PhotoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     album_id?: boolean
     s3_key?: boolean
+    name?: boolean
+    meta?: boolean
     uploaded_by_user_id?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -4913,6 +4807,8 @@ export namespace Prisma {
     id?: boolean
     album_id?: boolean
     s3_key?: boolean
+    name?: boolean
+    meta?: boolean
     uploaded_by_user_id?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -4925,18 +4821,18 @@ export namespace Prisma {
     id?: boolean
     album_id?: boolean
     s3_key?: boolean
+    name?: boolean
+    meta?: boolean
     uploaded_by_user_id?: boolean
     created_at?: boolean
     updated_at?: boolean
     is_deleted?: boolean
   }
 
-  export type PhotoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "album_id" | "s3_key" | "uploaded_by_user_id" | "created_at" | "updated_at" | "is_deleted", ExtArgs["result"]["photo"]>
+  export type PhotoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "album_id" | "s3_key" | "name" | "meta" | "uploaded_by_user_id" | "created_at" | "updated_at" | "is_deleted", ExtArgs["result"]["photo"]>
   export type PhotoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     album?: boolean | AlbumDefaultArgs<ExtArgs>
     uploader?: boolean | UserDefaultArgs<ExtArgs>
-    tags?: boolean | Photo$tagsArgs<ExtArgs>
-    _count?: boolean | PhotoCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PhotoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     album?: boolean | AlbumDefaultArgs<ExtArgs>
@@ -4952,12 +4848,13 @@ export namespace Prisma {
     objects: {
       album: Prisma.$AlbumPayload<ExtArgs>
       uploader: Prisma.$UserPayload<ExtArgs>
-      tags: Prisma.$PhotoTagPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       album_id: string
       s3_key: string
+      name: string
+      meta: string | null
       uploaded_by_user_id: string
       created_at: Date
       updated_at: Date
@@ -5358,7 +5255,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     album<T extends AlbumDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AlbumDefaultArgs<ExtArgs>>): Prisma__AlbumClient<$Result.GetResult<Prisma.$AlbumPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     uploader<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    tags<T extends Photo$tagsArgs<ExtArgs> = {}>(args?: Subset<T, Photo$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5391,6 +5287,8 @@ export namespace Prisma {
     readonly id: FieldRef<"Photo", 'String'>
     readonly album_id: FieldRef<"Photo", 'String'>
     readonly s3_key: FieldRef<"Photo", 'String'>
+    readonly name: FieldRef<"Photo", 'String'>
+    readonly meta: FieldRef<"Photo", 'String'>
     readonly uploaded_by_user_id: FieldRef<"Photo", 'String'>
     readonly created_at: FieldRef<"Photo", 'DateTime'>
     readonly updated_at: FieldRef<"Photo", 'DateTime'>
@@ -5791,30 +5689,6 @@ export namespace Prisma {
   }
 
   /**
-   * Photo.tags
-   */
-  export type Photo$tagsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    where?: PhotoTagWhereInput
-    orderBy?: PhotoTagOrderByWithRelationInput | PhotoTagOrderByWithRelationInput[]
-    cursor?: PhotoTagWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: PhotoTagScalarFieldEnum | PhotoTagScalarFieldEnum[]
-  }
-
-  /**
    * Photo without action
    */
   export type PhotoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5830,1038 +5704,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: PhotoInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model PhotoTag
-   */
-
-  export type AggregatePhotoTag = {
-    _count: PhotoTagCountAggregateOutputType | null
-    _min: PhotoTagMinAggregateOutputType | null
-    _max: PhotoTagMaxAggregateOutputType | null
-  }
-
-  export type PhotoTagMinAggregateOutputType = {
-    id: string | null
-    photo_id: string | null
-    tag: string | null
-  }
-
-  export type PhotoTagMaxAggregateOutputType = {
-    id: string | null
-    photo_id: string | null
-    tag: string | null
-  }
-
-  export type PhotoTagCountAggregateOutputType = {
-    id: number
-    photo_id: number
-    tag: number
-    _all: number
-  }
-
-
-  export type PhotoTagMinAggregateInputType = {
-    id?: true
-    photo_id?: true
-    tag?: true
-  }
-
-  export type PhotoTagMaxAggregateInputType = {
-    id?: true
-    photo_id?: true
-    tag?: true
-  }
-
-  export type PhotoTagCountAggregateInputType = {
-    id?: true
-    photo_id?: true
-    tag?: true
-    _all?: true
-  }
-
-  export type PhotoTagAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which PhotoTag to aggregate.
-     */
-    where?: PhotoTagWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PhotoTags to fetch.
-     */
-    orderBy?: PhotoTagOrderByWithRelationInput | PhotoTagOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: PhotoTagWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PhotoTags from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PhotoTags.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned PhotoTags
-    **/
-    _count?: true | PhotoTagCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: PhotoTagMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: PhotoTagMaxAggregateInputType
-  }
-
-  export type GetPhotoTagAggregateType<T extends PhotoTagAggregateArgs> = {
-        [P in keyof T & keyof AggregatePhotoTag]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregatePhotoTag[P]>
-      : GetScalarType<T[P], AggregatePhotoTag[P]>
-  }
-
-
-
-
-  export type PhotoTagGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PhotoTagWhereInput
-    orderBy?: PhotoTagOrderByWithAggregationInput | PhotoTagOrderByWithAggregationInput[]
-    by: PhotoTagScalarFieldEnum[] | PhotoTagScalarFieldEnum
-    having?: PhotoTagScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: PhotoTagCountAggregateInputType | true
-    _min?: PhotoTagMinAggregateInputType
-    _max?: PhotoTagMaxAggregateInputType
-  }
-
-  export type PhotoTagGroupByOutputType = {
-    id: string
-    photo_id: string
-    tag: string
-    _count: PhotoTagCountAggregateOutputType | null
-    _min: PhotoTagMinAggregateOutputType | null
-    _max: PhotoTagMaxAggregateOutputType | null
-  }
-
-  type GetPhotoTagGroupByPayload<T extends PhotoTagGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<PhotoTagGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof PhotoTagGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], PhotoTagGroupByOutputType[P]>
-            : GetScalarType<T[P], PhotoTagGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type PhotoTagSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    photo_id?: boolean
-    tag?: boolean
-    photo?: boolean | PhotoDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["photoTag"]>
-
-  export type PhotoTagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    photo_id?: boolean
-    tag?: boolean
-    photo?: boolean | PhotoDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["photoTag"]>
-
-  export type PhotoTagSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    photo_id?: boolean
-    tag?: boolean
-    photo?: boolean | PhotoDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["photoTag"]>
-
-  export type PhotoTagSelectScalar = {
-    id?: boolean
-    photo_id?: boolean
-    tag?: boolean
-  }
-
-  export type PhotoTagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "photo_id" | "tag", ExtArgs["result"]["photoTag"]>
-  export type PhotoTagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    photo?: boolean | PhotoDefaultArgs<ExtArgs>
-  }
-  export type PhotoTagIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    photo?: boolean | PhotoDefaultArgs<ExtArgs>
-  }
-  export type PhotoTagIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    photo?: boolean | PhotoDefaultArgs<ExtArgs>
-  }
-
-  export type $PhotoTagPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "PhotoTag"
-    objects: {
-      photo: Prisma.$PhotoPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      photo_id: string
-      tag: string
-    }, ExtArgs["result"]["photoTag"]>
-    composites: {}
-  }
-
-  type PhotoTagGetPayload<S extends boolean | null | undefined | PhotoTagDefaultArgs> = $Result.GetResult<Prisma.$PhotoTagPayload, S>
-
-  type PhotoTagCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<PhotoTagFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: PhotoTagCountAggregateInputType | true
-    }
-
-  export interface PhotoTagDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PhotoTag'], meta: { name: 'PhotoTag' } }
-    /**
-     * Find zero or one PhotoTag that matches the filter.
-     * @param {PhotoTagFindUniqueArgs} args - Arguments to find a PhotoTag
-     * @example
-     * // Get one PhotoTag
-     * const photoTag = await prisma.photoTag.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends PhotoTagFindUniqueArgs>(args: SelectSubset<T, PhotoTagFindUniqueArgs<ExtArgs>>): Prisma__PhotoTagClient<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one PhotoTag that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {PhotoTagFindUniqueOrThrowArgs} args - Arguments to find a PhotoTag
-     * @example
-     * // Get one PhotoTag
-     * const photoTag = await prisma.photoTag.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends PhotoTagFindUniqueOrThrowArgs>(args: SelectSubset<T, PhotoTagFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PhotoTagClient<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first PhotoTag that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PhotoTagFindFirstArgs} args - Arguments to find a PhotoTag
-     * @example
-     * // Get one PhotoTag
-     * const photoTag = await prisma.photoTag.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends PhotoTagFindFirstArgs>(args?: SelectSubset<T, PhotoTagFindFirstArgs<ExtArgs>>): Prisma__PhotoTagClient<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first PhotoTag that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PhotoTagFindFirstOrThrowArgs} args - Arguments to find a PhotoTag
-     * @example
-     * // Get one PhotoTag
-     * const photoTag = await prisma.photoTag.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends PhotoTagFindFirstOrThrowArgs>(args?: SelectSubset<T, PhotoTagFindFirstOrThrowArgs<ExtArgs>>): Prisma__PhotoTagClient<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more PhotoTags that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PhotoTagFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all PhotoTags
-     * const photoTags = await prisma.photoTag.findMany()
-     * 
-     * // Get first 10 PhotoTags
-     * const photoTags = await prisma.photoTag.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const photoTagWithIdOnly = await prisma.photoTag.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends PhotoTagFindManyArgs>(args?: SelectSubset<T, PhotoTagFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a PhotoTag.
-     * @param {PhotoTagCreateArgs} args - Arguments to create a PhotoTag.
-     * @example
-     * // Create one PhotoTag
-     * const PhotoTag = await prisma.photoTag.create({
-     *   data: {
-     *     // ... data to create a PhotoTag
-     *   }
-     * })
-     * 
-     */
-    create<T extends PhotoTagCreateArgs>(args: SelectSubset<T, PhotoTagCreateArgs<ExtArgs>>): Prisma__PhotoTagClient<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many PhotoTags.
-     * @param {PhotoTagCreateManyArgs} args - Arguments to create many PhotoTags.
-     * @example
-     * // Create many PhotoTags
-     * const photoTag = await prisma.photoTag.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends PhotoTagCreateManyArgs>(args?: SelectSubset<T, PhotoTagCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many PhotoTags and returns the data saved in the database.
-     * @param {PhotoTagCreateManyAndReturnArgs} args - Arguments to create many PhotoTags.
-     * @example
-     * // Create many PhotoTags
-     * const photoTag = await prisma.photoTag.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many PhotoTags and only return the `id`
-     * const photoTagWithIdOnly = await prisma.photoTag.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends PhotoTagCreateManyAndReturnArgs>(args?: SelectSubset<T, PhotoTagCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a PhotoTag.
-     * @param {PhotoTagDeleteArgs} args - Arguments to delete one PhotoTag.
-     * @example
-     * // Delete one PhotoTag
-     * const PhotoTag = await prisma.photoTag.delete({
-     *   where: {
-     *     // ... filter to delete one PhotoTag
-     *   }
-     * })
-     * 
-     */
-    delete<T extends PhotoTagDeleteArgs>(args: SelectSubset<T, PhotoTagDeleteArgs<ExtArgs>>): Prisma__PhotoTagClient<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one PhotoTag.
-     * @param {PhotoTagUpdateArgs} args - Arguments to update one PhotoTag.
-     * @example
-     * // Update one PhotoTag
-     * const photoTag = await prisma.photoTag.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends PhotoTagUpdateArgs>(args: SelectSubset<T, PhotoTagUpdateArgs<ExtArgs>>): Prisma__PhotoTagClient<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more PhotoTags.
-     * @param {PhotoTagDeleteManyArgs} args - Arguments to filter PhotoTags to delete.
-     * @example
-     * // Delete a few PhotoTags
-     * const { count } = await prisma.photoTag.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends PhotoTagDeleteManyArgs>(args?: SelectSubset<T, PhotoTagDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more PhotoTags.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PhotoTagUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many PhotoTags
-     * const photoTag = await prisma.photoTag.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends PhotoTagUpdateManyArgs>(args: SelectSubset<T, PhotoTagUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more PhotoTags and returns the data updated in the database.
-     * @param {PhotoTagUpdateManyAndReturnArgs} args - Arguments to update many PhotoTags.
-     * @example
-     * // Update many PhotoTags
-     * const photoTag = await prisma.photoTag.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more PhotoTags and only return the `id`
-     * const photoTagWithIdOnly = await prisma.photoTag.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends PhotoTagUpdateManyAndReturnArgs>(args: SelectSubset<T, PhotoTagUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one PhotoTag.
-     * @param {PhotoTagUpsertArgs} args - Arguments to update or create a PhotoTag.
-     * @example
-     * // Update or create a PhotoTag
-     * const photoTag = await prisma.photoTag.upsert({
-     *   create: {
-     *     // ... data to create a PhotoTag
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the PhotoTag we want to update
-     *   }
-     * })
-     */
-    upsert<T extends PhotoTagUpsertArgs>(args: SelectSubset<T, PhotoTagUpsertArgs<ExtArgs>>): Prisma__PhotoTagClient<$Result.GetResult<Prisma.$PhotoTagPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of PhotoTags.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PhotoTagCountArgs} args - Arguments to filter PhotoTags to count.
-     * @example
-     * // Count the number of PhotoTags
-     * const count = await prisma.photoTag.count({
-     *   where: {
-     *     // ... the filter for the PhotoTags we want to count
-     *   }
-     * })
-    **/
-    count<T extends PhotoTagCountArgs>(
-      args?: Subset<T, PhotoTagCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], PhotoTagCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a PhotoTag.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PhotoTagAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends PhotoTagAggregateArgs>(args: Subset<T, PhotoTagAggregateArgs>): Prisma.PrismaPromise<GetPhotoTagAggregateType<T>>
-
-    /**
-     * Group by PhotoTag.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PhotoTagGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends PhotoTagGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: PhotoTagGroupByArgs['orderBy'] }
-        : { orderBy?: PhotoTagGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, PhotoTagGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPhotoTagGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the PhotoTag model
-   */
-  readonly fields: PhotoTagFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for PhotoTag.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__PhotoTagClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    photo<T extends PhotoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PhotoDefaultArgs<ExtArgs>>): Prisma__PhotoClient<$Result.GetResult<Prisma.$PhotoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the PhotoTag model
-   */
-  interface PhotoTagFieldRefs {
-    readonly id: FieldRef<"PhotoTag", 'String'>
-    readonly photo_id: FieldRef<"PhotoTag", 'String'>
-    readonly tag: FieldRef<"PhotoTag", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * PhotoTag findUnique
-   */
-  export type PhotoTagFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    /**
-     * Filter, which PhotoTag to fetch.
-     */
-    where: PhotoTagWhereUniqueInput
-  }
-
-  /**
-   * PhotoTag findUniqueOrThrow
-   */
-  export type PhotoTagFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    /**
-     * Filter, which PhotoTag to fetch.
-     */
-    where: PhotoTagWhereUniqueInput
-  }
-
-  /**
-   * PhotoTag findFirst
-   */
-  export type PhotoTagFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    /**
-     * Filter, which PhotoTag to fetch.
-     */
-    where?: PhotoTagWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PhotoTags to fetch.
-     */
-    orderBy?: PhotoTagOrderByWithRelationInput | PhotoTagOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for PhotoTags.
-     */
-    cursor?: PhotoTagWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PhotoTags from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PhotoTags.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of PhotoTags.
-     */
-    distinct?: PhotoTagScalarFieldEnum | PhotoTagScalarFieldEnum[]
-  }
-
-  /**
-   * PhotoTag findFirstOrThrow
-   */
-  export type PhotoTagFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    /**
-     * Filter, which PhotoTag to fetch.
-     */
-    where?: PhotoTagWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PhotoTags to fetch.
-     */
-    orderBy?: PhotoTagOrderByWithRelationInput | PhotoTagOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for PhotoTags.
-     */
-    cursor?: PhotoTagWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PhotoTags from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PhotoTags.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of PhotoTags.
-     */
-    distinct?: PhotoTagScalarFieldEnum | PhotoTagScalarFieldEnum[]
-  }
-
-  /**
-   * PhotoTag findMany
-   */
-  export type PhotoTagFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    /**
-     * Filter, which PhotoTags to fetch.
-     */
-    where?: PhotoTagWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PhotoTags to fetch.
-     */
-    orderBy?: PhotoTagOrderByWithRelationInput | PhotoTagOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing PhotoTags.
-     */
-    cursor?: PhotoTagWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PhotoTags from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PhotoTags.
-     */
-    skip?: number
-    distinct?: PhotoTagScalarFieldEnum | PhotoTagScalarFieldEnum[]
-  }
-
-  /**
-   * PhotoTag create
-   */
-  export type PhotoTagCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    /**
-     * The data needed to create a PhotoTag.
-     */
-    data: XOR<PhotoTagCreateInput, PhotoTagUncheckedCreateInput>
-  }
-
-  /**
-   * PhotoTag createMany
-   */
-  export type PhotoTagCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many PhotoTags.
-     */
-    data: PhotoTagCreateManyInput | PhotoTagCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * PhotoTag createManyAndReturn
-   */
-  export type PhotoTagCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * The data used to create many PhotoTags.
-     */
-    data: PhotoTagCreateManyInput | PhotoTagCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * PhotoTag update
-   */
-  export type PhotoTagUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    /**
-     * The data needed to update a PhotoTag.
-     */
-    data: XOR<PhotoTagUpdateInput, PhotoTagUncheckedUpdateInput>
-    /**
-     * Choose, which PhotoTag to update.
-     */
-    where: PhotoTagWhereUniqueInput
-  }
-
-  /**
-   * PhotoTag updateMany
-   */
-  export type PhotoTagUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update PhotoTags.
-     */
-    data: XOR<PhotoTagUpdateManyMutationInput, PhotoTagUncheckedUpdateManyInput>
-    /**
-     * Filter which PhotoTags to update
-     */
-    where?: PhotoTagWhereInput
-    /**
-     * Limit how many PhotoTags to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * PhotoTag updateManyAndReturn
-   */
-  export type PhotoTagUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * The data used to update PhotoTags.
-     */
-    data: XOR<PhotoTagUpdateManyMutationInput, PhotoTagUncheckedUpdateManyInput>
-    /**
-     * Filter which PhotoTags to update
-     */
-    where?: PhotoTagWhereInput
-    /**
-     * Limit how many PhotoTags to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * PhotoTag upsert
-   */
-  export type PhotoTagUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    /**
-     * The filter to search for the PhotoTag to update in case it exists.
-     */
-    where: PhotoTagWhereUniqueInput
-    /**
-     * In case the PhotoTag found by the `where` argument doesn't exist, create a new PhotoTag with this data.
-     */
-    create: XOR<PhotoTagCreateInput, PhotoTagUncheckedCreateInput>
-    /**
-     * In case the PhotoTag was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<PhotoTagUpdateInput, PhotoTagUncheckedUpdateInput>
-  }
-
-  /**
-   * PhotoTag delete
-   */
-  export type PhotoTagDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
-    /**
-     * Filter which PhotoTag to delete.
-     */
-    where: PhotoTagWhereUniqueInput
-  }
-
-  /**
-   * PhotoTag deleteMany
-   */
-  export type PhotoTagDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which PhotoTags to delete
-     */
-    where?: PhotoTagWhereInput
-    /**
-     * Limit how many PhotoTags to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * PhotoTag without action
-   */
-  export type PhotoTagDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PhotoTag
-     */
-    select?: PhotoTagSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PhotoTag
-     */
-    omit?: PhotoTagOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PhotoTagInclude<ExtArgs> | null
   }
 
 
@@ -6915,6 +5757,8 @@ export namespace Prisma {
     id: 'id',
     album_id: 'album_id',
     s3_key: 's3_key',
+    name: 'name',
+    meta: 'meta',
     uploaded_by_user_id: 'uploaded_by_user_id',
     created_at: 'created_at',
     updated_at: 'updated_at',
@@ -6922,15 +5766,6 @@ export namespace Prisma {
   };
 
   export type PhotoScalarFieldEnum = (typeof PhotoScalarFieldEnum)[keyof typeof PhotoScalarFieldEnum]
-
-
-  export const PhotoTagScalarFieldEnum: {
-    id: 'id',
-    photo_id: 'photo_id',
-    tag: 'tag'
-  };
-
-  export type PhotoTagScalarFieldEnum = (typeof PhotoTagScalarFieldEnum)[keyof typeof PhotoTagScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -7202,26 +6037,28 @@ export namespace Prisma {
     id?: StringFilter<"Photo"> | string
     album_id?: StringFilter<"Photo"> | string
     s3_key?: StringFilter<"Photo"> | string
+    name?: StringFilter<"Photo"> | string
+    meta?: StringNullableFilter<"Photo"> | string | null
     uploaded_by_user_id?: StringFilter<"Photo"> | string
     created_at?: DateTimeFilter<"Photo"> | Date | string
     updated_at?: DateTimeFilter<"Photo"> | Date | string
     is_deleted?: BoolFilter<"Photo"> | boolean
     album?: XOR<AlbumScalarRelationFilter, AlbumWhereInput>
     uploader?: XOR<UserScalarRelationFilter, UserWhereInput>
-    tags?: PhotoTagListRelationFilter
   }
 
   export type PhotoOrderByWithRelationInput = {
     id?: SortOrder
     album_id?: SortOrder
     s3_key?: SortOrder
+    name?: SortOrder
+    meta?: SortOrderInput | SortOrder
     uploaded_by_user_id?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     is_deleted?: SortOrder
     album?: AlbumOrderByWithRelationInput
     uploader?: UserOrderByWithRelationInput
-    tags?: PhotoTagOrderByRelationAggregateInput
   }
 
   export type PhotoWhereUniqueInput = Prisma.AtLeast<{
@@ -7231,19 +6068,22 @@ export namespace Prisma {
     NOT?: PhotoWhereInput | PhotoWhereInput[]
     album_id?: StringFilter<"Photo"> | string
     s3_key?: StringFilter<"Photo"> | string
+    name?: StringFilter<"Photo"> | string
+    meta?: StringNullableFilter<"Photo"> | string | null
     uploaded_by_user_id?: StringFilter<"Photo"> | string
     created_at?: DateTimeFilter<"Photo"> | Date | string
     updated_at?: DateTimeFilter<"Photo"> | Date | string
     is_deleted?: BoolFilter<"Photo"> | boolean
     album?: XOR<AlbumScalarRelationFilter, AlbumWhereInput>
     uploader?: XOR<UserScalarRelationFilter, UserWhereInput>
-    tags?: PhotoTagListRelationFilter
   }, "id">
 
   export type PhotoOrderByWithAggregationInput = {
     id?: SortOrder
     album_id?: SortOrder
     s3_key?: SortOrder
+    name?: SortOrder
+    meta?: SortOrderInput | SortOrder
     uploaded_by_user_id?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -7260,55 +6100,12 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Photo"> | string
     album_id?: StringWithAggregatesFilter<"Photo"> | string
     s3_key?: StringWithAggregatesFilter<"Photo"> | string
+    name?: StringWithAggregatesFilter<"Photo"> | string
+    meta?: StringNullableWithAggregatesFilter<"Photo"> | string | null
     uploaded_by_user_id?: StringWithAggregatesFilter<"Photo"> | string
     created_at?: DateTimeWithAggregatesFilter<"Photo"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Photo"> | Date | string
     is_deleted?: BoolWithAggregatesFilter<"Photo"> | boolean
-  }
-
-  export type PhotoTagWhereInput = {
-    AND?: PhotoTagWhereInput | PhotoTagWhereInput[]
-    OR?: PhotoTagWhereInput[]
-    NOT?: PhotoTagWhereInput | PhotoTagWhereInput[]
-    id?: StringFilter<"PhotoTag"> | string
-    photo_id?: StringFilter<"PhotoTag"> | string
-    tag?: StringFilter<"PhotoTag"> | string
-    photo?: XOR<PhotoScalarRelationFilter, PhotoWhereInput>
-  }
-
-  export type PhotoTagOrderByWithRelationInput = {
-    id?: SortOrder
-    photo_id?: SortOrder
-    tag?: SortOrder
-    photo?: PhotoOrderByWithRelationInput
-  }
-
-  export type PhotoTagWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: PhotoTagWhereInput | PhotoTagWhereInput[]
-    OR?: PhotoTagWhereInput[]
-    NOT?: PhotoTagWhereInput | PhotoTagWhereInput[]
-    photo_id?: StringFilter<"PhotoTag"> | string
-    tag?: StringFilter<"PhotoTag"> | string
-    photo?: XOR<PhotoScalarRelationFilter, PhotoWhereInput>
-  }, "id">
-
-  export type PhotoTagOrderByWithAggregationInput = {
-    id?: SortOrder
-    photo_id?: SortOrder
-    tag?: SortOrder
-    _count?: PhotoTagCountOrderByAggregateInput
-    _max?: PhotoTagMaxOrderByAggregateInput
-    _min?: PhotoTagMinOrderByAggregateInput
-  }
-
-  export type PhotoTagScalarWhereWithAggregatesInput = {
-    AND?: PhotoTagScalarWhereWithAggregatesInput | PhotoTagScalarWhereWithAggregatesInput[]
-    OR?: PhotoTagScalarWhereWithAggregatesInput[]
-    NOT?: PhotoTagScalarWhereWithAggregatesInput | PhotoTagScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"PhotoTag"> | string
-    photo_id?: StringWithAggregatesFilter<"PhotoTag"> | string
-    tag?: StringWithAggregatesFilter<"PhotoTag"> | string
   }
 
   export type UserCreateInput = {
@@ -7495,51 +6292,57 @@ export namespace Prisma {
   export type PhotoCreateInput = {
     id?: string
     s3_key: string
+    name: string
+    meta?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
     album: AlbumCreateNestedOneWithoutPhotosInput
     uploader: UserCreateNestedOneWithoutPhotosInput
-    tags?: PhotoTagCreateNestedManyWithoutPhotoInput
   }
 
   export type PhotoUncheckedCreateInput = {
     id?: string
     album_id: string
     s3_key: string
+    name: string
+    meta?: string | null
     uploaded_by_user_id: string
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
-    tags?: PhotoTagUncheckedCreateNestedManyWithoutPhotoInput
   }
 
   export type PhotoUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     album?: AlbumUpdateOneRequiredWithoutPhotosNestedInput
     uploader?: UserUpdateOneRequiredWithoutPhotosNestedInput
-    tags?: PhotoTagUpdateManyWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     album_id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     uploaded_by_user_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    tags?: PhotoTagUncheckedUpdateManyWithoutPhotoNestedInput
   }
 
   export type PhotoCreateManyInput = {
     id?: string
     album_id: string
     s3_key: string
+    name: string
+    meta?: string | null
     uploaded_by_user_id: string
     created_at?: Date | string
     updated_at?: Date | string
@@ -7549,6 +6352,8 @@ export namespace Prisma {
   export type PhotoUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
@@ -7558,51 +6363,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     album_id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     uploaded_by_user_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-  }
-
-  export type PhotoTagCreateInput = {
-    id?: string
-    tag: string
-    photo: PhotoCreateNestedOneWithoutTagsInput
-  }
-
-  export type PhotoTagUncheckedCreateInput = {
-    id?: string
-    photo_id: string
-    tag: string
-  }
-
-  export type PhotoTagUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tag?: StringFieldUpdateOperationsInput | string
-    photo?: PhotoUpdateOneRequiredWithoutTagsNestedInput
-  }
-
-  export type PhotoTagUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    photo_id?: StringFieldUpdateOperationsInput | string
-    tag?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PhotoTagCreateManyInput = {
-    id?: string
-    photo_id: string
-    tag: string
-  }
-
-  export type PhotoTagUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tag?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PhotoTagUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    photo_id?: StringFieldUpdateOperationsInput | string
-    tag?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -7828,20 +6594,12 @@ export namespace Prisma {
     role?: SortOrder
   }
 
-  export type PhotoTagListRelationFilter = {
-    every?: PhotoTagWhereInput
-    some?: PhotoTagWhereInput
-    none?: PhotoTagWhereInput
-  }
-
-  export type PhotoTagOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type PhotoCountOrderByAggregateInput = {
     id?: SortOrder
     album_id?: SortOrder
     s3_key?: SortOrder
+    name?: SortOrder
+    meta?: SortOrder
     uploaded_by_user_id?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -7852,6 +6610,8 @@ export namespace Prisma {
     id?: SortOrder
     album_id?: SortOrder
     s3_key?: SortOrder
+    name?: SortOrder
+    meta?: SortOrder
     uploaded_by_user_id?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -7862,33 +6622,12 @@ export namespace Prisma {
     id?: SortOrder
     album_id?: SortOrder
     s3_key?: SortOrder
+    name?: SortOrder
+    meta?: SortOrder
     uploaded_by_user_id?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     is_deleted?: SortOrder
-  }
-
-  export type PhotoScalarRelationFilter = {
-    is?: PhotoWhereInput
-    isNot?: PhotoWhereInput
-  }
-
-  export type PhotoTagCountOrderByAggregateInput = {
-    id?: SortOrder
-    photo_id?: SortOrder
-    tag?: SortOrder
-  }
-
-  export type PhotoTagMaxOrderByAggregateInput = {
-    id?: SortOrder
-    photo_id?: SortOrder
-    tag?: SortOrder
-  }
-
-  export type PhotoTagMinOrderByAggregateInput = {
-    id?: SortOrder
-    photo_id?: SortOrder
-    tag?: SortOrder
   }
 
   export type AlbumCreateNestedManyWithoutOwnerInput = {
@@ -8229,20 +6968,6 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type PhotoTagCreateNestedManyWithoutPhotoInput = {
-    create?: XOR<PhotoTagCreateWithoutPhotoInput, PhotoTagUncheckedCreateWithoutPhotoInput> | PhotoTagCreateWithoutPhotoInput[] | PhotoTagUncheckedCreateWithoutPhotoInput[]
-    connectOrCreate?: PhotoTagCreateOrConnectWithoutPhotoInput | PhotoTagCreateOrConnectWithoutPhotoInput[]
-    createMany?: PhotoTagCreateManyPhotoInputEnvelope
-    connect?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-  }
-
-  export type PhotoTagUncheckedCreateNestedManyWithoutPhotoInput = {
-    create?: XOR<PhotoTagCreateWithoutPhotoInput, PhotoTagUncheckedCreateWithoutPhotoInput> | PhotoTagCreateWithoutPhotoInput[] | PhotoTagUncheckedCreateWithoutPhotoInput[]
-    connectOrCreate?: PhotoTagCreateOrConnectWithoutPhotoInput | PhotoTagCreateOrConnectWithoutPhotoInput[]
-    createMany?: PhotoTagCreateManyPhotoInputEnvelope
-    connect?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-  }
-
   export type AlbumUpdateOneRequiredWithoutPhotosNestedInput = {
     create?: XOR<AlbumCreateWithoutPhotosInput, AlbumUncheckedCreateWithoutPhotosInput>
     connectOrCreate?: AlbumCreateOrConnectWithoutPhotosInput
@@ -8257,48 +6982,6 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutPhotosInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPhotosInput, UserUpdateWithoutPhotosInput>, UserUncheckedUpdateWithoutPhotosInput>
-  }
-
-  export type PhotoTagUpdateManyWithoutPhotoNestedInput = {
-    create?: XOR<PhotoTagCreateWithoutPhotoInput, PhotoTagUncheckedCreateWithoutPhotoInput> | PhotoTagCreateWithoutPhotoInput[] | PhotoTagUncheckedCreateWithoutPhotoInput[]
-    connectOrCreate?: PhotoTagCreateOrConnectWithoutPhotoInput | PhotoTagCreateOrConnectWithoutPhotoInput[]
-    upsert?: PhotoTagUpsertWithWhereUniqueWithoutPhotoInput | PhotoTagUpsertWithWhereUniqueWithoutPhotoInput[]
-    createMany?: PhotoTagCreateManyPhotoInputEnvelope
-    set?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-    disconnect?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-    delete?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-    connect?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-    update?: PhotoTagUpdateWithWhereUniqueWithoutPhotoInput | PhotoTagUpdateWithWhereUniqueWithoutPhotoInput[]
-    updateMany?: PhotoTagUpdateManyWithWhereWithoutPhotoInput | PhotoTagUpdateManyWithWhereWithoutPhotoInput[]
-    deleteMany?: PhotoTagScalarWhereInput | PhotoTagScalarWhereInput[]
-  }
-
-  export type PhotoTagUncheckedUpdateManyWithoutPhotoNestedInput = {
-    create?: XOR<PhotoTagCreateWithoutPhotoInput, PhotoTagUncheckedCreateWithoutPhotoInput> | PhotoTagCreateWithoutPhotoInput[] | PhotoTagUncheckedCreateWithoutPhotoInput[]
-    connectOrCreate?: PhotoTagCreateOrConnectWithoutPhotoInput | PhotoTagCreateOrConnectWithoutPhotoInput[]
-    upsert?: PhotoTagUpsertWithWhereUniqueWithoutPhotoInput | PhotoTagUpsertWithWhereUniqueWithoutPhotoInput[]
-    createMany?: PhotoTagCreateManyPhotoInputEnvelope
-    set?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-    disconnect?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-    delete?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-    connect?: PhotoTagWhereUniqueInput | PhotoTagWhereUniqueInput[]
-    update?: PhotoTagUpdateWithWhereUniqueWithoutPhotoInput | PhotoTagUpdateWithWhereUniqueWithoutPhotoInput[]
-    updateMany?: PhotoTagUpdateManyWithWhereWithoutPhotoInput | PhotoTagUpdateManyWithWhereWithoutPhotoInput[]
-    deleteMany?: PhotoTagScalarWhereInput | PhotoTagScalarWhereInput[]
-  }
-
-  export type PhotoCreateNestedOneWithoutTagsInput = {
-    create?: XOR<PhotoCreateWithoutTagsInput, PhotoUncheckedCreateWithoutTagsInput>
-    connectOrCreate?: PhotoCreateOrConnectWithoutTagsInput
-    connect?: PhotoWhereUniqueInput
-  }
-
-  export type PhotoUpdateOneRequiredWithoutTagsNestedInput = {
-    create?: XOR<PhotoCreateWithoutTagsInput, PhotoUncheckedCreateWithoutTagsInput>
-    connectOrCreate?: PhotoCreateOrConnectWithoutTagsInput
-    upsert?: PhotoUpsertWithoutTagsInput
-    connect?: PhotoWhereUniqueInput
-    update?: XOR<XOR<PhotoUpdateToOneWithWhereWithoutTagsInput, PhotoUpdateWithoutTagsInput>, PhotoUncheckedUpdateWithoutTagsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -8460,21 +7143,23 @@ export namespace Prisma {
   export type PhotoCreateWithoutUploaderInput = {
     id?: string
     s3_key: string
+    name: string
+    meta?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
     album: AlbumCreateNestedOneWithoutPhotosInput
-    tags?: PhotoTagCreateNestedManyWithoutPhotoInput
   }
 
   export type PhotoUncheckedCreateWithoutUploaderInput = {
     id?: string
     album_id: string
     s3_key: string
+    name: string
+    meta?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
-    tags?: PhotoTagUncheckedCreateNestedManyWithoutPhotoInput
   }
 
   export type PhotoCreateOrConnectWithoutUploaderInput = {
@@ -8561,6 +7246,8 @@ export namespace Prisma {
     id?: StringFilter<"Photo"> | string
     album_id?: StringFilter<"Photo"> | string
     s3_key?: StringFilter<"Photo"> | string
+    name?: StringFilter<"Photo"> | string
+    meta?: StringNullableFilter<"Photo"> | string | null
     uploaded_by_user_id?: StringFilter<"Photo"> | string
     created_at?: DateTimeFilter<"Photo"> | Date | string
     updated_at?: DateTimeFilter<"Photo"> | Date | string
@@ -8680,21 +7367,23 @@ export namespace Prisma {
   export type PhotoCreateWithoutAlbumInput = {
     id?: string
     s3_key: string
+    name: string
+    meta?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
     uploader: UserCreateNestedOneWithoutPhotosInput
-    tags?: PhotoTagCreateNestedManyWithoutPhotoInput
   }
 
   export type PhotoUncheckedCreateWithoutAlbumInput = {
     id?: string
     s3_key: string
+    name: string
+    meta?: string | null
     uploaded_by_user_id: string
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
-    tags?: PhotoTagUncheckedCreateNestedManyWithoutPhotoInput
   }
 
   export type PhotoCreateOrConnectWithoutAlbumInput = {
@@ -9001,26 +7690,6 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutPhotosInput, UserUncheckedCreateWithoutPhotosInput>
   }
 
-  export type PhotoTagCreateWithoutPhotoInput = {
-    id?: string
-    tag: string
-  }
-
-  export type PhotoTagUncheckedCreateWithoutPhotoInput = {
-    id?: string
-    tag: string
-  }
-
-  export type PhotoTagCreateOrConnectWithoutPhotoInput = {
-    where: PhotoTagWhereUniqueInput
-    create: XOR<PhotoTagCreateWithoutPhotoInput, PhotoTagUncheckedCreateWithoutPhotoInput>
-  }
-
-  export type PhotoTagCreateManyPhotoInputEnvelope = {
-    data: PhotoTagCreateManyPhotoInput | PhotoTagCreateManyPhotoInput[]
-    skipDuplicates?: boolean
-  }
-
   export type AlbumUpsertWithoutPhotosInput = {
     update: XOR<AlbumUpdateWithoutPhotosInput, AlbumUncheckedUpdateWithoutPhotosInput>
     create: XOR<AlbumCreateWithoutPhotosInput, AlbumUncheckedCreateWithoutPhotosInput>
@@ -9083,87 +7752,6 @@ export namespace Prisma {
     albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type PhotoTagUpsertWithWhereUniqueWithoutPhotoInput = {
-    where: PhotoTagWhereUniqueInput
-    update: XOR<PhotoTagUpdateWithoutPhotoInput, PhotoTagUncheckedUpdateWithoutPhotoInput>
-    create: XOR<PhotoTagCreateWithoutPhotoInput, PhotoTagUncheckedCreateWithoutPhotoInput>
-  }
-
-  export type PhotoTagUpdateWithWhereUniqueWithoutPhotoInput = {
-    where: PhotoTagWhereUniqueInput
-    data: XOR<PhotoTagUpdateWithoutPhotoInput, PhotoTagUncheckedUpdateWithoutPhotoInput>
-  }
-
-  export type PhotoTagUpdateManyWithWhereWithoutPhotoInput = {
-    where: PhotoTagScalarWhereInput
-    data: XOR<PhotoTagUpdateManyMutationInput, PhotoTagUncheckedUpdateManyWithoutPhotoInput>
-  }
-
-  export type PhotoTagScalarWhereInput = {
-    AND?: PhotoTagScalarWhereInput | PhotoTagScalarWhereInput[]
-    OR?: PhotoTagScalarWhereInput[]
-    NOT?: PhotoTagScalarWhereInput | PhotoTagScalarWhereInput[]
-    id?: StringFilter<"PhotoTag"> | string
-    photo_id?: StringFilter<"PhotoTag"> | string
-    tag?: StringFilter<"PhotoTag"> | string
-  }
-
-  export type PhotoCreateWithoutTagsInput = {
-    id?: string
-    s3_key: string
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
-    album: AlbumCreateNestedOneWithoutPhotosInput
-    uploader: UserCreateNestedOneWithoutPhotosInput
-  }
-
-  export type PhotoUncheckedCreateWithoutTagsInput = {
-    id?: string
-    album_id: string
-    s3_key: string
-    uploaded_by_user_id: string
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
-  }
-
-  export type PhotoCreateOrConnectWithoutTagsInput = {
-    where: PhotoWhereUniqueInput
-    create: XOR<PhotoCreateWithoutTagsInput, PhotoUncheckedCreateWithoutTagsInput>
-  }
-
-  export type PhotoUpsertWithoutTagsInput = {
-    update: XOR<PhotoUpdateWithoutTagsInput, PhotoUncheckedUpdateWithoutTagsInput>
-    create: XOR<PhotoCreateWithoutTagsInput, PhotoUncheckedCreateWithoutTagsInput>
-    where?: PhotoWhereInput
-  }
-
-  export type PhotoUpdateToOneWithWhereWithoutTagsInput = {
-    where?: PhotoWhereInput
-    data: XOR<PhotoUpdateWithoutTagsInput, PhotoUncheckedUpdateWithoutTagsInput>
-  }
-
-  export type PhotoUpdateWithoutTagsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    s3_key?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    album?: AlbumUpdateOneRequiredWithoutPhotosNestedInput
-    uploader?: UserUpdateOneRequiredWithoutPhotosNestedInput
-  }
-
-  export type PhotoUncheckedUpdateWithoutTagsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    album_id?: StringFieldUpdateOperationsInput | string
-    s3_key?: StringFieldUpdateOperationsInput | string
-    uploaded_by_user_id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    is_deleted?: BoolFieldUpdateOperationsInput | boolean
-  }
-
   export type AlbumCreateManyOwnerInput = {
     id?: string
     name: string
@@ -9177,6 +7765,8 @@ export namespace Prisma {
     id?: string
     album_id: string
     s3_key: string
+    name: string
+    meta?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
@@ -9224,27 +7814,31 @@ export namespace Prisma {
   export type PhotoUpdateWithoutUploaderInput = {
     id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     album?: AlbumUpdateOneRequiredWithoutPhotosNestedInput
-    tags?: PhotoTagUpdateManyWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateWithoutUploaderInput = {
     id?: StringFieldUpdateOperationsInput | string
     album_id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    tags?: PhotoTagUncheckedUpdateManyWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateManyWithoutUploaderInput = {
     id?: StringFieldUpdateOperationsInput | string
     album_id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
@@ -9280,6 +7874,8 @@ export namespace Prisma {
   export type PhotoCreateManyAlbumInput = {
     id?: string
     s3_key: string
+    name: string
+    meta?: string | null
     uploaded_by_user_id: string
     created_at?: Date | string
     updated_at?: Date | string
@@ -9328,26 +7924,30 @@ export namespace Prisma {
   export type PhotoUpdateWithoutAlbumInput = {
     id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     uploader?: UserUpdateOneRequiredWithoutPhotosNestedInput
-    tags?: PhotoTagUpdateManyWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateWithoutAlbumInput = {
     id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     uploaded_by_user_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    tags?: PhotoTagUncheckedUpdateManyWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateManyWithoutAlbumInput = {
     id?: StringFieldUpdateOperationsInput | string
     s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     uploaded_by_user_id?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9370,26 +7970,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PhotoTagCreateManyPhotoInput = {
-    id?: string
-    tag: string
-  }
-
-  export type PhotoTagUpdateWithoutPhotoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tag?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PhotoTagUncheckedUpdateWithoutPhotoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tag?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PhotoTagUncheckedUpdateManyWithoutPhotoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tag?: StringFieldUpdateOperationsInput | string
   }
 
 

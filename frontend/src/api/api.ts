@@ -4,6 +4,7 @@ import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
 export const syncUserToBackend = async () => {
   try {
       const userAttributes = await fetchUserAttributes();
+      console.log(userAttributes)
       const {idToken} = (await fetchAuthSession()).tokens ?? {};
       const sub = userAttributes.sub;
       const email = userAttributes.email;
@@ -43,8 +44,11 @@ export const fetchAlbums = async () => {
 };
 
 export const createAlbum = async (albumName: string, parentAlbumId: string) => {
+
   try {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
+        console.log("albumName:", albumName, "parentAlbumId:", parentAlbumId);
+    console.log(idToken)
     const res = await fetch(`http://localhost:3001/albums`, {
       method: 'POST',
       headers: {
@@ -102,3 +106,44 @@ export const renameAlbum = async (albumId: string, newName: string) => {
     throw e;
   }
 };
+export const uploadImage = async (file: File, parentAlbumId: string) => {
+    if (!file) return alert('ファイルを選択してください');
+
+    const { idToken } = (await fetchAuthSession()).tokens ?? {};
+
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('albumId', parentAlbumId);
+    try {
+        const res = await fetch('http://localhost:3001/images/upload', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+            },
+            body: formData,
+        });
+
+        if (!res.ok) throw new Error('アップロード失敗');
+        return await res.json();
+    }catch(e){
+        console.error(e);
+        throw e;
+    }
+};
+
+export const fetchImages = async (albumId: string) => {
+    const { idToken } = (await fetchAuthSession()).tokens ?? {};
+    try {
+        const res = await fetch(`http://localhost:3001/images/view/${albumId}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+            },
+        })
+        
+        return await res.json();
+    } catch(e){
+        console.error(e);
+        throw e;
+    }
+}

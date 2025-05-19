@@ -9,8 +9,15 @@ export interface AlbumType {
 export interface Photo {
   id: string;
   albumId: string;
-  s3Key: string;
-  uploadedByUserId: string;
+  url: string;
+  name: string;
+  meta?: string;
+  uploader: User;
   createdAt?: string;
-  tags: string[];
+}
+
+export interface User {
+  id: string 
+  name: string
+  email: string
 }

@@ -54,17 +54,11 @@ model Photo {
   album_id            String
   album               Album      @relation(fields: [album_id], references: [id])
   s3_key              String
+  name                String
+  meta                String?
   uploaded_by_user_id String
   uploader            User       @relation("UserPhotos", fields: [uploaded_by_user_id], references: [id])
-  tags                PhotoTag[]
   created_at          DateTime   @default(now())
-  updated_at      DateTime @updatedAt
-  is_deleted      Boolean   @default(false)
-}
-
-model PhotoTag {
-  id       String   @id @default(uuid())
-  photo_id String
-  photo    Photo    @relation(fields: [photo_id], references: [id])
-  tag      String
+  updated_at          DateTime @updatedAt
+  is_deleted          Boolean   @default(false)
 }

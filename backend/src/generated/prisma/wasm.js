@@ -147,16 +147,12 @@ exports.Prisma.PhotoScalarFieldEnum = {
   id: 'id',
   album_id: 'album_id',
   s3_key: 's3_key',
+  name: 'name',
+  meta: 'meta',
   uploaded_by_user_id: 'uploaded_by_user_id',
   created_at: 'created_at',
   updated_at: 'updated_at',
   is_deleted: 'is_deleted'
-};
-
-exports.Prisma.PhotoTagScalarFieldEnum = {
-  id: 'id',
-  photo_id: 'photo_id',
-  tag: 'tag'
 };
 
 exports.Prisma.SortOrder = {
@@ -179,8 +175,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   Album: 'Album',
   AlbumMember: 'AlbumMember',
-  Photo: 'Photo',
-  PhotoTag: 'PhotoTag'
+  Photo: 'Photo'
 };
 
 /**

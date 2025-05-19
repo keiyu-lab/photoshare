@@ -14,10 +14,10 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onAddAlbum, onAddPhoto }) => 
         onChange={(e) => onSearch(e.target.value)}
       />
       <div className="flex space-x-2">
-        <button className="bg-blue-500 text-white px-3 py-1 rounded" onClick={onAddAlbum}>
+        <button className="bg-blue-500 text-white px-3 py-1 rounded" onClick={() => onAddAlbum()}>
           アルバム追加
         </button>
-        <button className="bg-green-500 text-white px-3 py-1 rounded" onClick={onAddPhoto}>
+        <button className="bg-green-500 text-white px-3 py-1 rounded" onClick={() => onAddPhoto()}>
           写真追加
         </button>
       </div>

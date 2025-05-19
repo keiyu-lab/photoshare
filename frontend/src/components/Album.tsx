@@ -144,7 +144,7 @@ export const AlbumTreeNode = ({
             </SidebarMenuButton>
           </ContextMenuTrigger>
           <ContextMenuContent className="w-48">
-            <ContextMenuItem onClick={handleAddAlbum}>
+            <ContextMenuItem onClick={()=>handleAddAlbum}>
               <PlusCircle className="mr-2 h-4 w-4" />
               <span>アルバム追加</span>
             </ContextMenuItem>
