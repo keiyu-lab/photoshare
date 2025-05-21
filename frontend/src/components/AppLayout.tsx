@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import type { AlbumType, Photo } from '@/types';
 import { Authenticator } from '@aws-amplify/ui-react';
 import AlbumContents from './AlbumContents';
-import { createAlbum, deleteAlbum, fetchAlbums, fetchImages, renameAlbum, syncUserToBackend } from '@/api/api';
+import { createAlbum, deleteAlbum, fetchAlbums, fetchPhotos, renameAlbum, syncUserToBackend } from '@/api/api';
 import { buildAlbumTree, findAlbumById, flattenAlbums, normailzeRowAlbum } from '@/components/Album';
 import PhotoUploadModal from './Modal/PhotoUploadModal';
 import '@aws-amplify/ui-react/styles.css';
@@ -101,7 +101,7 @@ export function AppLayout() {
     // アップロード完了後に写真を再読み込み
     if (selectedAlbum) {
       try {
-        const albumPhotos = await fetchImages(selectedAlbum.id);
+        const albumPhotos = await fetchPhotos(selectedAlbum.id);
         setPhotos(albumPhotos);
       } catch (error) {
         console.error('Error refreshing photos after upload:', error);
@@ -128,6 +128,7 @@ export function AppLayout() {
             onAddPhoto={handleAddPhoto}
             onRenameAlbum={handleRenameAlbum}
             onDeleteAlbum={handleDeleteAlbum}
+            onSignOut={signOut}
           />
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="border-b p-2 flex items-center">
@@ -146,12 +147,6 @@ export function AppLayout() {
                   keyword={searchKeyword}
                 />
               </div>
-              <footer className="p-2 text-xs text-center text-gray-400 border-t min-h-[40px]">
-                Logged in as {user?.userId ?? 'unknown'}
-                <button className="ml-4 text-blue-500" onClick={signOut}>
-                  Sign out
-                </button>
-              </footer>
             </main>
           </div>
  

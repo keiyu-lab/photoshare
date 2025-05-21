@@ -106,7 +106,7 @@ export const renameAlbum = async (albumId: string, newName: string) => {
     throw e;
   }
 };
-export const uploadImage = async (file: File, parentAlbumId: string) => {
+export const uploadPhoto = async (file: File, parentAlbumId: string) => {
     if (!file) return alert('ファイルを選択してください');
 
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
@@ -115,7 +115,7 @@ export const uploadImage = async (file: File, parentAlbumId: string) => {
     formData.append('image', file);
     formData.append('albumId', parentAlbumId);
     try {
-        const res = await fetch('http://localhost:3001/images/upload', {
+        const res = await fetch('http://localhost:3001/images', {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${idToken}`,
@@ -131,10 +131,10 @@ export const uploadImage = async (file: File, parentAlbumId: string) => {
     }
 };
 
-export const fetchImages = async (albumId: string) => {
+export const fetchPhotos = async (albumId: string) => {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
     try {
-        const res = await fetch(`http://localhost:3001/images/view/${albumId}`, {
+        const res = await fetch(`http://localhost:3001/images/${albumId}`, {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${idToken}`,
@@ -146,4 +146,56 @@ export const fetchImages = async (albumId: string) => {
         console.error(e);
         throw e;
     }
+}
+
+export const deletePhoto = async (photoId: string) => {
+  const { idToken } = (await fetchAuthSession()).tokens ?? {};
+  try {
+      const res = await fetch(`http://localhost:3001/images/${photoId}`, {
+          method: 'DELETE',
+          headers: {
+              Authorization: `Bearer ${idToken}`,
+          },
+      })
+      
+      return await res.json();
+  } catch(e){
+      console.error(e);
+      throw e;
+  }
+}
+
+export const fetchUserName = async () => {
+  const { idToken } = (await fetchAuthSession()).tokens ?? {};
+  try {
+      const res = await fetch(`http://localhost:3001/user/`, {
+          method: 'GET',
+          headers: {
+              Authorization: `Bearer ${idToken}`,
+          },
+      })
+      
+      return await res.json();
+  } catch(e){
+      console.error(e);
+      throw e;
+  }
+}
+
+export const updateUserName = async (newName: string) => {
+  const { idToken } = (await fetchAuthSession()).tokens ?? {};
+  try {
+      const res = await fetch(`http://localhost:3001/user/`, {
+          method: 'POST',
+          headers: {
+              Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({ name: newName }),
+      })
+      
+      return await res.json();
+  } catch(e){
+      console.error(e);
+      throw e;
+  }
 }

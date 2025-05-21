@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { UploadCloud, X, Image as ImageIcon } from 'lucide-react';
-import { uploadImage } from '@/api/api';
+import { uploadPhoto } from '@/api/api';
 
 interface PhotoUploadModalProps {
   isOpen: boolean;
@@ -50,7 +50,7 @@ export default function PhotoUploadModal({ isOpen, onClose, albumId, onUploadCom
     try {
       // 各ファイルをアップロード
       for (let i = 0; i < files.length; i++) {
-        await uploadImage(files[i], albumId);
+        await uploadPhoto(files[i], albumId);
         setProgress(((i + 1) / files.length) * 100);
       }
 

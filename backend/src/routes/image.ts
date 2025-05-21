@@ -28,7 +28,7 @@ const prisma = new PrismaClient();
 /**
  * アップロード用の署名付きURLを発行
  */
-router.post('/upload', verifyJwt, upload.single('image'), async (req: any, res) => {
+router.post('/', verifyJwt, upload.single('image'), async (req: any, res) => {
   const userId = req.user.sub;
   const file = req.file;
   const albumId = req.body.albumId || '';
@@ -75,7 +75,7 @@ router.post('/upload', verifyJwt, upload.single('image'), async (req: any, res) 
 /**
  * ダウンロード（表示）用の署名付きURLを発行
  */
-router.get('/view/:id', verifyJwt, async (req: any, res) => {
+router.get('/:id', verifyJwt, async (req: any, res) => {
   const albumId = req.params.id;
 
   try {
@@ -89,7 +89,8 @@ router.get('/view/:id', verifyJwt, async (req: any, res) => {
         name: true,
         s3_key: true,
         meta: true,
-        uploader: true
+        uploader: true,
+        created_at: true
       },
     });
 
@@ -98,6 +99,7 @@ router.get('/view/:id', verifyJwt, async (req: any, res) => {
         const command = new GetObjectCommand({
           Bucket: process.env.S3_BUCKET_NAME!,
           Key: photo.s3_key,
+          ResponseContentDisposition: `attachment; filename=${photo.name}`,
         });
 
         const url = await getSignedUrl(s3, command, { expiresIn: 60 * 60 }); // 1時間有効
@@ -107,7 +109,8 @@ router.get('/view/:id', verifyJwt, async (req: any, res) => {
           name: photo.name,
           url: url,
           meta: photo.meta,
-          uploader: photo.uploader
+          uploader: photo.uploader,
+          createdAt: photo.created_at
         }
       })
     )
@@ -116,6 +119,22 @@ router.get('/view/:id', verifyJwt, async (req: any, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create view URL' });
+  }
+});
+
+router.delete('/:id', verifyJwt, async (req: any, res) => {
+  const photoId = req.params.id;
+    try {
+      // 論理削除
+      await prisma.photo.update({
+        where: { id: photoId },
+        data: { is_deleted: true },
+      });
+
+      // S3からは削除しない。後で完全に削除する機能をつける。また、アルバムと写真も復元できる機能を付けたい
+  }catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete photo from db' });
   }
 });
 

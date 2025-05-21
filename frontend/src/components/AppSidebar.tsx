@@ -1,5 +1,5 @@
 // src/components/AppSidebar.tsx
-import { Folder, Share, Plus, User, Settings, Home as HomeIcon } from "lucide-react";
+import { Folder, Share, Plus, User, Settings, Home as HomeIcon, Eye, Download, LogOutIcon, PenIcon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,6 +12,13 @@ import {
 } from "@/components/ui/sidebar";
 import { AlbumTreeNode } from "./Album";
 import type { AlbumType } from "@/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { updateUserName } from "@/api/api";
 
 
 type AppSidebarProps = {
@@ -22,6 +29,7 @@ type AppSidebarProps = {
   onAddPhoto?: (albumId: string) => void;
   onRenameAlbum?: (albumId: string) => void;
   onDeleteAlbum?: (albumId: string) => void;
+  onSignOut?: () => void;
 };
 
 export function AppSidebar({ 
@@ -31,7 +39,8 @@ export function AppSidebar({
   onAddAlbum,
   onAddPhoto,
   onRenameAlbum,
-  onDeleteAlbum
+  onDeleteAlbum,
+  onSignOut
 }: AppSidebarProps) {
   console.log(albumTree)
 
@@ -110,6 +119,8 @@ export function AppSidebar({
 
       {/* フッター */}
       <div className="mt-auto border-t border-border p-4">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
         <SidebarMenuButton className="w-full justify-between items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent hover:text-accent-foreground">
           <div className="flex items-center gap-2">
             <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary">
@@ -119,6 +130,18 @@ export function AppSidebar({
           </div>
           <Settings className="h-4 w-4 text-muted-foreground" />
         </SidebarMenuButton>
+        </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem >
+              <LogOutIcon className="mr-2 h-4 w-4" onClick={onSignOut}/>
+              <span>サインアウト</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem >
+              <PenIcon className="mr-2 h-4 w-4" onClick={()=>updateUserName()}/>
+              <span>名前変更</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </Sidebar>
   );
