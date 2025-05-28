@@ -1,15 +1,16 @@
 import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
 
+const API_BASE_URL =  'http://localhost:3001';
+
 // cognitoの認証後ユーザ情報をバックエンドに送信
 export const syncUserToBackend = async () => {
   try {
       const userAttributes = await fetchUserAttributes();
-      console.log(userAttributes)
       const {idToken} = (await fetchAuthSession()).tokens ?? {};
       const sub = userAttributes.sub;
       const email = userAttributes.email;
      
-      await fetch(`http://localhost:3001/users/sync`, {
+      await fetch(`${API_BASE_URL}/users/sync`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -28,7 +29,7 @@ export const fetchAlbums = async () => {
   try {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
 
-    const res = await fetch(`http://localhost:3001/albums`, {
+    const res = await fetch(`${API_BASE_URL}/albums`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${idToken}`,
@@ -44,12 +45,10 @@ export const fetchAlbums = async () => {
 };
 
 export const createAlbum = async (albumName: string, parentAlbumId: string) => {
-
   try {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
-        console.log("albumName:", albumName, "parentAlbumId:", parentAlbumId);
-    console.log(idToken)
-    const res = await fetch(`http://localhost:3001/albums`, {
+
+    const res = await fetch(`${API_BASE_URL}/albums`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -72,7 +71,7 @@ export const createAlbum = async (albumName: string, parentAlbumId: string) => {
 export const deleteAlbum = async (albumId: string) => {
   try {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
-    const res = await fetch(`http://localhost:3001/albums/${albumId}`, {
+    const res = await fetch(`${API_BASE_URL}/albums/${albumId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${idToken}`,
@@ -90,7 +89,7 @@ export const deleteAlbum = async (albumId: string) => {
 export const renameAlbum = async (albumId: string, newName: string) => {
   try {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
-    const res = await fetch(`http://localhost:3001/albums/${albumId}`, {
+    const res = await fetch(`${API_BASE_URL}/albums/${albumId}/rename`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json', 
@@ -106,6 +105,29 @@ export const renameAlbum = async (albumId: string, newName: string) => {
     throw e;
   }
 };
+
+export const updateAlbumParent = async (albumId: string, newParentId: string) => {
+
+  try {
+    const { idToken } = (await fetchAuthSession()).tokens ?? {};
+    const response = await fetch(`${API_BASE_URL}/albums/${albumId}/move`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify({ parentAlbumId: newParentId }),
+    });
+    
+    if (!response.ok) throw new Error("Failed to update parent album id");
+    
+    return await response.json();
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+};
+
 export const uploadPhoto = async (file: File, parentAlbumId: string) => {
     if (!file) return alert('ファイルを選択してください');
 
@@ -115,7 +137,7 @@ export const uploadPhoto = async (file: File, parentAlbumId: string) => {
     formData.append('image', file);
     formData.append('albumId', parentAlbumId);
     try {
-        const res = await fetch('http://localhost:3001/images', {
+        const res = await fetch(`${API_BASE_URL}/images`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${idToken}`,
@@ -134,7 +156,7 @@ export const uploadPhoto = async (file: File, parentAlbumId: string) => {
 export const fetchPhotos = async (albumId: string) => {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
     try {
-        const res = await fetch(`http://localhost:3001/images/${albumId}`, {
+        const res = await fetch(`${API_BASE_URL}/images/${albumId}`, {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${idToken}`,
@@ -151,7 +173,7 @@ export const fetchPhotos = async (albumId: string) => {
 export const deletePhoto = async (photoId: string) => {
   const { idToken } = (await fetchAuthSession()).tokens ?? {};
   try {
-      const res = await fetch(`http://localhost:3001/images/${photoId}`, {
+      const res = await fetch(`${API_BASE_URL}/images/${photoId}`, {
           method: 'DELETE',
           headers: {
               Authorization: `Bearer ${idToken}`,
@@ -165,10 +187,29 @@ export const deletePhoto = async (photoId: string) => {
   }
 }
 
+export const updatePhotoAlbum = async (photoId: string, targetAlbumId: string) => {
+  const { idToken } = (await fetchAuthSession()).tokens ?? {};
+  try {
+      const res = await fetch(`${API_BASE_URL}/images/${photoId}/move`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({ targetAlbumId: targetAlbumId }),
+      })
+      console.log("updatePhotoAlbum fired")
+      return await res.json();
+  } catch(e){
+      console.error(e);
+      throw e;
+  }
+}
+
 export const fetchUserName = async () => {
   const { idToken } = (await fetchAuthSession()).tokens ?? {};
   try {
-      const res = await fetch(`http://localhost:3001/user/`, {
+      const res = await fetch(`${API_BASE_URL}/user/`, {
           method: 'GET',
           headers: {
               Authorization: `Bearer ${idToken}`,
@@ -185,7 +226,7 @@ export const fetchUserName = async () => {
 export const updateUserName = async (newName: string) => {
   const { idToken } = (await fetchAuthSession()).tokens ?? {};
   try {
-      const res = await fetch(`http://localhost:3001/user/`, {
+      const res = await fetch(`${API_BASE_URL}/user/`, {
           method: 'POST',
           headers: {
               Authorization: `Bearer ${idToken}`,
@@ -199,3 +240,124 @@ export const updateUserName = async (newName: string) => {
       throw e;
   }
 }
+
+// アルバムを共有（招待メール送信）
+export const shareAlbum = async (albumId: string, email: string, role: 'read' | 'write') => {
+  const { idToken } = (await fetchAuthSession()).tokens ?? {};
+  try {
+    const response = await fetch(`${API_BASE_URL}/albums/share`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify({
+        albumId,
+        email,
+        role
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to share album');
+    }
+
+    return await response.json();
+  } catch (e) {
+    console.error('Error sharing album:', e);
+    throw e;
+  }
+};
+
+// 招待を受諾（トークンベース）
+export const acceptInvitation = async (token: string) => {
+  const { idToken } = (await fetchAuthSession()).tokens ?? {};
+  try {
+    const response = await fetch(`${API_BASE_URL}/albums/accept`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify({ token })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to accept invitation');
+    }
+
+    return await response.json();
+  } catch (e) {
+    console.error('Error accepting invitation:', e);
+    throw e;
+  }
+};
+
+// 共有されたアルバム一覧を取得
+export const fetchSharedAlbums = async () => {
+  const { idToken } = (await fetchAuthSession()).tokens ?? {};
+  try {
+    const response = await fetch(`${API_BASE_URL}/albums/shared`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch shared albums');
+    }
+
+    return await response.json();
+  } catch (e) {
+    console.error('Error fetching shared albums:', e);
+    throw e;
+  }
+};
+
+// アルバムの共有状況を取得
+export const getAlbumSharedStatus = async (albumId: string) => {
+  const { idToken } = (await fetchAuthSession()).tokens ?? {};
+  try {
+    const response = await fetch(`${API_BASE_URL}/albums/${albumId}/members`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to get album shared status');
+    }
+
+    return await response.json();
+  } catch (e) {
+    console.error('Error getting album shared status:', e);
+    throw e;
+  }
+};
+
+// 共有を取り消す
+export const removeAlbumShare = async (albumId: string, userId: string) => {
+  const { idToken } = (await fetchAuthSession()).tokens ?? {};
+  try {
+    const response = await fetch(`${API_BASE_URL}/albums/${albumId}/members/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to remove album share');
+    }
+
+    return await response.json();
+  } catch (e) {
+    console.error('Error removing album share:', e);
+    throw e;
+  }
+};

@@ -132,9 +132,26 @@ router.delete('/:id', verifyJwt, async (req: any, res) => {
       });
 
       // S3からは削除しない。後で完全に削除する機能をつける。また、アルバムと写真も復元できる機能を付けたい
+    res.status(200).json({ message: 'Photo deleted' });
   }catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to delete photo from db' });
+  }
+});
+
+router.put('/:id/move', verifyJwt, async (req: any, res) => {
+  const photoId = req.params.id;
+  const {targetAlbumId} = req.body;
+  console.log(targetAlbumId)
+  try {
+    await prisma.photo.update({
+      where: { id: photoId },
+      data: { album_id: targetAlbumId},
+    });
+    res.status(200).json({ message: 'Photo moved' });
+  }catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to move photo' });
   }
 });
 

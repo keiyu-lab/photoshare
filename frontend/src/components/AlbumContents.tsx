@@ -16,42 +16,32 @@ interface AlbumContentsProps {
   album: AlbumType | null;
   photos: Photo[];
   keyword: string;
+  onMovePhoto?: (photoId: string, targetAlbumId: string) => void;
+  onDeletePhoto: (photoId: string) => void;
+  onDeleteMultiplePhotos?: (photoIds: string[]) => void;
 }
 
-export default function AlbumContents({ album, photos: initialPhotos, keyword }: AlbumContentsProps) {
-  const [photos, setPhotos] = useState<Photo[]>(initialPhotos);
+export default function AlbumContents({ 
+  album,
+  photos, 
+  keyword, 
+  onMovePhoto,
+  onDeletePhoto,
+  onDeleteMultiplePhotos,
+}: AlbumContentsProps) 
+{
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [loading, setLoading] = useState(false);
   const [inspectPhoto, setInspectPhoto] = useState<Photo | null>(null);
   const [isInspectOpen, setIsInspectOpen] = useState(false);
   const [selectedPhotos, setSelectedPhotos] = useState<Set<string>>(new Set());
   const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [draggedPhoto, setDraggedPhoto] = useState<Photo | null>(null);
   
   useEffect(() => {
-    const loadPhotos = async () => {
-      if (!album) {
-        setPhotos([]);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const albumPhotos = await fetchPhotos(album.id);
-        
-        setPhotos(albumPhotos);
-      } catch (error) {
-        console.error('Error loading photos:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadPhotos();
+    setSelectedPhotos(new Set());
+    setIsSelectionMode(false);
   }, [album]);
-
-  useEffect(() => {
-    console.log(photos)
-  }, [photos])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -69,7 +59,6 @@ export default function AlbumContents({ album, photos: initialPhotos, keyword }:
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [photos, album]);
-
 
   const cancelSelectionMode = () => {
     setIsSelectionMode(false);
@@ -175,14 +164,14 @@ export default function AlbumContents({ album, photos: initialPhotos, keyword }:
     }
   };
 
-
   const handleDelete = async (photo: Photo) => {
+    console.log("handleDelete is fired in Album")
     if (!confirm(`"${photo.name}" を削除してもよろしいですか？`)) return;
     
     try {
       await deletePhoto(photo.id);
-      // 写真一覧から削除した写真を除外
-      setPhotos(prev => prev.filter(p => p.id !== photo.id));
+      // 親コンポーネントに削除を通知
+      onDeletePhoto(photo.id);
     } catch (error) {
       console.error('Error deleting photo:', error);
       alert('写真の削除に失敗しました');
@@ -198,8 +187,10 @@ export default function AlbumContents({ album, photos: initialPhotos, keyword }:
       const deletePromises = selectedPhotosList.map(photo => deletePhoto(photo.id));
       await Promise.all(deletePromises);
       
-      // 写真一覧から削除した写真を除外
-      setPhotos(prev => prev.filter(p => !selectedPhotos.has(p.id)));
+      // 親コンポーネントに複数削除を通知
+      const deletedIds = selectedPhotosList.map(photo => photo.id);
+      onDeleteMultiplePhotos?.(deletedIds);
+      
       // 選択をクリア
       setSelectedPhotos(new Set());
       setIsSelectionMode(false);
@@ -207,6 +198,20 @@ export default function AlbumContents({ album, photos: initialPhotos, keyword }:
       console.error('Error deleting multiple photos:', error);
       alert('複数写真の削除に失敗しました');
     }
+  };
+
+  // 写真のドラッグ開始
+  const handlePhotoDragStart = (e: React.DragEvent, photo: Photo) => {
+    e.stopPropagation();
+    setDraggedPhoto(photo);
+    e.dataTransfer.setData('application/photo-id', photo.id);
+    e.dataTransfer.setData('application/photo-name', photo.name);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  // 写真のドラッグ終了
+  const handlePhotoDragEnd = () => {
+    setDraggedPhoto(null);
   };
 
   const navigateToNextPhoto = useCallback(() => {
@@ -314,13 +319,18 @@ export default function AlbumContents({ album, photos: initialPhotos, keyword }:
             viewMode === 'grid' ? (
               <div 
                 key={photo.id} 
-                className={`relative group aspect-square bg-gray-100 rounded overflow-hidden ${selectedPhotos.has(photo.id) ? 'ring-2 ring-blue-500' : ''}`}
+                className={`relative group aspect-square bg-gray-100 rounded overflow-hidden cursor-move ${
+                  selectedPhotos.has(photo.id) ? 'ring-2 ring-blue-500' : ''
+                } ${draggedPhoto?.id === photo.id ? 'opacity-50' : ''}`}
                 onClick={(e) => handlePhotoClick(e, photo.id)}
+                draggable
+                onDragStart={(e) => handlePhotoDragStart(e, photo)}
+                onDragEnd={handlePhotoDragEnd}
               >
                 <img 
                   src={photo.url} 
                   alt={photo.name}
-                  className="object-cover w-full h-full"
+                  className="object-cover w-full h-full pointer-events-none"
                 />
                 {selectedPhotos.has(photo.id) && (
                   <div className="absolute top-2 right-2 bg-blue-500 rounded-full text-white p-1">
@@ -387,14 +397,19 @@ export default function AlbumContents({ album, photos: initialPhotos, keyword }:
             ) : (
               <div 
                 key={photo.id} 
-                className={`flex items-center space-x-3 p-2 hover:bg-gray-50 rounded border ${selectedPhotos.has(photo.id) ? 'bg-blue-50 border-blue-200' : ''}`}
+                className={`flex items-center space-x-3 p-2 hover:bg-gray-50 rounded border cursor-move ${
+                  selectedPhotos.has(photo.id) ? 'bg-blue-50 border-blue-200' : ''
+                } ${draggedPhoto?.id === photo.id ? 'opacity-50' : ''}`}
                 onClick={(e) => handlePhotoClick(e, photo.id)}
+                draggable
+                onDragStart={(e) => handlePhotoDragStart(e, photo)}
+                onDragEnd={handlePhotoDragEnd}
               >
                 <div className="h-12 w-12 flex-shrink-0 bg-gray-100 rounded overflow-hidden relative">
                   <img 
                     src={photo.url} 
                     alt={photo.name}
-                    className="object-cover w-full h-full"
+                    className="object-cover w-full h-full pointer-events-none"
                   />
                   {selectedPhotos.has(photo.id) && (
                     <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">

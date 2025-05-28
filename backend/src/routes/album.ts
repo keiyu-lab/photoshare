@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '../generated/prisma/client';
 import { verifyJwt } from '../middleware/jwt';
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -80,7 +81,7 @@ export async function softDeleteAlbumAndChildren(albumId: string): Promise<void>
 }
 
 // アルバム名変更
-router.put('/:id', verifyJwt, async (req: any, res) => {
+router.put('/:id/rename', verifyJwt, async (req: any, res) => {
   const userId = req.user.sub;
   const albumId = req.params.id;
   const { name } = req.body;
@@ -105,4 +106,39 @@ router.put('/:id', verifyJwt, async (req: any, res) => {
   }
 });
 
+// アルバム親変更
+router.put('/:id/move', verifyJwt, async (req: any, res) => {
+  const userId = req.user.sub;
+  const albumId = req.params.id;
+  const { parentAlbumId } = req.body;
+
+  if (!parentAlbumId) return res.status(400).json({ error: 'New Parent Id is required' });
+
+  try {
+    const album = await prisma.album.findUnique({ where: { id: albumId } });
+
+    if (!album || album.owner_user_id !== userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const updated = await prisma.album.update({
+      where: { id: albumId },
+      data: { parent_album_id: parentAlbumId },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update parent album' });
+  }
+});
+
+const sesClient = new SESClient({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY!,
+    secretAccessKey: process.env.AWS_SECRET_KEY!,
+  },
+});
+
 export default router;
+

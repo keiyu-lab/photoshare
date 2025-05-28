@@ -12,11 +12,11 @@ export interface Photo {
   url: string;
   name: string;
   meta?: string;
-  uploader: User;
+  uploader: UserType;
   createdAt?: string;
 }
 
-export interface User {
+export interface UserType {
   id: string 
   name: string
   email: string
