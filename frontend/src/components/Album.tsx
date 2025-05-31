@@ -340,10 +340,6 @@ export const AlbumTreeNode = ({
               <Share className="mr-2 h-4 w-4" />
               <span>アルバム共有</span>
             </ContextMenuItem>
-            <ContextMenuItem >
-    
-              <span>共有ユーザ</span>
-            </ContextMenuItem>
             </>
           )}
           {(canWrite || canAdmin) && <ContextMenuSeparator />}
