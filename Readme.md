@@ -103,10 +103,10 @@ PhotoShareは、**階層構造で写真を整理し、家族や友人と安全�
 * 写真移動
 ![move](./assets/move.gif)
 * 写真拡大表示、消去
-![del](./assets/del_and_inspect.gif)
+![del](./assets/del.gif)
 * 招待
 ![invite](./assets/invite.gif)
 * 招待メール
-![invite_img](./assets/invite.png)
+![invite_img](./assets/mail.PNG)
 * 招待されたユーザ画面
 ![shared](./assets/shared.png)
