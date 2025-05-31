@@ -33,6 +33,11 @@ export type AlbumMember = $Result.DefaultSelection<Prisma.$AlbumMemberPayload>
  * 
  */
 export type Photo = $Result.DefaultSelection<Prisma.$PhotoPayload>
+/**
+ * Model AlbumShare
+ * 
+ */
+export type AlbumShare = $Result.DefaultSelection<Prisma.$AlbumSharePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -198,6 +203,16 @@ export class PrismaClient<
     * ```
     */
   get photo(): Prisma.PhotoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.albumShare`: Exposes CRUD operations for the **AlbumShare** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AlbumShares
+    * const albumShares = await prisma.albumShare.findMany()
+    * ```
+    */
+  get albumShare(): Prisma.AlbumShareDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -256,8 +271,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.7.0
-   * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+   * Prisma Client JS version: 6.8.2
+   * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
    */
   export type PrismaVersion = {
     client: string
@@ -641,7 +656,8 @@ export namespace Prisma {
     User: 'User',
     Album: 'Album',
     AlbumMember: 'AlbumMember',
-    Photo: 'Photo'
+    Photo: 'Photo',
+    AlbumShare: 'AlbumShare'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -660,7 +676,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "album" | "albumMember" | "photo"
+      modelProps: "user" | "album" | "albumMember" | "photo" | "albumShare"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -960,6 +976,80 @@ export namespace Prisma {
           }
         }
       }
+      AlbumShare: {
+        payload: Prisma.$AlbumSharePayload<ExtArgs>
+        fields: Prisma.AlbumShareFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AlbumShareFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AlbumShareFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload>
+          }
+          findFirst: {
+            args: Prisma.AlbumShareFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AlbumShareFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload>
+          }
+          findMany: {
+            args: Prisma.AlbumShareFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload>[]
+          }
+          create: {
+            args: Prisma.AlbumShareCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload>
+          }
+          createMany: {
+            args: Prisma.AlbumShareCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AlbumShareCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload>[]
+          }
+          delete: {
+            args: Prisma.AlbumShareDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload>
+          }
+          update: {
+            args: Prisma.AlbumShareUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload>
+          }
+          deleteMany: {
+            args: Prisma.AlbumShareDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AlbumShareUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AlbumShareUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload>[]
+          }
+          upsert: {
+            args: Prisma.AlbumShareUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AlbumSharePayload>
+          }
+          aggregate: {
+            args: Prisma.AlbumShareAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAlbumShare>
+          }
+          groupBy: {
+            args: Prisma.AlbumShareGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AlbumShareGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AlbumShareCountArgs<ExtArgs>
+            result: $Utils.Optional<AlbumShareCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1048,6 +1138,7 @@ export namespace Prisma {
     album?: AlbumOmit
     albumMember?: AlbumMemberOmit
     photo?: PhotoOmit
+    albumShare?: AlbumShareOmit
   }
 
   /* Types for Logging */
@@ -1145,12 +1236,16 @@ export namespace Prisma {
     albums: number
     photos: number
     albumMembers: number
+    sentShares: number
+    receivedShares: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     albums?: boolean | UserCountOutputTypeCountAlbumsArgs
     photos?: boolean | UserCountOutputTypeCountPhotosArgs
     albumMembers?: boolean | UserCountOutputTypeCountAlbumMembersArgs
+    sentShares?: boolean | UserCountOutputTypeCountSentSharesArgs
+    receivedShares?: boolean | UserCountOutputTypeCountReceivedSharesArgs
   }
 
   // Custom InputTypes
@@ -1185,6 +1280,20 @@ export namespace Prisma {
     where?: AlbumMemberWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSentSharesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AlbumShareWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountReceivedSharesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AlbumShareWhereInput
+  }
+
 
   /**
    * Count Type AlbumCountOutputType
@@ -1193,13 +1302,15 @@ export namespace Prisma {
   export type AlbumCountOutputType = {
     sub_albums: number
     photos: number
-    sharedUsers: number
+    albumMembers: number
+    albumShares: number
   }
 
   export type AlbumCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sub_albums?: boolean | AlbumCountOutputTypeCountSub_albumsArgs
     photos?: boolean | AlbumCountOutputTypeCountPhotosArgs
-    sharedUsers?: boolean | AlbumCountOutputTypeCountSharedUsersArgs
+    albumMembers?: boolean | AlbumCountOutputTypeCountAlbumMembersArgs
+    albumShares?: boolean | AlbumCountOutputTypeCountAlbumSharesArgs
   }
 
   // Custom InputTypes
@@ -1230,8 +1341,15 @@ export namespace Prisma {
   /**
    * AlbumCountOutputType without action
    */
-  export type AlbumCountOutputTypeCountSharedUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type AlbumCountOutputTypeCountAlbumMembersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AlbumMemberWhereInput
+  }
+
+  /**
+   * AlbumCountOutputType without action
+   */
+  export type AlbumCountOutputTypeCountAlbumSharesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AlbumShareWhereInput
   }
 
 
@@ -1390,6 +1508,8 @@ export namespace Prisma {
     albums?: boolean | User$albumsArgs<ExtArgs>
     photos?: boolean | User$photosArgs<ExtArgs>
     albumMembers?: boolean | User$albumMembersArgs<ExtArgs>
+    sentShares?: boolean | User$sentSharesArgs<ExtArgs>
+    receivedShares?: boolean | User$receivedSharesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1416,6 +1536,8 @@ export namespace Prisma {
     albums?: boolean | User$albumsArgs<ExtArgs>
     photos?: boolean | User$photosArgs<ExtArgs>
     albumMembers?: boolean | User$albumMembersArgs<ExtArgs>
+    sentShares?: boolean | User$sentSharesArgs<ExtArgs>
+    receivedShares?: boolean | User$receivedSharesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1427,6 +1549,8 @@ export namespace Prisma {
       albums: Prisma.$AlbumPayload<ExtArgs>[]
       photos: Prisma.$PhotoPayload<ExtArgs>[]
       albumMembers: Prisma.$AlbumMemberPayload<ExtArgs>[]
+      sentShares: Prisma.$AlbumSharePayload<ExtArgs>[]
+      receivedShares: Prisma.$AlbumSharePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1829,6 +1953,8 @@ export namespace Prisma {
     albums<T extends User$albumsArgs<ExtArgs> = {}>(args?: Subset<T, User$albumsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     photos<T extends User$photosArgs<ExtArgs> = {}>(args?: Subset<T, User$photosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     albumMembers<T extends User$albumMembersArgs<ExtArgs> = {}>(args?: Subset<T, User$albumMembersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sentShares<T extends User$sentSharesArgs<ExtArgs> = {}>(args?: Subset<T, User$sentSharesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    receivedShares<T extends User$receivedSharesArgs<ExtArgs> = {}>(args?: Subset<T, User$receivedSharesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2321,6 +2447,54 @@ export namespace Prisma {
   }
 
   /**
+   * User.sentShares
+   */
+  export type User$sentSharesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    where?: AlbumShareWhereInput
+    orderBy?: AlbumShareOrderByWithRelationInput | AlbumShareOrderByWithRelationInput[]
+    cursor?: AlbumShareWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AlbumShareScalarFieldEnum | AlbumShareScalarFieldEnum[]
+  }
+
+  /**
+   * User.receivedShares
+   */
+  export type User$receivedSharesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    where?: AlbumShareWhereInput
+    orderBy?: AlbumShareOrderByWithRelationInput | AlbumShareOrderByWithRelationInput[]
+    cursor?: AlbumShareWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AlbumShareScalarFieldEnum | AlbumShareScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2523,7 +2697,8 @@ export namespace Prisma {
     sub_albums?: boolean | Album$sub_albumsArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
     photos?: boolean | Album$photosArgs<ExtArgs>
-    sharedUsers?: boolean | Album$sharedUsersArgs<ExtArgs>
+    albumMembers?: boolean | Album$albumMembersArgs<ExtArgs>
+    albumShares?: boolean | Album$albumSharesArgs<ExtArgs>
     _count?: boolean | AlbumCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["album"]>
 
@@ -2567,7 +2742,8 @@ export namespace Prisma {
     sub_albums?: boolean | Album$sub_albumsArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
     photos?: boolean | Album$photosArgs<ExtArgs>
-    sharedUsers?: boolean | Album$sharedUsersArgs<ExtArgs>
+    albumMembers?: boolean | Album$albumMembersArgs<ExtArgs>
+    albumShares?: boolean | Album$albumSharesArgs<ExtArgs>
     _count?: boolean | AlbumCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AlbumIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2586,7 +2762,8 @@ export namespace Prisma {
       sub_albums: Prisma.$AlbumPayload<ExtArgs>[]
       owner: Prisma.$UserPayload<ExtArgs>
       photos: Prisma.$PhotoPayload<ExtArgs>[]
-      sharedUsers: Prisma.$AlbumMemberPayload<ExtArgs>[]
+      albumMembers: Prisma.$AlbumMemberPayload<ExtArgs>[]
+      albumShares: Prisma.$AlbumSharePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2994,7 +3171,8 @@ export namespace Prisma {
     sub_albums<T extends Album$sub_albumsArgs<ExtArgs> = {}>(args?: Subset<T, Album$sub_albumsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     photos<T extends Album$photosArgs<ExtArgs> = {}>(args?: Subset<T, Album$photosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    sharedUsers<T extends Album$sharedUsersArgs<ExtArgs> = {}>(args?: Subset<T, Album$sharedUsersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    albumMembers<T extends Album$albumMembersArgs<ExtArgs> = {}>(args?: Subset<T, Album$albumMembersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    albumShares<T extends Album$albumSharesArgs<ExtArgs> = {}>(args?: Subset<T, Album$albumSharesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3494,9 +3672,9 @@ export namespace Prisma {
   }
 
   /**
-   * Album.sharedUsers
+   * Album.albumMembers
    */
-  export type Album$sharedUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Album$albumMembersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the AlbumMember
      */
@@ -3515,6 +3693,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AlbumMemberScalarFieldEnum | AlbumMemberScalarFieldEnum[]
+  }
+
+  /**
+   * Album.albumShares
+   */
+  export type Album$albumSharesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    where?: AlbumShareWhereInput
+    orderBy?: AlbumShareOrderByWithRelationInput | AlbumShareOrderByWithRelationInput[]
+    cursor?: AlbumShareWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AlbumShareScalarFieldEnum | AlbumShareScalarFieldEnum[]
   }
 
   /**
@@ -5708,6 +5910,1177 @@ export namespace Prisma {
 
 
   /**
+   * Model AlbumShare
+   */
+
+  export type AggregateAlbumShare = {
+    _count: AlbumShareCountAggregateOutputType | null
+    _min: AlbumShareMinAggregateOutputType | null
+    _max: AlbumShareMaxAggregateOutputType | null
+  }
+
+  export type AlbumShareMinAggregateOutputType = {
+    id: string | null
+    album_id: string | null
+    invited_by_user_id: string | null
+    invited_email: string | null
+    invited_user_id: string | null
+    role: string | null
+    invitation_token: string | null
+    status: string | null
+    expires_at: Date | null
+    invited_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type AlbumShareMaxAggregateOutputType = {
+    id: string | null
+    album_id: string | null
+    invited_by_user_id: string | null
+    invited_email: string | null
+    invited_user_id: string | null
+    role: string | null
+    invitation_token: string | null
+    status: string | null
+    expires_at: Date | null
+    invited_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type AlbumShareCountAggregateOutputType = {
+    id: number
+    album_id: number
+    invited_by_user_id: number
+    invited_email: number
+    invited_user_id: number
+    role: number
+    invitation_token: number
+    status: number
+    expires_at: number
+    invited_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type AlbumShareMinAggregateInputType = {
+    id?: true
+    album_id?: true
+    invited_by_user_id?: true
+    invited_email?: true
+    invited_user_id?: true
+    role?: true
+    invitation_token?: true
+    status?: true
+    expires_at?: true
+    invited_at?: true
+    updated_at?: true
+  }
+
+  export type AlbumShareMaxAggregateInputType = {
+    id?: true
+    album_id?: true
+    invited_by_user_id?: true
+    invited_email?: true
+    invited_user_id?: true
+    role?: true
+    invitation_token?: true
+    status?: true
+    expires_at?: true
+    invited_at?: true
+    updated_at?: true
+  }
+
+  export type AlbumShareCountAggregateInputType = {
+    id?: true
+    album_id?: true
+    invited_by_user_id?: true
+    invited_email?: true
+    invited_user_id?: true
+    role?: true
+    invitation_token?: true
+    status?: true
+    expires_at?: true
+    invited_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type AlbumShareAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AlbumShare to aggregate.
+     */
+    where?: AlbumShareWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AlbumShares to fetch.
+     */
+    orderBy?: AlbumShareOrderByWithRelationInput | AlbumShareOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AlbumShareWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AlbumShares from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AlbumShares.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AlbumShares
+    **/
+    _count?: true | AlbumShareCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AlbumShareMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AlbumShareMaxAggregateInputType
+  }
+
+  export type GetAlbumShareAggregateType<T extends AlbumShareAggregateArgs> = {
+        [P in keyof T & keyof AggregateAlbumShare]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAlbumShare[P]>
+      : GetScalarType<T[P], AggregateAlbumShare[P]>
+  }
+
+
+
+
+  export type AlbumShareGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AlbumShareWhereInput
+    orderBy?: AlbumShareOrderByWithAggregationInput | AlbumShareOrderByWithAggregationInput[]
+    by: AlbumShareScalarFieldEnum[] | AlbumShareScalarFieldEnum
+    having?: AlbumShareScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AlbumShareCountAggregateInputType | true
+    _min?: AlbumShareMinAggregateInputType
+    _max?: AlbumShareMaxAggregateInputType
+  }
+
+  export type AlbumShareGroupByOutputType = {
+    id: string
+    album_id: string
+    invited_by_user_id: string
+    invited_email: string
+    invited_user_id: string | null
+    role: string
+    invitation_token: string
+    status: string
+    expires_at: Date
+    invited_at: Date
+    updated_at: Date
+    _count: AlbumShareCountAggregateOutputType | null
+    _min: AlbumShareMinAggregateOutputType | null
+    _max: AlbumShareMaxAggregateOutputType | null
+  }
+
+  type GetAlbumShareGroupByPayload<T extends AlbumShareGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AlbumShareGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AlbumShareGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AlbumShareGroupByOutputType[P]>
+            : GetScalarType<T[P], AlbumShareGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AlbumShareSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    album_id?: boolean
+    invited_by_user_id?: boolean
+    invited_email?: boolean
+    invited_user_id?: boolean
+    role?: boolean
+    invitation_token?: boolean
+    status?: boolean
+    expires_at?: boolean
+    invited_at?: boolean
+    updated_at?: boolean
+    album?: boolean | AlbumDefaultArgs<ExtArgs>
+    invited_by_user?: boolean | UserDefaultArgs<ExtArgs>
+    invited_user?: boolean | AlbumShare$invited_userArgs<ExtArgs>
+  }, ExtArgs["result"]["albumShare"]>
+
+  export type AlbumShareSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    album_id?: boolean
+    invited_by_user_id?: boolean
+    invited_email?: boolean
+    invited_user_id?: boolean
+    role?: boolean
+    invitation_token?: boolean
+    status?: boolean
+    expires_at?: boolean
+    invited_at?: boolean
+    updated_at?: boolean
+    album?: boolean | AlbumDefaultArgs<ExtArgs>
+    invited_by_user?: boolean | UserDefaultArgs<ExtArgs>
+    invited_user?: boolean | AlbumShare$invited_userArgs<ExtArgs>
+  }, ExtArgs["result"]["albumShare"]>
+
+  export type AlbumShareSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    album_id?: boolean
+    invited_by_user_id?: boolean
+    invited_email?: boolean
+    invited_user_id?: boolean
+    role?: boolean
+    invitation_token?: boolean
+    status?: boolean
+    expires_at?: boolean
+    invited_at?: boolean
+    updated_at?: boolean
+    album?: boolean | AlbumDefaultArgs<ExtArgs>
+    invited_by_user?: boolean | UserDefaultArgs<ExtArgs>
+    invited_user?: boolean | AlbumShare$invited_userArgs<ExtArgs>
+  }, ExtArgs["result"]["albumShare"]>
+
+  export type AlbumShareSelectScalar = {
+    id?: boolean
+    album_id?: boolean
+    invited_by_user_id?: boolean
+    invited_email?: boolean
+    invited_user_id?: boolean
+    role?: boolean
+    invitation_token?: boolean
+    status?: boolean
+    expires_at?: boolean
+    invited_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type AlbumShareOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "album_id" | "invited_by_user_id" | "invited_email" | "invited_user_id" | "role" | "invitation_token" | "status" | "expires_at" | "invited_at" | "updated_at", ExtArgs["result"]["albumShare"]>
+  export type AlbumShareInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    album?: boolean | AlbumDefaultArgs<ExtArgs>
+    invited_by_user?: boolean | UserDefaultArgs<ExtArgs>
+    invited_user?: boolean | AlbumShare$invited_userArgs<ExtArgs>
+  }
+  export type AlbumShareIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    album?: boolean | AlbumDefaultArgs<ExtArgs>
+    invited_by_user?: boolean | UserDefaultArgs<ExtArgs>
+    invited_user?: boolean | AlbumShare$invited_userArgs<ExtArgs>
+  }
+  export type AlbumShareIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    album?: boolean | AlbumDefaultArgs<ExtArgs>
+    invited_by_user?: boolean | UserDefaultArgs<ExtArgs>
+    invited_user?: boolean | AlbumShare$invited_userArgs<ExtArgs>
+  }
+
+  export type $AlbumSharePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AlbumShare"
+    objects: {
+      album: Prisma.$AlbumPayload<ExtArgs>
+      invited_by_user: Prisma.$UserPayload<ExtArgs>
+      invited_user: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      album_id: string
+      invited_by_user_id: string
+      invited_email: string
+      invited_user_id: string | null
+      role: string
+      invitation_token: string
+      status: string
+      expires_at: Date
+      invited_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["albumShare"]>
+    composites: {}
+  }
+
+  type AlbumShareGetPayload<S extends boolean | null | undefined | AlbumShareDefaultArgs> = $Result.GetResult<Prisma.$AlbumSharePayload, S>
+
+  type AlbumShareCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AlbumShareFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AlbumShareCountAggregateInputType | true
+    }
+
+  export interface AlbumShareDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AlbumShare'], meta: { name: 'AlbumShare' } }
+    /**
+     * Find zero or one AlbumShare that matches the filter.
+     * @param {AlbumShareFindUniqueArgs} args - Arguments to find a AlbumShare
+     * @example
+     * // Get one AlbumShare
+     * const albumShare = await prisma.albumShare.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AlbumShareFindUniqueArgs>(args: SelectSubset<T, AlbumShareFindUniqueArgs<ExtArgs>>): Prisma__AlbumShareClient<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AlbumShare that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AlbumShareFindUniqueOrThrowArgs} args - Arguments to find a AlbumShare
+     * @example
+     * // Get one AlbumShare
+     * const albumShare = await prisma.albumShare.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AlbumShareFindUniqueOrThrowArgs>(args: SelectSubset<T, AlbumShareFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AlbumShareClient<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AlbumShare that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AlbumShareFindFirstArgs} args - Arguments to find a AlbumShare
+     * @example
+     * // Get one AlbumShare
+     * const albumShare = await prisma.albumShare.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AlbumShareFindFirstArgs>(args?: SelectSubset<T, AlbumShareFindFirstArgs<ExtArgs>>): Prisma__AlbumShareClient<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AlbumShare that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AlbumShareFindFirstOrThrowArgs} args - Arguments to find a AlbumShare
+     * @example
+     * // Get one AlbumShare
+     * const albumShare = await prisma.albumShare.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AlbumShareFindFirstOrThrowArgs>(args?: SelectSubset<T, AlbumShareFindFirstOrThrowArgs<ExtArgs>>): Prisma__AlbumShareClient<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AlbumShares that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AlbumShareFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AlbumShares
+     * const albumShares = await prisma.albumShare.findMany()
+     * 
+     * // Get first 10 AlbumShares
+     * const albumShares = await prisma.albumShare.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const albumShareWithIdOnly = await prisma.albumShare.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AlbumShareFindManyArgs>(args?: SelectSubset<T, AlbumShareFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AlbumShare.
+     * @param {AlbumShareCreateArgs} args - Arguments to create a AlbumShare.
+     * @example
+     * // Create one AlbumShare
+     * const AlbumShare = await prisma.albumShare.create({
+     *   data: {
+     *     // ... data to create a AlbumShare
+     *   }
+     * })
+     * 
+     */
+    create<T extends AlbumShareCreateArgs>(args: SelectSubset<T, AlbumShareCreateArgs<ExtArgs>>): Prisma__AlbumShareClient<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AlbumShares.
+     * @param {AlbumShareCreateManyArgs} args - Arguments to create many AlbumShares.
+     * @example
+     * // Create many AlbumShares
+     * const albumShare = await prisma.albumShare.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AlbumShareCreateManyArgs>(args?: SelectSubset<T, AlbumShareCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AlbumShares and returns the data saved in the database.
+     * @param {AlbumShareCreateManyAndReturnArgs} args - Arguments to create many AlbumShares.
+     * @example
+     * // Create many AlbumShares
+     * const albumShare = await prisma.albumShare.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AlbumShares and only return the `id`
+     * const albumShareWithIdOnly = await prisma.albumShare.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AlbumShareCreateManyAndReturnArgs>(args?: SelectSubset<T, AlbumShareCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AlbumShare.
+     * @param {AlbumShareDeleteArgs} args - Arguments to delete one AlbumShare.
+     * @example
+     * // Delete one AlbumShare
+     * const AlbumShare = await prisma.albumShare.delete({
+     *   where: {
+     *     // ... filter to delete one AlbumShare
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AlbumShareDeleteArgs>(args: SelectSubset<T, AlbumShareDeleteArgs<ExtArgs>>): Prisma__AlbumShareClient<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AlbumShare.
+     * @param {AlbumShareUpdateArgs} args - Arguments to update one AlbumShare.
+     * @example
+     * // Update one AlbumShare
+     * const albumShare = await prisma.albumShare.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AlbumShareUpdateArgs>(args: SelectSubset<T, AlbumShareUpdateArgs<ExtArgs>>): Prisma__AlbumShareClient<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AlbumShares.
+     * @param {AlbumShareDeleteManyArgs} args - Arguments to filter AlbumShares to delete.
+     * @example
+     * // Delete a few AlbumShares
+     * const { count } = await prisma.albumShare.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AlbumShareDeleteManyArgs>(args?: SelectSubset<T, AlbumShareDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AlbumShares.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AlbumShareUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AlbumShares
+     * const albumShare = await prisma.albumShare.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AlbumShareUpdateManyArgs>(args: SelectSubset<T, AlbumShareUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AlbumShares and returns the data updated in the database.
+     * @param {AlbumShareUpdateManyAndReturnArgs} args - Arguments to update many AlbumShares.
+     * @example
+     * // Update many AlbumShares
+     * const albumShare = await prisma.albumShare.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AlbumShares and only return the `id`
+     * const albumShareWithIdOnly = await prisma.albumShare.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AlbumShareUpdateManyAndReturnArgs>(args: SelectSubset<T, AlbumShareUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AlbumShare.
+     * @param {AlbumShareUpsertArgs} args - Arguments to update or create a AlbumShare.
+     * @example
+     * // Update or create a AlbumShare
+     * const albumShare = await prisma.albumShare.upsert({
+     *   create: {
+     *     // ... data to create a AlbumShare
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AlbumShare we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AlbumShareUpsertArgs>(args: SelectSubset<T, AlbumShareUpsertArgs<ExtArgs>>): Prisma__AlbumShareClient<$Result.GetResult<Prisma.$AlbumSharePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AlbumShares.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AlbumShareCountArgs} args - Arguments to filter AlbumShares to count.
+     * @example
+     * // Count the number of AlbumShares
+     * const count = await prisma.albumShare.count({
+     *   where: {
+     *     // ... the filter for the AlbumShares we want to count
+     *   }
+     * })
+    **/
+    count<T extends AlbumShareCountArgs>(
+      args?: Subset<T, AlbumShareCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AlbumShareCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AlbumShare.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AlbumShareAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AlbumShareAggregateArgs>(args: Subset<T, AlbumShareAggregateArgs>): Prisma.PrismaPromise<GetAlbumShareAggregateType<T>>
+
+    /**
+     * Group by AlbumShare.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AlbumShareGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AlbumShareGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AlbumShareGroupByArgs['orderBy'] }
+        : { orderBy?: AlbumShareGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AlbumShareGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAlbumShareGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AlbumShare model
+   */
+  readonly fields: AlbumShareFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AlbumShare.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AlbumShareClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    album<T extends AlbumDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AlbumDefaultArgs<ExtArgs>>): Prisma__AlbumClient<$Result.GetResult<Prisma.$AlbumPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    invited_by_user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    invited_user<T extends AlbumShare$invited_userArgs<ExtArgs> = {}>(args?: Subset<T, AlbumShare$invited_userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AlbumShare model
+   */
+  interface AlbumShareFieldRefs {
+    readonly id: FieldRef<"AlbumShare", 'String'>
+    readonly album_id: FieldRef<"AlbumShare", 'String'>
+    readonly invited_by_user_id: FieldRef<"AlbumShare", 'String'>
+    readonly invited_email: FieldRef<"AlbumShare", 'String'>
+    readonly invited_user_id: FieldRef<"AlbumShare", 'String'>
+    readonly role: FieldRef<"AlbumShare", 'String'>
+    readonly invitation_token: FieldRef<"AlbumShare", 'String'>
+    readonly status: FieldRef<"AlbumShare", 'String'>
+    readonly expires_at: FieldRef<"AlbumShare", 'DateTime'>
+    readonly invited_at: FieldRef<"AlbumShare", 'DateTime'>
+    readonly updated_at: FieldRef<"AlbumShare", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AlbumShare findUnique
+   */
+  export type AlbumShareFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    /**
+     * Filter, which AlbumShare to fetch.
+     */
+    where: AlbumShareWhereUniqueInput
+  }
+
+  /**
+   * AlbumShare findUniqueOrThrow
+   */
+  export type AlbumShareFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    /**
+     * Filter, which AlbumShare to fetch.
+     */
+    where: AlbumShareWhereUniqueInput
+  }
+
+  /**
+   * AlbumShare findFirst
+   */
+  export type AlbumShareFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    /**
+     * Filter, which AlbumShare to fetch.
+     */
+    where?: AlbumShareWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AlbumShares to fetch.
+     */
+    orderBy?: AlbumShareOrderByWithRelationInput | AlbumShareOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AlbumShares.
+     */
+    cursor?: AlbumShareWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AlbumShares from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AlbumShares.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AlbumShares.
+     */
+    distinct?: AlbumShareScalarFieldEnum | AlbumShareScalarFieldEnum[]
+  }
+
+  /**
+   * AlbumShare findFirstOrThrow
+   */
+  export type AlbumShareFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    /**
+     * Filter, which AlbumShare to fetch.
+     */
+    where?: AlbumShareWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AlbumShares to fetch.
+     */
+    orderBy?: AlbumShareOrderByWithRelationInput | AlbumShareOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AlbumShares.
+     */
+    cursor?: AlbumShareWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AlbumShares from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AlbumShares.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AlbumShares.
+     */
+    distinct?: AlbumShareScalarFieldEnum | AlbumShareScalarFieldEnum[]
+  }
+
+  /**
+   * AlbumShare findMany
+   */
+  export type AlbumShareFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    /**
+     * Filter, which AlbumShares to fetch.
+     */
+    where?: AlbumShareWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AlbumShares to fetch.
+     */
+    orderBy?: AlbumShareOrderByWithRelationInput | AlbumShareOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AlbumShares.
+     */
+    cursor?: AlbumShareWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AlbumShares from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AlbumShares.
+     */
+    skip?: number
+    distinct?: AlbumShareScalarFieldEnum | AlbumShareScalarFieldEnum[]
+  }
+
+  /**
+   * AlbumShare create
+   */
+  export type AlbumShareCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AlbumShare.
+     */
+    data: XOR<AlbumShareCreateInput, AlbumShareUncheckedCreateInput>
+  }
+
+  /**
+   * AlbumShare createMany
+   */
+  export type AlbumShareCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AlbumShares.
+     */
+    data: AlbumShareCreateManyInput | AlbumShareCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AlbumShare createManyAndReturn
+   */
+  export type AlbumShareCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * The data used to create many AlbumShares.
+     */
+    data: AlbumShareCreateManyInput | AlbumShareCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AlbumShare update
+   */
+  export type AlbumShareUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AlbumShare.
+     */
+    data: XOR<AlbumShareUpdateInput, AlbumShareUncheckedUpdateInput>
+    /**
+     * Choose, which AlbumShare to update.
+     */
+    where: AlbumShareWhereUniqueInput
+  }
+
+  /**
+   * AlbumShare updateMany
+   */
+  export type AlbumShareUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AlbumShares.
+     */
+    data: XOR<AlbumShareUpdateManyMutationInput, AlbumShareUncheckedUpdateManyInput>
+    /**
+     * Filter which AlbumShares to update
+     */
+    where?: AlbumShareWhereInput
+    /**
+     * Limit how many AlbumShares to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AlbumShare updateManyAndReturn
+   */
+  export type AlbumShareUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * The data used to update AlbumShares.
+     */
+    data: XOR<AlbumShareUpdateManyMutationInput, AlbumShareUncheckedUpdateManyInput>
+    /**
+     * Filter which AlbumShares to update
+     */
+    where?: AlbumShareWhereInput
+    /**
+     * Limit how many AlbumShares to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AlbumShare upsert
+   */
+  export type AlbumShareUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AlbumShare to update in case it exists.
+     */
+    where: AlbumShareWhereUniqueInput
+    /**
+     * In case the AlbumShare found by the `where` argument doesn't exist, create a new AlbumShare with this data.
+     */
+    create: XOR<AlbumShareCreateInput, AlbumShareUncheckedCreateInput>
+    /**
+     * In case the AlbumShare was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AlbumShareUpdateInput, AlbumShareUncheckedUpdateInput>
+  }
+
+  /**
+   * AlbumShare delete
+   */
+  export type AlbumShareDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+    /**
+     * Filter which AlbumShare to delete.
+     */
+    where: AlbumShareWhereUniqueInput
+  }
+
+  /**
+   * AlbumShare deleteMany
+   */
+  export type AlbumShareDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AlbumShares to delete
+     */
+    where?: AlbumShareWhereInput
+    /**
+     * Limit how many AlbumShares to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AlbumShare.invited_user
+   */
+  export type AlbumShare$invited_userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * AlbumShare without action
+   */
+  export type AlbumShareDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AlbumShare
+     */
+    select?: AlbumShareSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AlbumShare
+     */
+    omit?: AlbumShareOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AlbumShareInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -5766,6 +7139,23 @@ export namespace Prisma {
   };
 
   export type PhotoScalarFieldEnum = (typeof PhotoScalarFieldEnum)[keyof typeof PhotoScalarFieldEnum]
+
+
+  export const AlbumShareScalarFieldEnum: {
+    id: 'id',
+    album_id: 'album_id',
+    invited_by_user_id: 'invited_by_user_id',
+    invited_email: 'invited_email',
+    invited_user_id: 'invited_user_id',
+    role: 'role',
+    invitation_token: 'invitation_token',
+    status: 'status',
+    expires_at: 'expires_at',
+    invited_at: 'invited_at',
+    updated_at: 'updated_at'
+  };
+
+  export type AlbumShareScalarFieldEnum = (typeof AlbumShareScalarFieldEnum)[keyof typeof AlbumShareScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -5859,6 +7249,8 @@ export namespace Prisma {
     albums?: AlbumListRelationFilter
     photos?: PhotoListRelationFilter
     albumMembers?: AlbumMemberListRelationFilter
+    sentShares?: AlbumShareListRelationFilter
+    receivedShares?: AlbumShareListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -5868,6 +7260,8 @@ export namespace Prisma {
     albums?: AlbumOrderByRelationAggregateInput
     photos?: PhotoOrderByRelationAggregateInput
     albumMembers?: AlbumMemberOrderByRelationAggregateInput
+    sentShares?: AlbumShareOrderByRelationAggregateInput
+    receivedShares?: AlbumShareOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -5880,6 +7274,8 @@ export namespace Prisma {
     albums?: AlbumListRelationFilter
     photos?: PhotoListRelationFilter
     albumMembers?: AlbumMemberListRelationFilter
+    sentShares?: AlbumShareListRelationFilter
+    receivedShares?: AlbumShareListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -5915,7 +7311,8 @@ export namespace Prisma {
     sub_albums?: AlbumListRelationFilter
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     photos?: PhotoListRelationFilter
-    sharedUsers?: AlbumMemberListRelationFilter
+    albumMembers?: AlbumMemberListRelationFilter
+    albumShares?: AlbumShareListRelationFilter
   }
 
   export type AlbumOrderByWithRelationInput = {
@@ -5930,7 +7327,8 @@ export namespace Prisma {
     sub_albums?: AlbumOrderByRelationAggregateInput
     owner?: UserOrderByWithRelationInput
     photos?: PhotoOrderByRelationAggregateInput
-    sharedUsers?: AlbumMemberOrderByRelationAggregateInput
+    albumMembers?: AlbumMemberOrderByRelationAggregateInput
+    albumShares?: AlbumShareOrderByRelationAggregateInput
   }
 
   export type AlbumWhereUniqueInput = Prisma.AtLeast<{
@@ -5948,7 +7346,8 @@ export namespace Prisma {
     sub_albums?: AlbumListRelationFilter
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     photos?: PhotoListRelationFilter
-    sharedUsers?: AlbumMemberListRelationFilter
+    albumMembers?: AlbumMemberListRelationFilter
+    albumShares?: AlbumShareListRelationFilter
   }, "id">
 
   export type AlbumOrderByWithAggregationInput = {
@@ -6000,6 +7399,7 @@ export namespace Prisma {
 
   export type AlbumMemberWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    album_id_user_id?: AlbumMemberAlbum_idUser_idCompoundUniqueInput
     AND?: AlbumMemberWhereInput | AlbumMemberWhereInput[]
     OR?: AlbumMemberWhereInput[]
     NOT?: AlbumMemberWhereInput | AlbumMemberWhereInput[]
@@ -6008,7 +7408,7 @@ export namespace Prisma {
     role?: StringFilter<"AlbumMember"> | string
     album?: XOR<AlbumScalarRelationFilter, AlbumWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+  }, "id" | "album_id_user_id">
 
   export type AlbumMemberOrderByWithAggregationInput = {
     id?: SortOrder
@@ -6063,11 +7463,11 @@ export namespace Prisma {
 
   export type PhotoWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    s3_key?: string
     AND?: PhotoWhereInput | PhotoWhereInput[]
     OR?: PhotoWhereInput[]
     NOT?: PhotoWhereInput | PhotoWhereInput[]
     album_id?: StringFilter<"Photo"> | string
-    s3_key?: StringFilter<"Photo"> | string
     name?: StringFilter<"Photo"> | string
     meta?: StringNullableFilter<"Photo"> | string | null
     uploaded_by_user_id?: StringFilter<"Photo"> | string
@@ -6076,7 +7476,7 @@ export namespace Prisma {
     is_deleted?: BoolFilter<"Photo"> | boolean
     album?: XOR<AlbumScalarRelationFilter, AlbumWhereInput>
     uploader?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+  }, "id" | "s3_key">
 
   export type PhotoOrderByWithAggregationInput = {
     id?: SortOrder
@@ -6108,6 +7508,97 @@ export namespace Prisma {
     is_deleted?: BoolWithAggregatesFilter<"Photo"> | boolean
   }
 
+  export type AlbumShareWhereInput = {
+    AND?: AlbumShareWhereInput | AlbumShareWhereInput[]
+    OR?: AlbumShareWhereInput[]
+    NOT?: AlbumShareWhereInput | AlbumShareWhereInput[]
+    id?: StringFilter<"AlbumShare"> | string
+    album_id?: StringFilter<"AlbumShare"> | string
+    invited_by_user_id?: StringFilter<"AlbumShare"> | string
+    invited_email?: StringFilter<"AlbumShare"> | string
+    invited_user_id?: StringNullableFilter<"AlbumShare"> | string | null
+    role?: StringFilter<"AlbumShare"> | string
+    invitation_token?: StringFilter<"AlbumShare"> | string
+    status?: StringFilter<"AlbumShare"> | string
+    expires_at?: DateTimeFilter<"AlbumShare"> | Date | string
+    invited_at?: DateTimeFilter<"AlbumShare"> | Date | string
+    updated_at?: DateTimeFilter<"AlbumShare"> | Date | string
+    album?: XOR<AlbumScalarRelationFilter, AlbumWhereInput>
+    invited_by_user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    invited_user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type AlbumShareOrderByWithRelationInput = {
+    id?: SortOrder
+    album_id?: SortOrder
+    invited_by_user_id?: SortOrder
+    invited_email?: SortOrder
+    invited_user_id?: SortOrderInput | SortOrder
+    role?: SortOrder
+    invitation_token?: SortOrder
+    status?: SortOrder
+    expires_at?: SortOrder
+    invited_at?: SortOrder
+    updated_at?: SortOrder
+    album?: AlbumOrderByWithRelationInput
+    invited_by_user?: UserOrderByWithRelationInput
+    invited_user?: UserOrderByWithRelationInput
+  }
+
+  export type AlbumShareWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    invitation_token?: string
+    AND?: AlbumShareWhereInput | AlbumShareWhereInput[]
+    OR?: AlbumShareWhereInput[]
+    NOT?: AlbumShareWhereInput | AlbumShareWhereInput[]
+    album_id?: StringFilter<"AlbumShare"> | string
+    invited_by_user_id?: StringFilter<"AlbumShare"> | string
+    invited_email?: StringFilter<"AlbumShare"> | string
+    invited_user_id?: StringNullableFilter<"AlbumShare"> | string | null
+    role?: StringFilter<"AlbumShare"> | string
+    status?: StringFilter<"AlbumShare"> | string
+    expires_at?: DateTimeFilter<"AlbumShare"> | Date | string
+    invited_at?: DateTimeFilter<"AlbumShare"> | Date | string
+    updated_at?: DateTimeFilter<"AlbumShare"> | Date | string
+    album?: XOR<AlbumScalarRelationFilter, AlbumWhereInput>
+    invited_by_user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    invited_user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id" | "invitation_token">
+
+  export type AlbumShareOrderByWithAggregationInput = {
+    id?: SortOrder
+    album_id?: SortOrder
+    invited_by_user_id?: SortOrder
+    invited_email?: SortOrder
+    invited_user_id?: SortOrderInput | SortOrder
+    role?: SortOrder
+    invitation_token?: SortOrder
+    status?: SortOrder
+    expires_at?: SortOrder
+    invited_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: AlbumShareCountOrderByAggregateInput
+    _max?: AlbumShareMaxOrderByAggregateInput
+    _min?: AlbumShareMinOrderByAggregateInput
+  }
+
+  export type AlbumShareScalarWhereWithAggregatesInput = {
+    AND?: AlbumShareScalarWhereWithAggregatesInput | AlbumShareScalarWhereWithAggregatesInput[]
+    OR?: AlbumShareScalarWhereWithAggregatesInput[]
+    NOT?: AlbumShareScalarWhereWithAggregatesInput | AlbumShareScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AlbumShare"> | string
+    album_id?: StringWithAggregatesFilter<"AlbumShare"> | string
+    invited_by_user_id?: StringWithAggregatesFilter<"AlbumShare"> | string
+    invited_email?: StringWithAggregatesFilter<"AlbumShare"> | string
+    invited_user_id?: StringNullableWithAggregatesFilter<"AlbumShare"> | string | null
+    role?: StringWithAggregatesFilter<"AlbumShare"> | string
+    invitation_token?: StringWithAggregatesFilter<"AlbumShare"> | string
+    status?: StringWithAggregatesFilter<"AlbumShare"> | string
+    expires_at?: DateTimeWithAggregatesFilter<"AlbumShare"> | Date | string
+    invited_at?: DateTimeWithAggregatesFilter<"AlbumShare"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"AlbumShare"> | Date | string
+  }
+
   export type UserCreateInput = {
     id: string
     name?: string | null
@@ -6115,6 +7606,8 @@ export namespace Prisma {
     albums?: AlbumCreateNestedManyWithoutOwnerInput
     photos?: PhotoCreateNestedManyWithoutUploaderInput
     albumMembers?: AlbumMemberCreateNestedManyWithoutUserInput
+    sentShares?: AlbumShareCreateNestedManyWithoutInvited_by_userInput
+    receivedShares?: AlbumShareCreateNestedManyWithoutInvited_userInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -6124,6 +7617,8 @@ export namespace Prisma {
     albums?: AlbumUncheckedCreateNestedManyWithoutOwnerInput
     photos?: PhotoUncheckedCreateNestedManyWithoutUploaderInput
     albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutUserInput
+    sentShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_by_userInput
+    receivedShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_userInput
   }
 
   export type UserUpdateInput = {
@@ -6133,6 +7628,8 @@ export namespace Prisma {
     albums?: AlbumUpdateManyWithoutOwnerNestedInput
     photos?: PhotoUpdateManyWithoutUploaderNestedInput
     albumMembers?: AlbumMemberUpdateManyWithoutUserNestedInput
+    sentShares?: AlbumShareUpdateManyWithoutInvited_by_userNestedInput
+    receivedShares?: AlbumShareUpdateManyWithoutInvited_userNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -6142,6 +7639,8 @@ export namespace Prisma {
     albums?: AlbumUncheckedUpdateManyWithoutOwnerNestedInput
     photos?: PhotoUncheckedUpdateManyWithoutUploaderNestedInput
     albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
+    sentShares?: AlbumShareUncheckedUpdateManyWithoutInvited_by_userNestedInput
+    receivedShares?: AlbumShareUncheckedUpdateManyWithoutInvited_userNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -6172,7 +7671,8 @@ export namespace Prisma {
     sub_albums?: AlbumCreateNestedManyWithoutParent_albumInput
     owner: UserCreateNestedOneWithoutAlbumsInput
     photos?: PhotoCreateNestedManyWithoutAlbumInput
-    sharedUsers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumUncheckedCreateInput = {
@@ -6185,7 +7685,8 @@ export namespace Prisma {
     is_deleted?: boolean
     sub_albums?: AlbumUncheckedCreateNestedManyWithoutParent_albumInput
     photos?: PhotoUncheckedCreateNestedManyWithoutAlbumInput
-    sharedUsers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareUncheckedCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumUpdateInput = {
@@ -6198,7 +7699,8 @@ export namespace Prisma {
     sub_albums?: AlbumUpdateManyWithoutParent_albumNestedInput
     owner?: UserUpdateOneRequiredWithoutAlbumsNestedInput
     photos?: PhotoUpdateManyWithoutAlbumNestedInput
-    sharedUsers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUpdateManyWithoutAlbumNestedInput
   }
 
   export type AlbumUncheckedUpdateInput = {
@@ -6211,7 +7713,8 @@ export namespace Prisma {
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     sub_albums?: AlbumUncheckedUpdateManyWithoutParent_albumNestedInput
     photos?: PhotoUncheckedUpdateManyWithoutAlbumNestedInput
-    sharedUsers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUncheckedUpdateManyWithoutAlbumNestedInput
   }
 
   export type AlbumCreateManyInput = {
@@ -6245,7 +7748,7 @@ export namespace Prisma {
   export type AlbumMemberCreateInput = {
     id?: string
     role: string
-    album: AlbumCreateNestedOneWithoutSharedUsersInput
+    album: AlbumCreateNestedOneWithoutAlbumMembersInput
     user: UserCreateNestedOneWithoutAlbumMembersInput
   }
 
@@ -6259,7 +7762,7 @@ export namespace Prisma {
   export type AlbumMemberUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
-    album?: AlbumUpdateOneRequiredWithoutSharedUsersNestedInput
+    album?: AlbumUpdateOneRequiredWithoutAlbumMembersNestedInput
     user?: UserUpdateOneRequiredWithoutAlbumMembersNestedInput
   }
 
@@ -6371,6 +7874,101 @@ export namespace Prisma {
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
+  export type AlbumShareCreateInput = {
+    id?: string
+    invited_email: string
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+    album: AlbumCreateNestedOneWithoutAlbumSharesInput
+    invited_by_user: UserCreateNestedOneWithoutSentSharesInput
+    invited_user?: UserCreateNestedOneWithoutReceivedSharesInput
+  }
+
+  export type AlbumShareUncheckedCreateInput = {
+    id?: string
+    album_id: string
+    invited_by_user_id: string
+    invited_email: string
+    invited_user_id?: string | null
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AlbumShareUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    album?: AlbumUpdateOneRequiredWithoutAlbumSharesNestedInput
+    invited_by_user?: UserUpdateOneRequiredWithoutSentSharesNestedInput
+    invited_user?: UserUpdateOneWithoutReceivedSharesNestedInput
+  }
+
+  export type AlbumShareUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    album_id?: StringFieldUpdateOperationsInput | string
+    invited_by_user_id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    invited_user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AlbumShareCreateManyInput = {
+    id?: string
+    album_id: string
+    invited_by_user_id: string
+    invited_email: string
+    invited_user_id?: string | null
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AlbumShareUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AlbumShareUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    album_id?: StringFieldUpdateOperationsInput | string
+    invited_by_user_id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    invited_user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -6419,6 +8017,12 @@ export namespace Prisma {
     none?: AlbumMemberWhereInput
   }
 
+  export type AlbumShareListRelationFilter = {
+    every?: AlbumShareWhereInput
+    some?: AlbumShareWhereInput
+    none?: AlbumShareWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -6433,6 +8037,10 @@ export namespace Prisma {
   }
 
   export type AlbumMemberOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AlbumShareOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -6573,6 +8181,11 @@ export namespace Prisma {
     isNot?: AlbumWhereInput
   }
 
+  export type AlbumMemberAlbum_idUser_idCompoundUniqueInput = {
+    album_id: string
+    user_id: string
+  }
+
   export type AlbumMemberCountOrderByAggregateInput = {
     id?: SortOrder
     album_id?: SortOrder
@@ -6630,6 +8243,53 @@ export namespace Prisma {
     is_deleted?: SortOrder
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type AlbumShareCountOrderByAggregateInput = {
+    id?: SortOrder
+    album_id?: SortOrder
+    invited_by_user_id?: SortOrder
+    invited_email?: SortOrder
+    invited_user_id?: SortOrder
+    role?: SortOrder
+    invitation_token?: SortOrder
+    status?: SortOrder
+    expires_at?: SortOrder
+    invited_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AlbumShareMaxOrderByAggregateInput = {
+    id?: SortOrder
+    album_id?: SortOrder
+    invited_by_user_id?: SortOrder
+    invited_email?: SortOrder
+    invited_user_id?: SortOrder
+    role?: SortOrder
+    invitation_token?: SortOrder
+    status?: SortOrder
+    expires_at?: SortOrder
+    invited_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AlbumShareMinOrderByAggregateInput = {
+    id?: SortOrder
+    album_id?: SortOrder
+    invited_by_user_id?: SortOrder
+    invited_email?: SortOrder
+    invited_user_id?: SortOrder
+    role?: SortOrder
+    invitation_token?: SortOrder
+    status?: SortOrder
+    expires_at?: SortOrder
+    invited_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
   export type AlbumCreateNestedManyWithoutOwnerInput = {
     create?: XOR<AlbumCreateWithoutOwnerInput, AlbumUncheckedCreateWithoutOwnerInput> | AlbumCreateWithoutOwnerInput[] | AlbumUncheckedCreateWithoutOwnerInput[]
     connectOrCreate?: AlbumCreateOrConnectWithoutOwnerInput | AlbumCreateOrConnectWithoutOwnerInput[]
@@ -6651,6 +8311,20 @@ export namespace Prisma {
     connect?: AlbumMemberWhereUniqueInput | AlbumMemberWhereUniqueInput[]
   }
 
+  export type AlbumShareCreateNestedManyWithoutInvited_by_userInput = {
+    create?: XOR<AlbumShareCreateWithoutInvited_by_userInput, AlbumShareUncheckedCreateWithoutInvited_by_userInput> | AlbumShareCreateWithoutInvited_by_userInput[] | AlbumShareUncheckedCreateWithoutInvited_by_userInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutInvited_by_userInput | AlbumShareCreateOrConnectWithoutInvited_by_userInput[]
+    createMany?: AlbumShareCreateManyInvited_by_userInputEnvelope
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+  }
+
+  export type AlbumShareCreateNestedManyWithoutInvited_userInput = {
+    create?: XOR<AlbumShareCreateWithoutInvited_userInput, AlbumShareUncheckedCreateWithoutInvited_userInput> | AlbumShareCreateWithoutInvited_userInput[] | AlbumShareUncheckedCreateWithoutInvited_userInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutInvited_userInput | AlbumShareCreateOrConnectWithoutInvited_userInput[]
+    createMany?: AlbumShareCreateManyInvited_userInputEnvelope
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+  }
+
   export type AlbumUncheckedCreateNestedManyWithoutOwnerInput = {
     create?: XOR<AlbumCreateWithoutOwnerInput, AlbumUncheckedCreateWithoutOwnerInput> | AlbumCreateWithoutOwnerInput[] | AlbumUncheckedCreateWithoutOwnerInput[]
     connectOrCreate?: AlbumCreateOrConnectWithoutOwnerInput | AlbumCreateOrConnectWithoutOwnerInput[]
@@ -6670,6 +8344,20 @@ export namespace Prisma {
     connectOrCreate?: AlbumMemberCreateOrConnectWithoutUserInput | AlbumMemberCreateOrConnectWithoutUserInput[]
     createMany?: AlbumMemberCreateManyUserInputEnvelope
     connect?: AlbumMemberWhereUniqueInput | AlbumMemberWhereUniqueInput[]
+  }
+
+  export type AlbumShareUncheckedCreateNestedManyWithoutInvited_by_userInput = {
+    create?: XOR<AlbumShareCreateWithoutInvited_by_userInput, AlbumShareUncheckedCreateWithoutInvited_by_userInput> | AlbumShareCreateWithoutInvited_by_userInput[] | AlbumShareUncheckedCreateWithoutInvited_by_userInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutInvited_by_userInput | AlbumShareCreateOrConnectWithoutInvited_by_userInput[]
+    createMany?: AlbumShareCreateManyInvited_by_userInputEnvelope
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+  }
+
+  export type AlbumShareUncheckedCreateNestedManyWithoutInvited_userInput = {
+    create?: XOR<AlbumShareCreateWithoutInvited_userInput, AlbumShareUncheckedCreateWithoutInvited_userInput> | AlbumShareCreateWithoutInvited_userInput[] | AlbumShareUncheckedCreateWithoutInvited_userInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutInvited_userInput | AlbumShareCreateOrConnectWithoutInvited_userInput[]
+    createMany?: AlbumShareCreateManyInvited_userInputEnvelope
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -6722,6 +8410,34 @@ export namespace Prisma {
     deleteMany?: AlbumMemberScalarWhereInput | AlbumMemberScalarWhereInput[]
   }
 
+  export type AlbumShareUpdateManyWithoutInvited_by_userNestedInput = {
+    create?: XOR<AlbumShareCreateWithoutInvited_by_userInput, AlbumShareUncheckedCreateWithoutInvited_by_userInput> | AlbumShareCreateWithoutInvited_by_userInput[] | AlbumShareUncheckedCreateWithoutInvited_by_userInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutInvited_by_userInput | AlbumShareCreateOrConnectWithoutInvited_by_userInput[]
+    upsert?: AlbumShareUpsertWithWhereUniqueWithoutInvited_by_userInput | AlbumShareUpsertWithWhereUniqueWithoutInvited_by_userInput[]
+    createMany?: AlbumShareCreateManyInvited_by_userInputEnvelope
+    set?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    disconnect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    delete?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    update?: AlbumShareUpdateWithWhereUniqueWithoutInvited_by_userInput | AlbumShareUpdateWithWhereUniqueWithoutInvited_by_userInput[]
+    updateMany?: AlbumShareUpdateManyWithWhereWithoutInvited_by_userInput | AlbumShareUpdateManyWithWhereWithoutInvited_by_userInput[]
+    deleteMany?: AlbumShareScalarWhereInput | AlbumShareScalarWhereInput[]
+  }
+
+  export type AlbumShareUpdateManyWithoutInvited_userNestedInput = {
+    create?: XOR<AlbumShareCreateWithoutInvited_userInput, AlbumShareUncheckedCreateWithoutInvited_userInput> | AlbumShareCreateWithoutInvited_userInput[] | AlbumShareUncheckedCreateWithoutInvited_userInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutInvited_userInput | AlbumShareCreateOrConnectWithoutInvited_userInput[]
+    upsert?: AlbumShareUpsertWithWhereUniqueWithoutInvited_userInput | AlbumShareUpsertWithWhereUniqueWithoutInvited_userInput[]
+    createMany?: AlbumShareCreateManyInvited_userInputEnvelope
+    set?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    disconnect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    delete?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    update?: AlbumShareUpdateWithWhereUniqueWithoutInvited_userInput | AlbumShareUpdateWithWhereUniqueWithoutInvited_userInput[]
+    updateMany?: AlbumShareUpdateManyWithWhereWithoutInvited_userInput | AlbumShareUpdateManyWithWhereWithoutInvited_userInput[]
+    deleteMany?: AlbumShareScalarWhereInput | AlbumShareScalarWhereInput[]
+  }
+
   export type AlbumUncheckedUpdateManyWithoutOwnerNestedInput = {
     create?: XOR<AlbumCreateWithoutOwnerInput, AlbumUncheckedCreateWithoutOwnerInput> | AlbumCreateWithoutOwnerInput[] | AlbumUncheckedCreateWithoutOwnerInput[]
     connectOrCreate?: AlbumCreateOrConnectWithoutOwnerInput | AlbumCreateOrConnectWithoutOwnerInput[]
@@ -6764,6 +8480,34 @@ export namespace Prisma {
     deleteMany?: AlbumMemberScalarWhereInput | AlbumMemberScalarWhereInput[]
   }
 
+  export type AlbumShareUncheckedUpdateManyWithoutInvited_by_userNestedInput = {
+    create?: XOR<AlbumShareCreateWithoutInvited_by_userInput, AlbumShareUncheckedCreateWithoutInvited_by_userInput> | AlbumShareCreateWithoutInvited_by_userInput[] | AlbumShareUncheckedCreateWithoutInvited_by_userInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutInvited_by_userInput | AlbumShareCreateOrConnectWithoutInvited_by_userInput[]
+    upsert?: AlbumShareUpsertWithWhereUniqueWithoutInvited_by_userInput | AlbumShareUpsertWithWhereUniqueWithoutInvited_by_userInput[]
+    createMany?: AlbumShareCreateManyInvited_by_userInputEnvelope
+    set?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    disconnect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    delete?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    update?: AlbumShareUpdateWithWhereUniqueWithoutInvited_by_userInput | AlbumShareUpdateWithWhereUniqueWithoutInvited_by_userInput[]
+    updateMany?: AlbumShareUpdateManyWithWhereWithoutInvited_by_userInput | AlbumShareUpdateManyWithWhereWithoutInvited_by_userInput[]
+    deleteMany?: AlbumShareScalarWhereInput | AlbumShareScalarWhereInput[]
+  }
+
+  export type AlbumShareUncheckedUpdateManyWithoutInvited_userNestedInput = {
+    create?: XOR<AlbumShareCreateWithoutInvited_userInput, AlbumShareUncheckedCreateWithoutInvited_userInput> | AlbumShareCreateWithoutInvited_userInput[] | AlbumShareUncheckedCreateWithoutInvited_userInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutInvited_userInput | AlbumShareCreateOrConnectWithoutInvited_userInput[]
+    upsert?: AlbumShareUpsertWithWhereUniqueWithoutInvited_userInput | AlbumShareUpsertWithWhereUniqueWithoutInvited_userInput[]
+    createMany?: AlbumShareCreateManyInvited_userInputEnvelope
+    set?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    disconnect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    delete?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    update?: AlbumShareUpdateWithWhereUniqueWithoutInvited_userInput | AlbumShareUpdateWithWhereUniqueWithoutInvited_userInput[]
+    updateMany?: AlbumShareUpdateManyWithWhereWithoutInvited_userInput | AlbumShareUpdateManyWithWhereWithoutInvited_userInput[]
+    deleteMany?: AlbumShareScalarWhereInput | AlbumShareScalarWhereInput[]
+  }
+
   export type AlbumCreateNestedOneWithoutSub_albumsInput = {
     create?: XOR<AlbumCreateWithoutSub_albumsInput, AlbumUncheckedCreateWithoutSub_albumsInput>
     connectOrCreate?: AlbumCreateOrConnectWithoutSub_albumsInput
@@ -6797,6 +8541,13 @@ export namespace Prisma {
     connect?: AlbumMemberWhereUniqueInput | AlbumMemberWhereUniqueInput[]
   }
 
+  export type AlbumShareCreateNestedManyWithoutAlbumInput = {
+    create?: XOR<AlbumShareCreateWithoutAlbumInput, AlbumShareUncheckedCreateWithoutAlbumInput> | AlbumShareCreateWithoutAlbumInput[] | AlbumShareUncheckedCreateWithoutAlbumInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutAlbumInput | AlbumShareCreateOrConnectWithoutAlbumInput[]
+    createMany?: AlbumShareCreateManyAlbumInputEnvelope
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+  }
+
   export type AlbumUncheckedCreateNestedManyWithoutParent_albumInput = {
     create?: XOR<AlbumCreateWithoutParent_albumInput, AlbumUncheckedCreateWithoutParent_albumInput> | AlbumCreateWithoutParent_albumInput[] | AlbumUncheckedCreateWithoutParent_albumInput[]
     connectOrCreate?: AlbumCreateOrConnectWithoutParent_albumInput | AlbumCreateOrConnectWithoutParent_albumInput[]
@@ -6816,6 +8567,13 @@ export namespace Prisma {
     connectOrCreate?: AlbumMemberCreateOrConnectWithoutAlbumInput | AlbumMemberCreateOrConnectWithoutAlbumInput[]
     createMany?: AlbumMemberCreateManyAlbumInputEnvelope
     connect?: AlbumMemberWhereUniqueInput | AlbumMemberWhereUniqueInput[]
+  }
+
+  export type AlbumShareUncheckedCreateNestedManyWithoutAlbumInput = {
+    create?: XOR<AlbumShareCreateWithoutAlbumInput, AlbumShareUncheckedCreateWithoutAlbumInput> | AlbumShareCreateWithoutAlbumInput[] | AlbumShareUncheckedCreateWithoutAlbumInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutAlbumInput | AlbumShareCreateOrConnectWithoutAlbumInput[]
+    createMany?: AlbumShareCreateManyAlbumInputEnvelope
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -6886,6 +8644,20 @@ export namespace Prisma {
     deleteMany?: AlbumMemberScalarWhereInput | AlbumMemberScalarWhereInput[]
   }
 
+  export type AlbumShareUpdateManyWithoutAlbumNestedInput = {
+    create?: XOR<AlbumShareCreateWithoutAlbumInput, AlbumShareUncheckedCreateWithoutAlbumInput> | AlbumShareCreateWithoutAlbumInput[] | AlbumShareUncheckedCreateWithoutAlbumInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutAlbumInput | AlbumShareCreateOrConnectWithoutAlbumInput[]
+    upsert?: AlbumShareUpsertWithWhereUniqueWithoutAlbumInput | AlbumShareUpsertWithWhereUniqueWithoutAlbumInput[]
+    createMany?: AlbumShareCreateManyAlbumInputEnvelope
+    set?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    disconnect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    delete?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    update?: AlbumShareUpdateWithWhereUniqueWithoutAlbumInput | AlbumShareUpdateWithWhereUniqueWithoutAlbumInput[]
+    updateMany?: AlbumShareUpdateManyWithWhereWithoutAlbumInput | AlbumShareUpdateManyWithWhereWithoutAlbumInput[]
+    deleteMany?: AlbumShareScalarWhereInput | AlbumShareScalarWhereInput[]
+  }
+
   export type AlbumUncheckedUpdateManyWithoutParent_albumNestedInput = {
     create?: XOR<AlbumCreateWithoutParent_albumInput, AlbumUncheckedCreateWithoutParent_albumInput> | AlbumCreateWithoutParent_albumInput[] | AlbumUncheckedCreateWithoutParent_albumInput[]
     connectOrCreate?: AlbumCreateOrConnectWithoutParent_albumInput | AlbumCreateOrConnectWithoutParent_albumInput[]
@@ -6928,9 +8700,23 @@ export namespace Prisma {
     deleteMany?: AlbumMemberScalarWhereInput | AlbumMemberScalarWhereInput[]
   }
 
-  export type AlbumCreateNestedOneWithoutSharedUsersInput = {
-    create?: XOR<AlbumCreateWithoutSharedUsersInput, AlbumUncheckedCreateWithoutSharedUsersInput>
-    connectOrCreate?: AlbumCreateOrConnectWithoutSharedUsersInput
+  export type AlbumShareUncheckedUpdateManyWithoutAlbumNestedInput = {
+    create?: XOR<AlbumShareCreateWithoutAlbumInput, AlbumShareUncheckedCreateWithoutAlbumInput> | AlbumShareCreateWithoutAlbumInput[] | AlbumShareUncheckedCreateWithoutAlbumInput[]
+    connectOrCreate?: AlbumShareCreateOrConnectWithoutAlbumInput | AlbumShareCreateOrConnectWithoutAlbumInput[]
+    upsert?: AlbumShareUpsertWithWhereUniqueWithoutAlbumInput | AlbumShareUpsertWithWhereUniqueWithoutAlbumInput[]
+    createMany?: AlbumShareCreateManyAlbumInputEnvelope
+    set?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    disconnect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    delete?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    connect?: AlbumShareWhereUniqueInput | AlbumShareWhereUniqueInput[]
+    update?: AlbumShareUpdateWithWhereUniqueWithoutAlbumInput | AlbumShareUpdateWithWhereUniqueWithoutAlbumInput[]
+    updateMany?: AlbumShareUpdateManyWithWhereWithoutAlbumInput | AlbumShareUpdateManyWithWhereWithoutAlbumInput[]
+    deleteMany?: AlbumShareScalarWhereInput | AlbumShareScalarWhereInput[]
+  }
+
+  export type AlbumCreateNestedOneWithoutAlbumMembersInput = {
+    create?: XOR<AlbumCreateWithoutAlbumMembersInput, AlbumUncheckedCreateWithoutAlbumMembersInput>
+    connectOrCreate?: AlbumCreateOrConnectWithoutAlbumMembersInput
     connect?: AlbumWhereUniqueInput
   }
 
@@ -6940,12 +8726,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type AlbumUpdateOneRequiredWithoutSharedUsersNestedInput = {
-    create?: XOR<AlbumCreateWithoutSharedUsersInput, AlbumUncheckedCreateWithoutSharedUsersInput>
-    connectOrCreate?: AlbumCreateOrConnectWithoutSharedUsersInput
-    upsert?: AlbumUpsertWithoutSharedUsersInput
+  export type AlbumUpdateOneRequiredWithoutAlbumMembersNestedInput = {
+    create?: XOR<AlbumCreateWithoutAlbumMembersInput, AlbumUncheckedCreateWithoutAlbumMembersInput>
+    connectOrCreate?: AlbumCreateOrConnectWithoutAlbumMembersInput
+    upsert?: AlbumUpsertWithoutAlbumMembersInput
     connect?: AlbumWhereUniqueInput
-    update?: XOR<XOR<AlbumUpdateToOneWithWhereWithoutSharedUsersInput, AlbumUpdateWithoutSharedUsersInput>, AlbumUncheckedUpdateWithoutSharedUsersInput>
+    update?: XOR<XOR<AlbumUpdateToOneWithWhereWithoutAlbumMembersInput, AlbumUpdateWithoutAlbumMembersInput>, AlbumUncheckedUpdateWithoutAlbumMembersInput>
   }
 
   export type UserUpdateOneRequiredWithoutAlbumMembersNestedInput = {
@@ -6982,6 +8768,50 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutPhotosInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPhotosInput, UserUpdateWithoutPhotosInput>, UserUncheckedUpdateWithoutPhotosInput>
+  }
+
+  export type AlbumCreateNestedOneWithoutAlbumSharesInput = {
+    create?: XOR<AlbumCreateWithoutAlbumSharesInput, AlbumUncheckedCreateWithoutAlbumSharesInput>
+    connectOrCreate?: AlbumCreateOrConnectWithoutAlbumSharesInput
+    connect?: AlbumWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSentSharesInput = {
+    create?: XOR<UserCreateWithoutSentSharesInput, UserUncheckedCreateWithoutSentSharesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSentSharesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutReceivedSharesInput = {
+    create?: XOR<UserCreateWithoutReceivedSharesInput, UserUncheckedCreateWithoutReceivedSharesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReceivedSharesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type AlbumUpdateOneRequiredWithoutAlbumSharesNestedInput = {
+    create?: XOR<AlbumCreateWithoutAlbumSharesInput, AlbumUncheckedCreateWithoutAlbumSharesInput>
+    connectOrCreate?: AlbumCreateOrConnectWithoutAlbumSharesInput
+    upsert?: AlbumUpsertWithoutAlbumSharesInput
+    connect?: AlbumWhereUniqueInput
+    update?: XOR<XOR<AlbumUpdateToOneWithWhereWithoutAlbumSharesInput, AlbumUpdateWithoutAlbumSharesInput>, AlbumUncheckedUpdateWithoutAlbumSharesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutSentSharesNestedInput = {
+    create?: XOR<UserCreateWithoutSentSharesInput, UserUncheckedCreateWithoutSentSharesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSentSharesInput
+    upsert?: UserUpsertWithoutSentSharesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSentSharesInput, UserUpdateWithoutSentSharesInput>, UserUncheckedUpdateWithoutSentSharesInput>
+  }
+
+  export type UserUpdateOneWithoutReceivedSharesNestedInput = {
+    create?: XOR<UserCreateWithoutReceivedSharesInput, UserUncheckedCreateWithoutReceivedSharesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReceivedSharesInput
+    upsert?: UserUpsertWithoutReceivedSharesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReceivedSharesInput, UserUpdateWithoutReceivedSharesInput>, UserUncheckedUpdateWithoutReceivedSharesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -7115,7 +8945,8 @@ export namespace Prisma {
     parent_album?: AlbumCreateNestedOneWithoutSub_albumsInput
     sub_albums?: AlbumCreateNestedManyWithoutParent_albumInput
     photos?: PhotoCreateNestedManyWithoutAlbumInput
-    sharedUsers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumUncheckedCreateWithoutOwnerInput = {
@@ -7127,7 +8958,8 @@ export namespace Prisma {
     is_deleted?: boolean
     sub_albums?: AlbumUncheckedCreateNestedManyWithoutParent_albumInput
     photos?: PhotoUncheckedCreateNestedManyWithoutAlbumInput
-    sharedUsers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareUncheckedCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumCreateOrConnectWithoutOwnerInput = {
@@ -7175,7 +9007,7 @@ export namespace Prisma {
   export type AlbumMemberCreateWithoutUserInput = {
     id?: string
     role: string
-    album: AlbumCreateNestedOneWithoutSharedUsersInput
+    album: AlbumCreateNestedOneWithoutAlbumMembersInput
   }
 
   export type AlbumMemberUncheckedCreateWithoutUserInput = {
@@ -7191,6 +9023,78 @@ export namespace Prisma {
 
   export type AlbumMemberCreateManyUserInputEnvelope = {
     data: AlbumMemberCreateManyUserInput | AlbumMemberCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AlbumShareCreateWithoutInvited_by_userInput = {
+    id?: string
+    invited_email: string
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+    album: AlbumCreateNestedOneWithoutAlbumSharesInput
+    invited_user?: UserCreateNestedOneWithoutReceivedSharesInput
+  }
+
+  export type AlbumShareUncheckedCreateWithoutInvited_by_userInput = {
+    id?: string
+    album_id: string
+    invited_email: string
+    invited_user_id?: string | null
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AlbumShareCreateOrConnectWithoutInvited_by_userInput = {
+    where: AlbumShareWhereUniqueInput
+    create: XOR<AlbumShareCreateWithoutInvited_by_userInput, AlbumShareUncheckedCreateWithoutInvited_by_userInput>
+  }
+
+  export type AlbumShareCreateManyInvited_by_userInputEnvelope = {
+    data: AlbumShareCreateManyInvited_by_userInput | AlbumShareCreateManyInvited_by_userInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AlbumShareCreateWithoutInvited_userInput = {
+    id?: string
+    invited_email: string
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+    album: AlbumCreateNestedOneWithoutAlbumSharesInput
+    invited_by_user: UserCreateNestedOneWithoutSentSharesInput
+  }
+
+  export type AlbumShareUncheckedCreateWithoutInvited_userInput = {
+    id?: string
+    album_id: string
+    invited_by_user_id: string
+    invited_email: string
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AlbumShareCreateOrConnectWithoutInvited_userInput = {
+    where: AlbumShareWhereUniqueInput
+    create: XOR<AlbumShareCreateWithoutInvited_userInput, AlbumShareUncheckedCreateWithoutInvited_userInput>
+  }
+
+  export type AlbumShareCreateManyInvited_userInputEnvelope = {
+    data: AlbumShareCreateManyInvited_userInput | AlbumShareCreateManyInvited_userInput[]
     skipDuplicates?: boolean
   }
 
@@ -7280,6 +9184,55 @@ export namespace Prisma {
     role?: StringFilter<"AlbumMember"> | string
   }
 
+  export type AlbumShareUpsertWithWhereUniqueWithoutInvited_by_userInput = {
+    where: AlbumShareWhereUniqueInput
+    update: XOR<AlbumShareUpdateWithoutInvited_by_userInput, AlbumShareUncheckedUpdateWithoutInvited_by_userInput>
+    create: XOR<AlbumShareCreateWithoutInvited_by_userInput, AlbumShareUncheckedCreateWithoutInvited_by_userInput>
+  }
+
+  export type AlbumShareUpdateWithWhereUniqueWithoutInvited_by_userInput = {
+    where: AlbumShareWhereUniqueInput
+    data: XOR<AlbumShareUpdateWithoutInvited_by_userInput, AlbumShareUncheckedUpdateWithoutInvited_by_userInput>
+  }
+
+  export type AlbumShareUpdateManyWithWhereWithoutInvited_by_userInput = {
+    where: AlbumShareScalarWhereInput
+    data: XOR<AlbumShareUpdateManyMutationInput, AlbumShareUncheckedUpdateManyWithoutInvited_by_userInput>
+  }
+
+  export type AlbumShareScalarWhereInput = {
+    AND?: AlbumShareScalarWhereInput | AlbumShareScalarWhereInput[]
+    OR?: AlbumShareScalarWhereInput[]
+    NOT?: AlbumShareScalarWhereInput | AlbumShareScalarWhereInput[]
+    id?: StringFilter<"AlbumShare"> | string
+    album_id?: StringFilter<"AlbumShare"> | string
+    invited_by_user_id?: StringFilter<"AlbumShare"> | string
+    invited_email?: StringFilter<"AlbumShare"> | string
+    invited_user_id?: StringNullableFilter<"AlbumShare"> | string | null
+    role?: StringFilter<"AlbumShare"> | string
+    invitation_token?: StringFilter<"AlbumShare"> | string
+    status?: StringFilter<"AlbumShare"> | string
+    expires_at?: DateTimeFilter<"AlbumShare"> | Date | string
+    invited_at?: DateTimeFilter<"AlbumShare"> | Date | string
+    updated_at?: DateTimeFilter<"AlbumShare"> | Date | string
+  }
+
+  export type AlbumShareUpsertWithWhereUniqueWithoutInvited_userInput = {
+    where: AlbumShareWhereUniqueInput
+    update: XOR<AlbumShareUpdateWithoutInvited_userInput, AlbumShareUncheckedUpdateWithoutInvited_userInput>
+    create: XOR<AlbumShareCreateWithoutInvited_userInput, AlbumShareUncheckedCreateWithoutInvited_userInput>
+  }
+
+  export type AlbumShareUpdateWithWhereUniqueWithoutInvited_userInput = {
+    where: AlbumShareWhereUniqueInput
+    data: XOR<AlbumShareUpdateWithoutInvited_userInput, AlbumShareUncheckedUpdateWithoutInvited_userInput>
+  }
+
+  export type AlbumShareUpdateManyWithWhereWithoutInvited_userInput = {
+    where: AlbumShareScalarWhereInput
+    data: XOR<AlbumShareUpdateManyMutationInput, AlbumShareUncheckedUpdateManyWithoutInvited_userInput>
+  }
+
   export type AlbumCreateWithoutSub_albumsInput = {
     id?: string
     name: string
@@ -7289,7 +9242,8 @@ export namespace Prisma {
     parent_album?: AlbumCreateNestedOneWithoutSub_albumsInput
     owner: UserCreateNestedOneWithoutAlbumsInput
     photos?: PhotoCreateNestedManyWithoutAlbumInput
-    sharedUsers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumUncheckedCreateWithoutSub_albumsInput = {
@@ -7301,7 +9255,8 @@ export namespace Prisma {
     updated_at?: Date | string
     is_deleted?: boolean
     photos?: PhotoUncheckedCreateNestedManyWithoutAlbumInput
-    sharedUsers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareUncheckedCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumCreateOrConnectWithoutSub_albumsInput = {
@@ -7318,7 +9273,8 @@ export namespace Prisma {
     sub_albums?: AlbumCreateNestedManyWithoutParent_albumInput
     owner: UserCreateNestedOneWithoutAlbumsInput
     photos?: PhotoCreateNestedManyWithoutAlbumInput
-    sharedUsers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumUncheckedCreateWithoutParent_albumInput = {
@@ -7330,7 +9286,8 @@ export namespace Prisma {
     is_deleted?: boolean
     sub_albums?: AlbumUncheckedCreateNestedManyWithoutParent_albumInput
     photos?: PhotoUncheckedCreateNestedManyWithoutAlbumInput
-    sharedUsers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareUncheckedCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumCreateOrConnectWithoutParent_albumInput = {
@@ -7349,6 +9306,8 @@ export namespace Prisma {
     email: string
     photos?: PhotoCreateNestedManyWithoutUploaderInput
     albumMembers?: AlbumMemberCreateNestedManyWithoutUserInput
+    sentShares?: AlbumShareCreateNestedManyWithoutInvited_by_userInput
+    receivedShares?: AlbumShareCreateNestedManyWithoutInvited_userInput
   }
 
   export type UserUncheckedCreateWithoutAlbumsInput = {
@@ -7357,6 +9316,8 @@ export namespace Prisma {
     email: string
     photos?: PhotoUncheckedCreateNestedManyWithoutUploaderInput
     albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutUserInput
+    sentShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_by_userInput
+    receivedShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_userInput
   }
 
   export type UserCreateOrConnectWithoutAlbumsInput = {
@@ -7418,6 +9379,42 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type AlbumShareCreateWithoutAlbumInput = {
+    id?: string
+    invited_email: string
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+    invited_by_user: UserCreateNestedOneWithoutSentSharesInput
+    invited_user?: UserCreateNestedOneWithoutReceivedSharesInput
+  }
+
+  export type AlbumShareUncheckedCreateWithoutAlbumInput = {
+    id?: string
+    invited_by_user_id: string
+    invited_email: string
+    invited_user_id?: string | null
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AlbumShareCreateOrConnectWithoutAlbumInput = {
+    where: AlbumShareWhereUniqueInput
+    create: XOR<AlbumShareCreateWithoutAlbumInput, AlbumShareUncheckedCreateWithoutAlbumInput>
+  }
+
+  export type AlbumShareCreateManyAlbumInputEnvelope = {
+    data: AlbumShareCreateManyAlbumInput | AlbumShareCreateManyAlbumInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AlbumUpsertWithoutSub_albumsInput = {
     update: XOR<AlbumUpdateWithoutSub_albumsInput, AlbumUncheckedUpdateWithoutSub_albumsInput>
     create: XOR<AlbumCreateWithoutSub_albumsInput, AlbumUncheckedCreateWithoutSub_albumsInput>
@@ -7438,7 +9435,8 @@ export namespace Prisma {
     parent_album?: AlbumUpdateOneWithoutSub_albumsNestedInput
     owner?: UserUpdateOneRequiredWithoutAlbumsNestedInput
     photos?: PhotoUpdateManyWithoutAlbumNestedInput
-    sharedUsers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUpdateManyWithoutAlbumNestedInput
   }
 
   export type AlbumUncheckedUpdateWithoutSub_albumsInput = {
@@ -7450,7 +9448,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     photos?: PhotoUncheckedUpdateManyWithoutAlbumNestedInput
-    sharedUsers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUncheckedUpdateManyWithoutAlbumNestedInput
   }
 
   export type AlbumUpsertWithWhereUniqueWithoutParent_albumInput = {
@@ -7486,6 +9485,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     photos?: PhotoUpdateManyWithoutUploaderNestedInput
     albumMembers?: AlbumMemberUpdateManyWithoutUserNestedInput
+    sentShares?: AlbumShareUpdateManyWithoutInvited_by_userNestedInput
+    receivedShares?: AlbumShareUpdateManyWithoutInvited_userNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAlbumsInput = {
@@ -7494,6 +9495,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     photos?: PhotoUncheckedUpdateManyWithoutUploaderNestedInput
     albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
+    sentShares?: AlbumShareUncheckedUpdateManyWithoutInvited_by_userNestedInput
+    receivedShares?: AlbumShareUncheckedUpdateManyWithoutInvited_userNestedInput
   }
 
   export type PhotoUpsertWithWhereUniqueWithoutAlbumInput = {
@@ -7528,7 +9531,23 @@ export namespace Prisma {
     data: XOR<AlbumMemberUpdateManyMutationInput, AlbumMemberUncheckedUpdateManyWithoutAlbumInput>
   }
 
-  export type AlbumCreateWithoutSharedUsersInput = {
+  export type AlbumShareUpsertWithWhereUniqueWithoutAlbumInput = {
+    where: AlbumShareWhereUniqueInput
+    update: XOR<AlbumShareUpdateWithoutAlbumInput, AlbumShareUncheckedUpdateWithoutAlbumInput>
+    create: XOR<AlbumShareCreateWithoutAlbumInput, AlbumShareUncheckedCreateWithoutAlbumInput>
+  }
+
+  export type AlbumShareUpdateWithWhereUniqueWithoutAlbumInput = {
+    where: AlbumShareWhereUniqueInput
+    data: XOR<AlbumShareUpdateWithoutAlbumInput, AlbumShareUncheckedUpdateWithoutAlbumInput>
+  }
+
+  export type AlbumShareUpdateManyWithWhereWithoutAlbumInput = {
+    where: AlbumShareScalarWhereInput
+    data: XOR<AlbumShareUpdateManyMutationInput, AlbumShareUncheckedUpdateManyWithoutAlbumInput>
+  }
+
+  export type AlbumCreateWithoutAlbumMembersInput = {
     id?: string
     name: string
     created_at?: Date | string
@@ -7538,9 +9557,10 @@ export namespace Prisma {
     sub_albums?: AlbumCreateNestedManyWithoutParent_albumInput
     owner: UserCreateNestedOneWithoutAlbumsInput
     photos?: PhotoCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareCreateNestedManyWithoutAlbumInput
   }
 
-  export type AlbumUncheckedCreateWithoutSharedUsersInput = {
+  export type AlbumUncheckedCreateWithoutAlbumMembersInput = {
     id?: string
     name: string
     parent_album_id?: string | null
@@ -7550,11 +9570,12 @@ export namespace Prisma {
     is_deleted?: boolean
     sub_albums?: AlbumUncheckedCreateNestedManyWithoutParent_albumInput
     photos?: PhotoUncheckedCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareUncheckedCreateNestedManyWithoutAlbumInput
   }
 
-  export type AlbumCreateOrConnectWithoutSharedUsersInput = {
+  export type AlbumCreateOrConnectWithoutAlbumMembersInput = {
     where: AlbumWhereUniqueInput
-    create: XOR<AlbumCreateWithoutSharedUsersInput, AlbumUncheckedCreateWithoutSharedUsersInput>
+    create: XOR<AlbumCreateWithoutAlbumMembersInput, AlbumUncheckedCreateWithoutAlbumMembersInput>
   }
 
   export type UserCreateWithoutAlbumMembersInput = {
@@ -7563,6 +9584,8 @@ export namespace Prisma {
     email: string
     albums?: AlbumCreateNestedManyWithoutOwnerInput
     photos?: PhotoCreateNestedManyWithoutUploaderInput
+    sentShares?: AlbumShareCreateNestedManyWithoutInvited_by_userInput
+    receivedShares?: AlbumShareCreateNestedManyWithoutInvited_userInput
   }
 
   export type UserUncheckedCreateWithoutAlbumMembersInput = {
@@ -7571,6 +9594,8 @@ export namespace Prisma {
     email: string
     albums?: AlbumUncheckedCreateNestedManyWithoutOwnerInput
     photos?: PhotoUncheckedCreateNestedManyWithoutUploaderInput
+    sentShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_by_userInput
+    receivedShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_userInput
   }
 
   export type UserCreateOrConnectWithoutAlbumMembersInput = {
@@ -7578,18 +9603,18 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutAlbumMembersInput, UserUncheckedCreateWithoutAlbumMembersInput>
   }
 
-  export type AlbumUpsertWithoutSharedUsersInput = {
-    update: XOR<AlbumUpdateWithoutSharedUsersInput, AlbumUncheckedUpdateWithoutSharedUsersInput>
-    create: XOR<AlbumCreateWithoutSharedUsersInput, AlbumUncheckedCreateWithoutSharedUsersInput>
+  export type AlbumUpsertWithoutAlbumMembersInput = {
+    update: XOR<AlbumUpdateWithoutAlbumMembersInput, AlbumUncheckedUpdateWithoutAlbumMembersInput>
+    create: XOR<AlbumCreateWithoutAlbumMembersInput, AlbumUncheckedCreateWithoutAlbumMembersInput>
     where?: AlbumWhereInput
   }
 
-  export type AlbumUpdateToOneWithWhereWithoutSharedUsersInput = {
+  export type AlbumUpdateToOneWithWhereWithoutAlbumMembersInput = {
     where?: AlbumWhereInput
-    data: XOR<AlbumUpdateWithoutSharedUsersInput, AlbumUncheckedUpdateWithoutSharedUsersInput>
+    data: XOR<AlbumUpdateWithoutAlbumMembersInput, AlbumUncheckedUpdateWithoutAlbumMembersInput>
   }
 
-  export type AlbumUpdateWithoutSharedUsersInput = {
+  export type AlbumUpdateWithoutAlbumMembersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7599,9 +9624,10 @@ export namespace Prisma {
     sub_albums?: AlbumUpdateManyWithoutParent_albumNestedInput
     owner?: UserUpdateOneRequiredWithoutAlbumsNestedInput
     photos?: PhotoUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUpdateManyWithoutAlbumNestedInput
   }
 
-  export type AlbumUncheckedUpdateWithoutSharedUsersInput = {
+  export type AlbumUncheckedUpdateWithoutAlbumMembersInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     parent_album_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7611,6 +9637,7 @@ export namespace Prisma {
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     sub_albums?: AlbumUncheckedUpdateManyWithoutParent_albumNestedInput
     photos?: PhotoUncheckedUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUncheckedUpdateManyWithoutAlbumNestedInput
   }
 
   export type UserUpsertWithoutAlbumMembersInput = {
@@ -7630,6 +9657,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUpdateManyWithoutOwnerNestedInput
     photos?: PhotoUpdateManyWithoutUploaderNestedInput
+    sentShares?: AlbumShareUpdateManyWithoutInvited_by_userNestedInput
+    receivedShares?: AlbumShareUpdateManyWithoutInvited_userNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAlbumMembersInput = {
@@ -7638,6 +9667,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUncheckedUpdateManyWithoutOwnerNestedInput
     photos?: PhotoUncheckedUpdateManyWithoutUploaderNestedInput
+    sentShares?: AlbumShareUncheckedUpdateManyWithoutInvited_by_userNestedInput
+    receivedShares?: AlbumShareUncheckedUpdateManyWithoutInvited_userNestedInput
   }
 
   export type AlbumCreateWithoutPhotosInput = {
@@ -7649,7 +9680,8 @@ export namespace Prisma {
     parent_album?: AlbumCreateNestedOneWithoutSub_albumsInput
     sub_albums?: AlbumCreateNestedManyWithoutParent_albumInput
     owner: UserCreateNestedOneWithoutAlbumsInput
-    sharedUsers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumUncheckedCreateWithoutPhotosInput = {
@@ -7661,7 +9693,8 @@ export namespace Prisma {
     updated_at?: Date | string
     is_deleted?: boolean
     sub_albums?: AlbumUncheckedCreateNestedManyWithoutParent_albumInput
-    sharedUsers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+    albumShares?: AlbumShareUncheckedCreateNestedManyWithoutAlbumInput
   }
 
   export type AlbumCreateOrConnectWithoutPhotosInput = {
@@ -7675,6 +9708,8 @@ export namespace Prisma {
     email: string
     albums?: AlbumCreateNestedManyWithoutOwnerInput
     albumMembers?: AlbumMemberCreateNestedManyWithoutUserInput
+    sentShares?: AlbumShareCreateNestedManyWithoutInvited_by_userInput
+    receivedShares?: AlbumShareCreateNestedManyWithoutInvited_userInput
   }
 
   export type UserUncheckedCreateWithoutPhotosInput = {
@@ -7683,6 +9718,8 @@ export namespace Prisma {
     email: string
     albums?: AlbumUncheckedCreateNestedManyWithoutOwnerInput
     albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutUserInput
+    sentShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_by_userInput
+    receivedShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_userInput
   }
 
   export type UserCreateOrConnectWithoutPhotosInput = {
@@ -7710,7 +9747,8 @@ export namespace Prisma {
     parent_album?: AlbumUpdateOneWithoutSub_albumsNestedInput
     sub_albums?: AlbumUpdateManyWithoutParent_albumNestedInput
     owner?: UserUpdateOneRequiredWithoutAlbumsNestedInput
-    sharedUsers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUpdateManyWithoutAlbumNestedInput
   }
 
   export type AlbumUncheckedUpdateWithoutPhotosInput = {
@@ -7722,7 +9760,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     sub_albums?: AlbumUncheckedUpdateManyWithoutParent_albumNestedInput
-    sharedUsers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUncheckedUpdateManyWithoutAlbumNestedInput
   }
 
   export type UserUpsertWithoutPhotosInput = {
@@ -7742,6 +9781,8 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUpdateManyWithoutOwnerNestedInput
     albumMembers?: AlbumMemberUpdateManyWithoutUserNestedInput
+    sentShares?: AlbumShareUpdateManyWithoutInvited_by_userNestedInput
+    receivedShares?: AlbumShareUpdateManyWithoutInvited_userNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPhotosInput = {
@@ -7750,6 +9791,188 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     albums?: AlbumUncheckedUpdateManyWithoutOwnerNestedInput
     albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
+    sentShares?: AlbumShareUncheckedUpdateManyWithoutInvited_by_userNestedInput
+    receivedShares?: AlbumShareUncheckedUpdateManyWithoutInvited_userNestedInput
+  }
+
+  export type AlbumCreateWithoutAlbumSharesInput = {
+    id?: string
+    name: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: boolean
+    parent_album?: AlbumCreateNestedOneWithoutSub_albumsInput
+    sub_albums?: AlbumCreateNestedManyWithoutParent_albumInput
+    owner: UserCreateNestedOneWithoutAlbumsInput
+    photos?: PhotoCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberCreateNestedManyWithoutAlbumInput
+  }
+
+  export type AlbumUncheckedCreateWithoutAlbumSharesInput = {
+    id?: string
+    name: string
+    parent_album_id?: string | null
+    owner_user_id: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: boolean
+    sub_albums?: AlbumUncheckedCreateNestedManyWithoutParent_albumInput
+    photos?: PhotoUncheckedCreateNestedManyWithoutAlbumInput
+    albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutAlbumInput
+  }
+
+  export type AlbumCreateOrConnectWithoutAlbumSharesInput = {
+    where: AlbumWhereUniqueInput
+    create: XOR<AlbumCreateWithoutAlbumSharesInput, AlbumUncheckedCreateWithoutAlbumSharesInput>
+  }
+
+  export type UserCreateWithoutSentSharesInput = {
+    id: string
+    name?: string | null
+    email: string
+    albums?: AlbumCreateNestedManyWithoutOwnerInput
+    photos?: PhotoCreateNestedManyWithoutUploaderInput
+    albumMembers?: AlbumMemberCreateNestedManyWithoutUserInput
+    receivedShares?: AlbumShareCreateNestedManyWithoutInvited_userInput
+  }
+
+  export type UserUncheckedCreateWithoutSentSharesInput = {
+    id: string
+    name?: string | null
+    email: string
+    albums?: AlbumUncheckedCreateNestedManyWithoutOwnerInput
+    photos?: PhotoUncheckedCreateNestedManyWithoutUploaderInput
+    albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutUserInput
+    receivedShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_userInput
+  }
+
+  export type UserCreateOrConnectWithoutSentSharesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSentSharesInput, UserUncheckedCreateWithoutSentSharesInput>
+  }
+
+  export type UserCreateWithoutReceivedSharesInput = {
+    id: string
+    name?: string | null
+    email: string
+    albums?: AlbumCreateNestedManyWithoutOwnerInput
+    photos?: PhotoCreateNestedManyWithoutUploaderInput
+    albumMembers?: AlbumMemberCreateNestedManyWithoutUserInput
+    sentShares?: AlbumShareCreateNestedManyWithoutInvited_by_userInput
+  }
+
+  export type UserUncheckedCreateWithoutReceivedSharesInput = {
+    id: string
+    name?: string | null
+    email: string
+    albums?: AlbumUncheckedCreateNestedManyWithoutOwnerInput
+    photos?: PhotoUncheckedCreateNestedManyWithoutUploaderInput
+    albumMembers?: AlbumMemberUncheckedCreateNestedManyWithoutUserInput
+    sentShares?: AlbumShareUncheckedCreateNestedManyWithoutInvited_by_userInput
+  }
+
+  export type UserCreateOrConnectWithoutReceivedSharesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReceivedSharesInput, UserUncheckedCreateWithoutReceivedSharesInput>
+  }
+
+  export type AlbumUpsertWithoutAlbumSharesInput = {
+    update: XOR<AlbumUpdateWithoutAlbumSharesInput, AlbumUncheckedUpdateWithoutAlbumSharesInput>
+    create: XOR<AlbumCreateWithoutAlbumSharesInput, AlbumUncheckedCreateWithoutAlbumSharesInput>
+    where?: AlbumWhereInput
+  }
+
+  export type AlbumUpdateToOneWithWhereWithoutAlbumSharesInput = {
+    where?: AlbumWhereInput
+    data: XOR<AlbumUpdateWithoutAlbumSharesInput, AlbumUncheckedUpdateWithoutAlbumSharesInput>
+  }
+
+  export type AlbumUpdateWithoutAlbumSharesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: BoolFieldUpdateOperationsInput | boolean
+    parent_album?: AlbumUpdateOneWithoutSub_albumsNestedInput
+    sub_albums?: AlbumUpdateManyWithoutParent_albumNestedInput
+    owner?: UserUpdateOneRequiredWithoutAlbumsNestedInput
+    photos?: PhotoUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+  }
+
+  export type AlbumUncheckedUpdateWithoutAlbumSharesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    parent_album_id?: NullableStringFieldUpdateOperationsInput | string | null
+    owner_user_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: BoolFieldUpdateOperationsInput | boolean
+    sub_albums?: AlbumUncheckedUpdateManyWithoutParent_albumNestedInput
+    photos?: PhotoUncheckedUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+  }
+
+  export type UserUpsertWithoutSentSharesInput = {
+    update: XOR<UserUpdateWithoutSentSharesInput, UserUncheckedUpdateWithoutSentSharesInput>
+    create: XOR<UserCreateWithoutSentSharesInput, UserUncheckedCreateWithoutSentSharesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSentSharesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSentSharesInput, UserUncheckedUpdateWithoutSentSharesInput>
+  }
+
+  export type UserUpdateWithoutSentSharesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    albums?: AlbumUpdateManyWithoutOwnerNestedInput
+    photos?: PhotoUpdateManyWithoutUploaderNestedInput
+    albumMembers?: AlbumMemberUpdateManyWithoutUserNestedInput
+    receivedShares?: AlbumShareUpdateManyWithoutInvited_userNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSentSharesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    albums?: AlbumUncheckedUpdateManyWithoutOwnerNestedInput
+    photos?: PhotoUncheckedUpdateManyWithoutUploaderNestedInput
+    albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
+    receivedShares?: AlbumShareUncheckedUpdateManyWithoutInvited_userNestedInput
+  }
+
+  export type UserUpsertWithoutReceivedSharesInput = {
+    update: XOR<UserUpdateWithoutReceivedSharesInput, UserUncheckedUpdateWithoutReceivedSharesInput>
+    create: XOR<UserCreateWithoutReceivedSharesInput, UserUncheckedCreateWithoutReceivedSharesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutReceivedSharesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutReceivedSharesInput, UserUncheckedUpdateWithoutReceivedSharesInput>
+  }
+
+  export type UserUpdateWithoutReceivedSharesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    albums?: AlbumUpdateManyWithoutOwnerNestedInput
+    photos?: PhotoUpdateManyWithoutUploaderNestedInput
+    albumMembers?: AlbumMemberUpdateManyWithoutUserNestedInput
+    sentShares?: AlbumShareUpdateManyWithoutInvited_by_userNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReceivedSharesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    albums?: AlbumUncheckedUpdateManyWithoutOwnerNestedInput
+    photos?: PhotoUncheckedUpdateManyWithoutUploaderNestedInput
+    albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
+    sentShares?: AlbumShareUncheckedUpdateManyWithoutInvited_by_userNestedInput
   }
 
   export type AlbumCreateManyOwnerInput = {
@@ -7778,6 +10001,32 @@ export namespace Prisma {
     role: string
   }
 
+  export type AlbumShareCreateManyInvited_by_userInput = {
+    id?: string
+    album_id: string
+    invited_email: string
+    invited_user_id?: string | null
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AlbumShareCreateManyInvited_userInput = {
+    id?: string
+    album_id: string
+    invited_by_user_id: string
+    invited_email: string
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+  }
+
   export type AlbumUpdateWithoutOwnerInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -7787,7 +10036,8 @@ export namespace Prisma {
     parent_album?: AlbumUpdateOneWithoutSub_albumsNestedInput
     sub_albums?: AlbumUpdateManyWithoutParent_albumNestedInput
     photos?: PhotoUpdateManyWithoutAlbumNestedInput
-    sharedUsers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUpdateManyWithoutAlbumNestedInput
   }
 
   export type AlbumUncheckedUpdateWithoutOwnerInput = {
@@ -7799,7 +10049,8 @@ export namespace Prisma {
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     sub_albums?: AlbumUncheckedUpdateManyWithoutParent_albumNestedInput
     photos?: PhotoUncheckedUpdateManyWithoutAlbumNestedInput
-    sharedUsers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUncheckedUpdateManyWithoutAlbumNestedInput
   }
 
   export type AlbumUncheckedUpdateManyWithoutOwnerInput = {
@@ -7847,7 +10098,7 @@ export namespace Prisma {
   export type AlbumMemberUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
-    album?: AlbumUpdateOneRequiredWithoutSharedUsersNestedInput
+    album?: AlbumUpdateOneRequiredWithoutAlbumMembersNestedInput
   }
 
   export type AlbumMemberUncheckedUpdateWithoutUserInput = {
@@ -7860,6 +10111,84 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     album_id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AlbumShareUpdateWithoutInvited_by_userInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    album?: AlbumUpdateOneRequiredWithoutAlbumSharesNestedInput
+    invited_user?: UserUpdateOneWithoutReceivedSharesNestedInput
+  }
+
+  export type AlbumShareUncheckedUpdateWithoutInvited_by_userInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    album_id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    invited_user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AlbumShareUncheckedUpdateManyWithoutInvited_by_userInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    album_id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    invited_user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AlbumShareUpdateWithoutInvited_userInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    album?: AlbumUpdateOneRequiredWithoutAlbumSharesNestedInput
+    invited_by_user?: UserUpdateOneRequiredWithoutSentSharesNestedInput
+  }
+
+  export type AlbumShareUncheckedUpdateWithoutInvited_userInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    album_id?: StringFieldUpdateOperationsInput | string
+    invited_by_user_id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AlbumShareUncheckedUpdateManyWithoutInvited_userInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    album_id?: StringFieldUpdateOperationsInput | string
+    invited_by_user_id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AlbumCreateManyParent_albumInput = {
@@ -7888,6 +10217,19 @@ export namespace Prisma {
     role: string
   }
 
+  export type AlbumShareCreateManyAlbumInput = {
+    id?: string
+    invited_by_user_id: string
+    invited_email: string
+    invited_user_id?: string | null
+    role: string
+    invitation_token: string
+    status?: string
+    expires_at: Date | string
+    invited_at?: Date | string
+    updated_at?: Date | string
+  }
+
   export type AlbumUpdateWithoutParent_albumInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -7897,7 +10239,8 @@ export namespace Prisma {
     sub_albums?: AlbumUpdateManyWithoutParent_albumNestedInput
     owner?: UserUpdateOneRequiredWithoutAlbumsNestedInput
     photos?: PhotoUpdateManyWithoutAlbumNestedInput
-    sharedUsers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUpdateManyWithoutAlbumNestedInput
   }
 
   export type AlbumUncheckedUpdateWithoutParent_albumInput = {
@@ -7909,7 +10252,8 @@ export namespace Prisma {
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     sub_albums?: AlbumUncheckedUpdateManyWithoutParent_albumNestedInput
     photos?: PhotoUncheckedUpdateManyWithoutAlbumNestedInput
-    sharedUsers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumMembers?: AlbumMemberUncheckedUpdateManyWithoutAlbumNestedInput
+    albumShares?: AlbumShareUncheckedUpdateManyWithoutAlbumNestedInput
   }
 
   export type AlbumUncheckedUpdateManyWithoutParent_albumInput = {
@@ -7970,6 +10314,45 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type AlbumShareUpdateWithoutAlbumInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_by_user?: UserUpdateOneRequiredWithoutSentSharesNestedInput
+    invited_user?: UserUpdateOneWithoutReceivedSharesNestedInput
+  }
+
+  export type AlbumShareUncheckedUpdateWithoutAlbumInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invited_by_user_id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    invited_user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AlbumShareUncheckedUpdateManyWithoutAlbumInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invited_by_user_id?: StringFieldUpdateOperationsInput | string
+    invited_email?: StringFieldUpdateOperationsInput | string
+    invited_user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    invitation_token?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    invited_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

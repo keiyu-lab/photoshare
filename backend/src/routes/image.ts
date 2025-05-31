@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Response} from 'express';
 import {
   S3Client,
   PutObjectCommand,
@@ -10,6 +10,7 @@ import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
 import multer from 'multer';
 import { PrismaClient } from '../generated/prisma/client';
+import { AuthenticatedRequest } from '../types';
 
 dotenv.config();
 const router = express.Router();
@@ -28,7 +29,7 @@ const prisma = new PrismaClient();
 /**
  * アップロード用の署名付きURLを発行
  */
-router.post('/', verifyJwt, upload.single('image'), async (req: any, res) => {
+router.post('/', verifyJwt, upload.single('image'), async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user.sub;
   const file = req.file;
   const albumId = req.body.albumId || '';
@@ -75,7 +76,7 @@ router.post('/', verifyJwt, upload.single('image'), async (req: any, res) => {
 /**
  * ダウンロード（表示）用の署名付きURLを発行
  */
-router.get('/:id', verifyJwt, async (req: any, res) => {
+router.get('/:id', verifyJwt, async (req: AuthenticatedRequest, res: Response) => {
   const albumId = req.params.id;
 
   try {
@@ -122,7 +123,7 @@ router.get('/:id', verifyJwt, async (req: any, res) => {
   }
 });
 
-router.delete('/:id', verifyJwt, async (req: any, res) => {
+router.delete('/:id', verifyJwt, async (req: AuthenticatedRequest, res: Response) => {
   const photoId = req.params.id;
     try {
       // 論理削除
@@ -139,7 +140,7 @@ router.delete('/:id', verifyJwt, async (req: any, res) => {
   }
 });
 
-router.put('/:id/move', verifyJwt, async (req: any, res) => {
+router.put('/:id/move', verifyJwt, async (req: AuthenticatedRequest, res: Response) => {
   const photoId = req.params.id;
   const {targetAlbumId} = req.body;
   console.log(targetAlbumId)

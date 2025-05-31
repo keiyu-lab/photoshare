@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.7.0
- * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+ * Prisma Client JS version: 6.8.2
+ * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
  */
 Prisma.prismaVersion = {
-  client: "6.7.0",
-  engine: "3cff47a7f5d65c3ea74883f1d736e41d68ce91ed"
+  client: "6.8.2",
+  engine: "2060c79ba17c6bb9f5823312b6f6b7f4a845738e"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -155,6 +155,20 @@ exports.Prisma.PhotoScalarFieldEnum = {
   is_deleted: 'is_deleted'
 };
 
+exports.Prisma.AlbumShareScalarFieldEnum = {
+  id: 'id',
+  album_id: 'album_id',
+  invited_by_user_id: 'invited_by_user_id',
+  invited_email: 'invited_email',
+  invited_user_id: 'invited_user_id',
+  role: 'role',
+  invitation_token: 'invitation_token',
+  status: 'status',
+  expires_at: 'expires_at',
+  invited_at: 'invited_at',
+  updated_at: 'updated_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -175,7 +189,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Album: 'Album',
   AlbumMember: 'AlbumMember',
-  Photo: 'Photo'
+  Photo: 'Photo',
+  AlbumShare: 'AlbumShare'
 };
 
 /**

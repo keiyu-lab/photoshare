@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import jwksRsa from "jwks-rsa";
 
 // --- JWTの認証ミドルウェア ---
-export const verifyJwt = (req, res, next) => {
+export const verifyJwt = (req:any, res: any, next: any) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).send("Missing Authorization header");
 
@@ -11,9 +11,9 @@ export const verifyJwt = (req, res, next) => {
     jwksUri: `https://cognito-idp.${process.env.AWS_REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}/.well-known/jwks.json`
   });
 
-  const getKey = (header, callback) => {
+  const getKey = (header:any, callback:any) => {
     client.getSigningKey(header.kid, (err, key) => {
-      const signingKey = key.getPublicKey();
+      const signingKey = key!.getPublicKey();
       callback(null, signingKey);
     });
   };

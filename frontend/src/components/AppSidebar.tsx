@@ -23,10 +23,10 @@ import { useState } from "react";
 
 type AppSidebarProps = {
   user?: UserType;
-  albumTree: AlbumType[];
-  sharedFolders: any[]; // 型を簡略化
-  onSelectFolder: (id: string) => void;
-  onSelectRoot: () => void; // ルート選択用の新しいプロップ
+  privateAlbumTree: AlbumType[];
+  sharedAlbumTree: AlbumType[];
+  onSelectAlbum: (id: string, isShared?: boolean) => void;  // isShared パラメータ追加
+  onSelectRoot: () => void;
   onAddAlbum?: (parentId: string) => void;
   onAddPhoto?: (albumId: string) => void;
   onRenameAlbum?: (albumId: string, newName: string) => Promise<boolean>;
@@ -35,13 +35,15 @@ type AppSidebarProps = {
   onMoveAlbum?: (albumId: string, targetAlbumId: string) => void;
   onMovePhoto?: (photoId: string, targetAlbumId: string) => void;
   onSignOut?: () => void;
+  selectedAlbumContext?: 'private' | 'shared';  // 新規追加
+  getCurrentUserPermission?: (album: AlbumType | null) => 'owner' | 'write' | 'read' | null;  // 新規追加
 };
 
 export function AppSidebar({ 
   user,
-  albumTree, 
-  sharedFolders, 
-  onSelectFolder,
+  privateAlbumTree, 
+  sharedAlbumTree, 
+  onSelectAlbum,
   onSelectRoot,
   onAddAlbum,
   onAddPhoto,
@@ -50,7 +52,9 @@ export function AppSidebar({
   onShareAlbum,
   onMoveAlbum,
   onMovePhoto,
-  onSignOut
+  onSignOut,
+  selectedAlbumContext,
+  getCurrentUserPermission,
 }: AppSidebarProps) {
   // ドラッグ中のアルバムID
   const [draggedAlbumId, setDraggedAlbumId] = useState<string | null>(null);
@@ -88,13 +92,34 @@ export function AppSidebar({
     setDropTargetId(null);
   };
 
-  // アルバムツリーをレンダリング
-  const renderAlbumTree = () => {
-    return albumTree.map((album) => (
+  const renderSharedAlbumTree = (albums: AlbumType[]) => {
+      return albums.map((album) => (
+        <AlbumTreeNode
+          key={album.id}
+          album={album}
+          onSelectAlbum={(id) => onSelectAlbum(id, true)}  // 共有アルバムフラグを true に
+          onAddAlbum={onAddAlbum}
+          onAddPhoto={onAddPhoto}
+          onRenameAlbum={onRenameAlbum}
+          onDeleteAlbum={onDeleteAlbum}
+          onShareAlbum={onShareAlbum}
+          onMoveAlbum={handleMoveAlbum}
+          onMovePhoto={onMovePhoto}
+          isDragging={draggedAlbumId === album.id}
+          isDropTarget={dropTargetId === album.id}
+          isSharedAlbum={true}  // 共有アルバムフラグ
+          userPermission={album.userPermission || 'read'}  // 権限情報
+        />
+      ));
+    };
+
+  // プライベートアルバム用のレンダリング関数
+  const renderAlbumTree = (albums: AlbumType[]) => {
+    return albums.map((album) => (
       <AlbumTreeNode
         key={album.id}
         album={album}
-        onSelectFolder={onSelectFolder}
+        onSelectAlbum={(id) => onSelectAlbum(id, false)}  // プライベートアルバムフラグを false に
         onAddAlbum={onAddAlbum}
         onAddPhoto={onAddPhoto}
         onRenameAlbum={onRenameAlbum}
@@ -104,6 +129,8 @@ export function AppSidebar({
         onMovePhoto={onMovePhoto}
         isDragging={draggedAlbumId === album.id}
         isDropTarget={dropTargetId === album.id}
+        isSharedAlbum={false}  // プライベートアルバムフラグ
+        userPermission="owner"  // プライベートアルバムは常にowner
       />
     ));
   };
@@ -111,56 +138,56 @@ export function AppSidebar({
   return (
     <Sidebar className="border-r border-border bg-card w-64">
       <SidebarContent>
-        {/* アプリケーションのヘッダー部分 */}
         <div className="flex items-center gap-2 px-4 h-14 border-b border-border">
           <div className="flex items-center justify-center w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-bold">P</div>
           <h2 className="text-lg font-semibold">PhotoShare</h2>
         </div>
 
-        {/* 自分のフォルダ - 階層表示 */}
+        {/* 自分のプライベートフォルダ */}
         <SidebarGroup>
-          <SidebarGroupLabel 
+          <SidebarGroupLabel
             className="flex justify-between items-center px-2 py-1.5 text-muted-foreground text-xs uppercase font-medium cursor-pointer hover:text-foreground"
-            onClick={onSelectRoot}
+            onClick={onSelectRoot} // ルート（プライベートアルバムのトップ）を選択
           >
-            <span>My Albums</span>
+            {/* ラベルを「My Private Albums」などに変更することを検討 */}
+            <span>My Private Albums</span>
             <SidebarMenuButton className="h-5 w-5" onClick={(e) => {
               e.stopPropagation();
-              onAddAlbum && onAddAlbum("");
+              if (onAddAlbum) onAddAlbum; // ルートにアルバム追加
             }}>
               <Plus className="h-3.5 w-3.5" />
             </SidebarMenuButton>
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {renderAlbumTree()}
+              {privateAlbumTree.length > 0 ? 
+                renderAlbumTree(privateAlbumTree) : 
+                <SidebarMenuItem className="px-2 py-1.5 text-sm text-muted-foreground">
+                  No private albums.
+                </SidebarMenuItem>
+               }
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
         
-        {/* 共有フォルダ */}
+        {/* 共有アルバム (自分がオーナーで共有中 + 他人から共有されたもの) */}
         <SidebarGroup>
-          <SidebarGroupLabel className="px-2 py-1.5 text-muted-foreground text-xs uppercase font-medium">
-            Shared With Me
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {sharedFolders.map((folder) => (
-                <SidebarMenuItem key={folder.id}>
-                  <SidebarMenuButton onClick={() => onSelectFolder(folder.id)}
-                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <Share className="h-4 w-4" />
-                    <span>{folder.name}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+            <SidebarGroupLabel className="px-2 py-1.5 text-muted-foreground text-xs uppercase font-medium">
+              Shared Albums 
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {sharedAlbumTree.length > 0 ? 
+                  renderSharedAlbumTree(sharedAlbumTree) :
+                  <SidebarMenuItem className="px-2 py-1.5 text-sm text-muted-foreground">
+                    No shared albums.
+                  </SidebarMenuItem>
+                }
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
       </SidebarContent>
 
-      {/* フッター */}
       <div className="mt-auto border-t border-border p-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -170,7 +197,7 @@ export function AppSidebar({
               <User className="h-4 w-4" />
             </div>
             {user && (
-              <span className="text-sm">{user.name}</span>
+              <span className="text-sm">{user.name || user.email}</span>
             )}
           </div>
           <Settings className="h-4 w-4 text-muted-foreground" />
@@ -181,12 +208,6 @@ export function AppSidebar({
               <LogOutIcon className="mr-2 h-4 w-4" />
               <span>サインアウト</span>
             </DropdownMenuItem>
-            {/*
-            <DropdownMenuItem>
-              <PenIcon className="mr-2 h-4 w-4" onClick={()=>updateUserName()}/>
-              <span>名前変更</span>
-            </DropdownMenuItem>
-            */}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

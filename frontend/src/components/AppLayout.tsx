@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import type { AlbumType, Photo } from '@/types';
 import { Authenticator } from '@aws-amplify/ui-react';
 import AlbumContents from './AlbumContents';
-import { createAlbum, deleteAlbum, fetchAlbums, fetchPhotos, renameAlbum, syncUserToBackend, updateAlbumParent, updatePhotoAlbum } from '@/api/api';
+import { createAlbum, deleteAlbum, fetchAlbums, fetchPhotos, renameAlbum, syncUserToBackend, updateAlbumParent, updatePhotoAlbum, fetchSharedAlbums, shareAlbum } from '@/api/api';
 import { buildAlbumTree, findAlbumById, flattenAlbums, normailzeRowAlbum } from '@/components/Album';
 import PhotoUploadModal from './Modal/PhotoUploadModal';
 import AlbumShareModal from './Modal/AlbumShareModal';
@@ -16,9 +16,13 @@ import '@aws-amplify/ui-react/styles.css';
 export function AppLayout() {
 
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [albumTree, setAlbumTree] = useState<AlbumType[]>([]);
+
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumType | null>(null);
+  const [privateAlbumTree, setPrivateAlbumTree] = useState<AlbumType[]>([]);
+  const [sharedAlbumTree, setSharedAlbumTree] = useState<AlbumType[]>([]);
+  const [selectedAlbumContext, setSelectedAlbumContext] = useState<'private' | 'shared'>('private'); // 新規追加
   const [photos, setPhotos] = useState<Photo[]>([]);
+
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -27,9 +31,24 @@ export function AppLayout() {
   useEffect(() => {
     const initialize = async () => {
       await syncUserToBackend();
-      const albumList = await fetchAlbums();
-      const normalizedAlbums = normailzeRowAlbum(albumList);
-      setAlbumTree(buildAlbumTree(normalizedAlbums));
+
+      // プライベートアルバムを取得
+      try {
+        const privateAlbumList = await fetchAlbums();
+        const normalizedPrivateAlbums = normailzeRowAlbum(privateAlbumList);
+        setPrivateAlbumTree(buildAlbumTree(normalizedPrivateAlbums));
+      } catch (error){
+        console.error('Error fetching private albums:', error);
+      }
+      
+      // 共有アルバムを取得
+      try {
+        const sharedAlbumList = await fetchSharedAlbums();
+        const normalizedSharedAlbum = normailzeRowAlbum(sharedAlbumList);
+        setSharedAlbumTree(buildAlbumTree(normalizedSharedAlbum));
+      } catch (error) {
+        console.error('Error fetching shared albums:', error);
+      }
     };
     initialize();
   }, []);
@@ -57,40 +76,38 @@ export function AppLayout() {
   const getExistingAlbumNames = (parentId: string): string[] => {
     if (!parentId) {
       // ルートレベルのアルバム名
-      return albumTree.map(album => album.name);
+      return privateAlbumTree.map(album => album.name);
     }
     
-    const parentAlbum = findAlbumById(albumTree, parentId);
+    const parentAlbum = findAlbumById(privateAlbumTree, parentId);
     return parentAlbum?.children?.map(child => child.name) || [];
   };
 
   // アルバム追加
   const handleAddAlbum = async (albumId?: string) => {
+    if (selectedAlbumContext === 'shared' && !canPerformAction('write')) {
+      alert('この操作を行う権限がありません');
+      return;
+    }
     const parentId = albumId || '';
     setCreateModalParentId(parentId);
     setIsCreateModalOpen(true);
   };
 
-  // モーダルからのアルバム作成確認
-  const handleConfirmCreateAlbum = async (albumName: string) => {
-    try {
-      await createAlbum(albumName, createModalParentId);
-      const albumList = await fetchAlbums();
-      const normalizedAlbums = normailzeRowAlbum(albumList);
-      setAlbumTree(buildAlbumTree(normalizedAlbums));
-    } catch (e) {
-      throw new Error("アルバムの作成に失敗しました");
-    }
-  };
-
   const handleRenameAlbum = async (albumId: string, newName: string) => {
-    const found = findAlbumById(albumTree, albumId);
+    if (selectedAlbumContext === 'shared' && !canPerformAction('admin')) {
+      alert('この操作を行う権限がありません');
+      return false;
+    }
+    
+    const targetTree = selectedAlbumContext === 'shared' ? sharedAlbumTree : privateAlbumTree;
+    const found = findAlbumById(targetTree, albumId);
     if (!found) return false;
     
-    // 同名チェック
+    // 同名チェックロジックは既存と同じ
     const parentId = found.parentAlbumId || '';
     const existingNames = getExistingAlbumNames(parentId);
-    const filteredNames = existingNames.filter(name => name !== found.name); // 自分自身は除外
+    const filteredNames = existingNames.filter(name => name !== found.name);
     
     if (filteredNames.includes(newName)) {
       alert('このアルバム名は既に存在します');
@@ -100,9 +117,16 @@ export function AppLayout() {
     try {
       await renameAlbum(albumId, newName);
       
-      const albumList = await fetchAlbums();
-      const normalizedAlbums = normailzeRowAlbum(albumList);
-      setAlbumTree(buildAlbumTree(normalizedAlbums));
+      // 適切なツリーを更新
+      if (selectedAlbumContext === 'shared') {
+        const sharedAlbumList = await fetchSharedAlbums();
+        const normalizedSharedAlbums = normailzeRowAlbum(sharedAlbumList);
+        setSharedAlbumTree(buildAlbumTree(normalizedSharedAlbums));
+      } else {
+        const albumList = await fetchAlbums();
+        const normalizedAlbums = normailzeRowAlbum(albumList);
+        setPrivateAlbumTree(buildAlbumTree(normalizedAlbums));
+      }
       return true;
     } catch (e) {
       alert("アルバム名の変更に失敗しました");
@@ -112,16 +136,27 @@ export function AppLayout() {
 
   // アルバム削除
   const handleDeleteAlbum = async (albumId: string) => {
+    if (selectedAlbumContext === 'shared' && !canPerformAction('admin')) {
+      alert('この操作を行う権限がありません');
+      return;
+    }
+    
     if (!confirm("このアルバムを削除してもよろしいですか？")) return;
     
     try {
       await deleteAlbum(albumId);
       
-      const albumList = await fetchAlbums();
-      const normalizedAlbums = normailzeRowAlbum(albumList);
-      setAlbumTree(buildAlbumTree(normalizedAlbums));
+      // 適切なツリーを更新
+      if (selectedAlbumContext === 'shared') {
+        const sharedAlbumList = await fetchSharedAlbums();
+        const normalizedSharedAlbums = normailzeRowAlbum(sharedAlbumList);
+        setSharedAlbumTree(buildAlbumTree(normalizedSharedAlbums));
+      } else {
+        const albumList = await fetchAlbums();
+        const normalizedAlbums = normailzeRowAlbum(albumList);
+        setPrivateAlbumTree(buildAlbumTree(normalizedAlbums));
+      }
       
-      // 選択中のアルバムだった場合、選択解除
       if (selectedAlbum?.id === albumId) {
         setSelectedAlbum(null);
       }
@@ -130,10 +165,56 @@ export function AppLayout() {
     }
   };
 
+  const handleAddPhoto = () => {
+    if (!selectedAlbum) {
+      alert('写真をアップロードするアルバムを選択してください');
+      return;
+    }
+    
+    if (selectedAlbumContext === 'shared' && !canPerformAction('write')) {
+      alert('この操作を行う権限がありません');
+      return;
+    }
+    
+    setIsUploadModalOpen(true);
+  };
+
+  
+  // 写真削除のハンドラー（AlbumContentsから呼び出される）
+  const handleDeletePhoto = async (photoId: string) => {
+    // AlbumContentsで削除処理が行われた後、
+    // 親コンポーネントの状態も更新する
+    console.log("handleDeletePhoto in AppLayout is fired now")
+    setPhotos(prevPhotos => prevPhotos.filter(photo => photo.id !== photoId));
+  };
+
+  // 複数写真削除のハンドラー
+  const handleDeleteMultiplePhotos = async (photoIds: string[]) => {
+    setPhotos(prevPhotos => prevPhotos.filter(photo => !photoIds.includes(photo.id)));
+  };
+
+  const handleMovePhoto = async (photoId: string, targetAlbumId: string) => {
+    if (selectedAlbumContext === 'shared' && !canPerformAction('write')) {
+      alert('この操作を行う権限がありません');
+      return;
+    }
+    
+    try {
+      await updatePhotoAlbum(photoId, targetAlbumId);
+      if (selectedAlbum) {
+        const albumPhotos = await fetchPhotos(selectedAlbum.id);
+        setPhotos(albumPhotos);
+      }
+    } catch (e) {
+      alert("写真の移動に失敗しました");
+      console.error(e);
+    }
+  };
+
   // アルバム移動 (ドラッグ＆ドロップ)  
   const handleMoveAlbum = async (albumId: string, targetAlbumId: string) => {
     const isDescendant = (albumId: string, potentialDescendantId: string): boolean => {
-      const parent = findAlbumById(albumTree, albumId);
+      const parent = findAlbumById(privateAlbumTree, albumId);
       if (!parent || !parent.children) return false;
 
       return parent.children.some(child => 
@@ -149,8 +230,8 @@ export function AppLayout() {
       }
       
       // 修正: 同名チェックを追加
-      const draggedAlbum = findAlbumById(albumTree, albumId);
-      const targetAlbum = findAlbumById(albumTree, targetAlbumId);
+      const draggedAlbum = findAlbumById(privateAlbumTree, albumId);
+      const targetAlbum = findAlbumById(privateAlbumTree, targetAlbumId);
       
       if (draggedAlbum && targetAlbum) {
         const hasChildWithSameName = targetAlbum.children?.some(child => 
@@ -168,7 +249,7 @@ export function AppLayout() {
         
         const albumList = await fetchAlbums();
         const normalizedAlbums = normailzeRowAlbum(albumList);
-        setAlbumTree(buildAlbumTree(normalizedAlbums));
+        setPrivateAlbumTree(buildAlbumTree(normalizedAlbums));
       } catch (e) {
         alert("アルバムの移動に失敗しました");
         console.error(e);
@@ -176,22 +257,48 @@ export function AppLayout() {
     }
   };
 
-  const handleAddPhoto = () => {
-    if (!selectedAlbum) {
-      alert('写真をアップロードするアルバムを選択してください');
-      return;
+  const handleSelectAlbum = (id: string, isShared: boolean = false) => {
+    if (isShared) {
+      const found = findAlbumById(sharedAlbumTree, id);
+      if (found) {
+        setSelectedAlbum(found);
+        setSelectedAlbumContext('shared');
+      }
+    } else {
+      const found = findAlbumById(privateAlbumTree, id);
+      if (found) {
+        setSelectedAlbum(found);
+        setSelectedAlbumContext('private');
+      }
     }
-    setIsUploadModalOpen(true);
-  };
-
-  const handleSelectFolder = (id: string) => {
-    const found = findAlbumById(albumTree, id);
-    if (found) setSelectedAlbum(found);
   };
 
   // ルートに戻る（全アルバムを表示）
   const handleSelectRoot = () => {
     setSelectedAlbum(null);
+    setSelectedAlbumContext('private');
+  };
+
+  // 権限チェック関数の追加
+  const getCurrentUserPermission = (album: AlbumType | null): 'owner' | 'write' | 'read' | null => {
+    if (!album || selectedAlbumContext === 'private') return 'owner';
+    
+    // 共有アルバムの場合、バックエンドからの権限情報を参照
+    // album.userPermission や album.permission プロパティがあると仮定
+    return album.userPermission || 'read';
+  };
+
+  const canPerformAction = (action: 'write' | 'admin'): boolean => {
+    const permission = getCurrentUserPermission(selectedAlbum);
+    if (!permission) return false;
+    
+    if (action === 'write') {
+      return ['owner', 'write'].includes(permission);
+    }
+    if (action === 'admin') {
+      return permission === 'owner';
+    }
+    return false;
   };
 
   const handleUploadComplete = async () => {
@@ -206,33 +313,15 @@ export function AppLayout() {
     }
   };
 
-  // 写真削除のハンドラー（AlbumContentsから呼び出される）
-  const handleDeletePhoto = async (photoId: string) => {
-    // AlbumContentsで削除処理が行われた後、
-    // 親コンポーネントの状態も更新する
-    console.log("handleDeletePhoto in AppLayout is fired now")
-    setPhotos(prevPhotos => prevPhotos.filter(photo => photo.id !== photoId));
-  };
-
-  // 複数写真削除のハンドラー
-  const handleDeleteMultiplePhotos = async (photoIds: string[]) => {
-    setPhotos(prevPhotos => prevPhotos.filter(photo => !photoIds.includes(photo.id)));
-  };
-
-  const handleMovePhoto = async (photoId: string, targetAlbumId: string) => {
+    // モーダルからのアルバム作成確認
+  const handleConfirmCreateAlbum = async (albumName: string) => {
     try {
-      console.log("handleMovePhoto is fired1")
-      // APIを呼び出してバックエンドで写真のアルバムを更新
-      await updatePhotoAlbum(photoId, targetAlbumId);
-      console.log("handleMovePhoto is fired2")
-      // 写真リストを再読み込み
-      if (selectedAlbum) {
-        const albumPhotos = await fetchPhotos(selectedAlbum.id);
-        setPhotos(albumPhotos);
-      }
+      await createAlbum(albumName, createModalParentId);
+      const albumList = await fetchAlbums();
+      const normalizedAlbums = normailzeRowAlbum(albumList);
+      setPrivateAlbumTree(buildAlbumTree(normalizedAlbums));
     } catch (e) {
-      alert("写真の移動に失敗しました");
-      console.error(e);
+      throw new Error("アルバムの作成に失敗しました");
     }
   };
 
@@ -242,12 +331,18 @@ export function AppLayout() {
       return;
     }
     setIsShareModalOpen(true);
-  }
+  };
 
-  const sharedFolders = [
-    { id: '10', name: 'Team Project' },
-    { id: '11', name: 'Events' },
-  ];
+  const handleConfirmShare = async (email: string, role: 'read' | 'write') => {
+    if (!selectedAlbum) return;
+    
+    try {
+      await shareAlbum(selectedAlbum.id, email, role);
+    } catch (error) {
+      console.error('Error sharing album:', error);
+      throw error;
+    }
+  };
 
   return (
     <Authenticator socialProviders={['google']}>
@@ -256,9 +351,9 @@ export function AppLayout() {
           <SidebarProvider>
             <AppSidebar  
               user={null}
-              albumTree={albumTree}
-              sharedFolders={sharedFolders}
-              onSelectFolder={handleSelectFolder}
+              privateAlbumTree={privateAlbumTree}
+              sharedAlbumTree={sharedAlbumTree}
+              onSelectAlbum={handleSelectAlbum}
               onSelectRoot={handleSelectRoot}
               onAddAlbum={handleAddAlbum}
               onAddPhoto={handleAddPhoto}
@@ -268,6 +363,8 @@ export function AppLayout() {
               onMovePhoto={handleMovePhoto}
               onMoveAlbum={handleMoveAlbum}
               onSignOut={signOut}
+              selectedAlbumContext={selectedAlbumContext}
+              getCurrentUserPermission={getCurrentUserPermission}
             />
             <div className="flex-1 flex flex-col overflow-hidden">
               <div className="border-b p-2 flex items-center">
@@ -303,7 +400,7 @@ export function AppLayout() {
               isOpen={isCreateModalOpen}
               onClose={() => setIsCreateModalOpen(false)}
               onConfirm={handleConfirmCreateAlbum}
-              parentAlbum={createModalParentId ? findAlbumById(albumTree, createModalParentId) : null}
+              parentAlbum={createModalParentId ? findAlbumById(privateAlbumTree, createModalParentId) : null}
               existingNames={getExistingAlbumNames(createModalParentId)}
             />
 
@@ -311,7 +408,7 @@ export function AppLayout() {
               isOpen={isShareModalOpen}
               onClose={() => setIsShareModalOpen(false)}
               album={selectedAlbum}
-              onShare={() => {}}
+              onShare={handleConfirmShare}
             />
           </SidebarProvider>
         </div>

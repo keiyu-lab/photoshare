@@ -1,7 +1,7 @@
 import type { AlbumType } from "@/types";
 import { useState } from "react";
 import { SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
-import { ChevronDown, ChevronRight, Folder, Pencil, PlusCircle, Trash2, Image, Share } from "lucide-react";
+import { ChevronDown, ChevronRight, Folder, Pencil, PlusCircle, Trash2, Image, Share, Eye } from "lucide-react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -13,25 +13,29 @@ import {
 export const buildAlbumTree = (albums: AlbumType[]): AlbumType[] => {
   const map = new Map<string, AlbumType>();
   const roots: AlbumType[] = [];
-
+  if(albums.length < 4)
+    console.log(albums)
   // Map に各アルバムを登録
   for (const album of albums) {
     map.set(album.id, { ...album, children: [] });
   }
-
+  if(albums.length < 4)
+    console.log(map)
   // 親に children を割り当てる
   for (const album of albums) {
     const node = map.get(album.id)!;
-    if (album.parentAlbumId) {
-      const parent = map.get(album.parentAlbumId);
+    if (album.parent_album_id) {
+      const parent = map.get(album.parent_album_id);
       if (parent) {
         parent.children?.push(node);
+      } else {
+        roots.push(node); // 少しおかしいかもしれない。共有アルバムが元のparent_album_idを持ったままこちらにくるのでこうしないとプッシュできない
       }
     } else {
-      roots.push(node); // parentAlbumId === null → root
+      roots.push(node);
     }
   }
-
+  
   return roots;
 }
 
@@ -61,19 +65,28 @@ export const flattenAlbums = (tree: AlbumType[]): AlbumType[] => {
 };
 
 export const normailzeRowAlbum = (albumList: any) => {
-  const normalizedAlbums = albumList.map((a:any) => ({
-        id: a.id,
-        name: a.name,
-        parentAlbumId: a.parent_album_id,
-        ownerUserId: a.owner_user_id,
+  const normalizedAlbums = albumList.map((album: any) => ({
+    id: album.id,
+    name: album.name,
+    parent_album_id: album.parent_album_id || album.parentAlbumId || null,
+    owner_user_id: album.owner_user_id || album.ownerUserId,
+    children: album.children || [],
+    userPermission: album.userPermission || album.role || 'read',
+    isShared: album.isShared ?? (album.role !== 'owner'),
+    sharedWith: album.sharedWith || [],
+    owner: album.owner,
+    role: album.role, // 後方互換性
+    _count: album._count,
+    created_at: album.created_at,
+    updated_at: album.updated_at,
   }));
   return normalizedAlbums;
-}
+};
 
 export const AlbumTreeNode = ({ 
   album, 
   level = 0, 
-  onSelectFolder,
+  onSelectAlbum,
   onAddAlbum,
   onAddPhoto,
   onRenameAlbum,
@@ -82,11 +95,13 @@ export const AlbumTreeNode = ({
   onMoveAlbum,
   onMovePhoto,
   isDragging = false,
-  isDropTarget = false
+  isDropTarget = false,
+  isSharedAlbum = false,        
+  userPermission = 'owner'      
 }: { 
   album: AlbumType;
   level?: number;
-  onSelectFolder: (id: string) => void;
+  onSelectAlbum: (id: string) => void;
   onAddAlbum?: (parentId: string) => void;
   onAddPhoto?: (albumId: string) => void;
   onRenameAlbum?: (albumId: string, newName: string) => Promise<boolean>; 
@@ -96,11 +111,16 @@ export const AlbumTreeNode = ({
   onMovePhoto?: (photoId: string, targetAlbumId: string) => void;
   isDragging?: boolean;
   isDropTarget?: boolean;
+  isSharedAlbum?: boolean;      // 新規追加
+  userPermission?: 'owner' | 'write' | 'read';  // 新規追加
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isRenaming, setIsRenaming] = useState(false);
   const [editingName, setEditingName] = useState(album.name);
   const hasChildren = album.children && album.children.length > 0;
+
+  const canWrite = userPermission === 'owner' || userPermission === 'write';
+  const canAdmin = userPermission === 'owner';
 
   const toggleExpand = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -110,18 +130,48 @@ export const AlbumTreeNode = ({
   
   const handleAddAlbum = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (isSharedAlbum && !canWrite) {
+      alert('この操作を行う権限がありません');
+      return;
+    }
     if (onAddAlbum) onAddAlbum(album.id);
   };
   
   const handleAddPhoto = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (isSharedAlbum && !canWrite) {
+      alert('この操作を行う権限がありません');
+      return;
+    }
     if (onAddPhoto) onAddPhoto(album.id);
   };
-  
- const handleRenameAlbum = (e: React.MouseEvent) => {
+
+  const handleRenameAlbum = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (isSharedAlbum && !canAdmin) {
+      alert('この操作を行う権限がありません');
+      return;
+    }
     setIsRenaming(true);
     setEditingName(album.name);
+  };
+
+  const handleDeleteAlbum = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isSharedAlbum && !canAdmin) {
+      alert('この操作を行う権限がありません');
+      return;
+    }
+    if (onDeleteAlbum) onDeleteAlbum(album.id);
+  };
+
+  const handleShareAlbum = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isSharedAlbum && !canAdmin) {
+      alert('この操作を行う権限がありません');
+      return;
+    }
+    if (onShareAlbum) onShareAlbum(album.id);
   };
 
   const handleConfirmRename = async () => {
@@ -151,16 +201,6 @@ export const AlbumTreeNode = ({
     } else if (e.key === 'Escape') {
       handleCancelRename();
     }
-  };
-  
-  const handleDeleteAlbum = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onDeleteAlbum) onDeleteAlbum(album.id);
-  };
-
-  const handleShareAlbum = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onShareAlbum) onShareAlbum(album.id);
   };
   
   // ドラッグ＆ドロップイベントハンドラ
@@ -244,7 +284,7 @@ export const AlbumTreeNode = ({
         <ContextMenu>
           <ContextMenuTrigger>
             <SidebarMenuButton
-              onClick={() => onSelectFolder(album.id)} 
+              onClick={() => onSelectAlbum(album.id)} 
               className="flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
               style={{ paddingLeft: `${(level * 16) + 8}px` }}
               draggable
@@ -281,29 +321,52 @@ export const AlbumTreeNode = ({
               )}
             </SidebarMenuButton>
           </ContextMenuTrigger>
-          <ContextMenuContent className="w-48">
-            <ContextMenuItem onClick={handleAddAlbum}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              <span>アルバム追加</span>
-            </ContextMenuItem>
-            <ContextMenuItem onClick={handleAddPhoto}>
-              <Image className="mr-2 h-4 w-4" />
-              <span>写真追加</span>
-            </ContextMenuItem>
+        <ContextMenuContent className="w-48">
+          {canWrite && (
+            <>
+              <ContextMenuItem onClick={handleAddAlbum}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                <span>アルバム追加</span>
+              </ContextMenuItem>
+              <ContextMenuItem onClick={handleAddPhoto}>
+                <Image className="mr-2 h-4 w-4" />
+                <span>写真追加</span>
+              </ContextMenuItem>
+            </>
+          )}
+          {canAdmin && (
+            <>
             <ContextMenuItem onClick={handleShareAlbum}>
               <Share className="mr-2 h-4 w-4" />
               <span>アルバム共有</span>
             </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem onClick={handleRenameAlbum}>
-              <Pencil className="mr-2 h-4 w-4" />
-              <span>アルバム名変更</span>
+            <ContextMenuItem >
+    
+              <span>共有ユーザ</span>
             </ContextMenuItem>
-            <ContextMenuItem onClick={handleDeleteAlbum} className="text-destructive focus:text-destructive">
-              <Trash2 className="mr-2 h-4 w-4" />
-              <span>アルバム削除</span>
+            </>
+          )}
+          {(canWrite || canAdmin) && <ContextMenuSeparator />}
+          {canAdmin && (
+            <>
+              <ContextMenuItem onClick={handleRenameAlbum}>
+                <Pencil className="mr-2 h-4 w-4" />
+                <span>アルバム名変更</span>
+              </ContextMenuItem>
+              <ContextMenuItem onClick={handleDeleteAlbum} className="text-destructive focus:text-destructive">
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>アルバム削除</span>
+              </ContextMenuItem>
+            </>
+          )}
+          {/* 読み取り専用ユーザーには何も表示しない、または閲覧専用メニューを表示 */}
+          {!canWrite && !canAdmin && (
+            <ContextMenuItem disabled>
+              <Eye className="mr-2 h-4 w-4" />
+              <span>閲覧専用</span>
             </ContextMenuItem>
-          </ContextMenuContent>
+          )}
+        </ContextMenuContent>
         </ContextMenu>
       </SidebarMenuItem>
       
@@ -314,13 +377,16 @@ export const AlbumTreeNode = ({
               key={child.id} 
               album={child} 
               level={level + 1}
-              onSelectFolder={onSelectFolder}
+              onSelectAlbum={onSelectAlbum}
               onAddAlbum={onAddAlbum}
               onAddPhoto={onAddPhoto}
               onRenameAlbum={onRenameAlbum}
               onDeleteAlbum={onDeleteAlbum}
+              onShareAlbum={onShareAlbum}
               onMoveAlbum={onMoveAlbum}
               onMovePhoto={onMovePhoto}
+              isSharedAlbum={isSharedAlbum}                    // 親から継承
+              userPermission={child.userPermission || userPermission} 
             />
           ))}
         </div>

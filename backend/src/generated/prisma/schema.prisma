@@ -15,12 +15,14 @@ datasource db {
 }
 
 model User {
-  id           String        @id // congito_subを使う
-  name         String?
-  email        String        @unique
-  albums       Album[]       @relation("UserAlbums")
-  photos       Photo[]       @relation("UserPhotos")
-  albumMembers AlbumMember[]
+  id             String        @id // congito_subを使う
+  name           String?
+  email          String        @unique
+  albums         Album[]       @relation("UserAlbums")
+  photos         Photo[]       @relation("UserPhotos")
+  albumMembers   AlbumMember[]
+  sentShares     AlbumShare[]  @relation("SentShares")
+  receivedShares AlbumShare[]  @relation("ReceivedShares")
 }
 
 model Album {
@@ -32,7 +34,8 @@ model Album {
   owner_user_id   String
   owner           User          @relation("UserAlbums", fields: [owner_user_id], references: [id])
   photos          Photo[]
-  sharedUsers     AlbumMember[]
+  albumMembers    AlbumMember[]
+  albumShares     AlbumShare[]
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt
   is_deleted      Boolean       @default(false)
@@ -45,13 +48,15 @@ model AlbumMember {
   user     User   @relation(fields: [user_id], references: [id])
   user_id  String
   role     String
+
+  @@unique([album_id, user_id]) // 同一アルバムに同一ユーザーは一つのロールのみ
 }
 
 model Photo {
   id                  String   @id @default(uuid())
   album_id            String
   album               Album    @relation(fields: [album_id], references: [id])
-  s3_key              String
+  s3_key              String   @unique
   name                String
   meta                String?
   uploaded_by_user_id String
@@ -59,4 +64,25 @@ model Photo {
   created_at          DateTime @default(now())
   updated_at          DateTime @updatedAt
   is_deleted          Boolean  @default(false)
+}
+
+model AlbumShare {
+  id                 String   @id @default(uuid())
+  album_id           String
+  album              Album    @relation(fields: [album_id], references: [id], onDelete: Cascade)
+  invited_by_user_id String
+  invited_by_user    User     @relation("SentShares", fields: [invited_by_user_id], references: [id])
+  invited_email      String
+  invited_user_id    String?
+  invited_user       User?    @relation("ReceivedShares", fields: [invited_user_id], references: [id])
+  role               String
+  invitation_token   String   @unique
+  status             String   @default("pending") // "pending", "accepted", "expired", "revoked"
+  expires_at         DateTime
+  invited_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@index([album_id])
+  @@index([invited_email])
+  @@index([invitation_token])
 }

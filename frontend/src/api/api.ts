@@ -1,3 +1,4 @@
+import type { AlbumType } from '@/types';
 import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
 
 const API_BASE_URL =  'http://localhost:3001';
@@ -25,7 +26,7 @@ export const syncUserToBackend = async () => {
   catch (e) { console.log(e); }
 };
 
-export const fetchAlbums = async () => {
+export const fetchAlbums = async (): Promise<AlbumType[]> => {
   try {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
 
@@ -257,8 +258,9 @@ export const shareAlbum = async (albumId: string, email: string, role: 'read' | 
         role
       })
     });
-
+    
     if (!response.ok) {
+      console.log(response)
       throw new Error('Failed to share album');
     }
 
@@ -294,7 +296,7 @@ export const acceptInvitation = async (token: string) => {
 };
 
 // 共有されたアルバム一覧を取得
-export const fetchSharedAlbums = async () => {
+export const fetchSharedAlbums = async (): Promise<AlbumType[]> => {
   const { idToken } = (await fetchAuthSession()).tokens ?? {};
   try {
     const response = await fetch(`${API_BASE_URL}/albums/shared`, {
