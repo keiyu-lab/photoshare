@@ -211,6 +211,29 @@ export function AppLayout() {
     }
   };
 
+  const handleMoveMultiplePhotos = async (photoIds: string[], targetAlbumId: string) => {
+  if (selectedAlbumContext === 'shared' && !canPerformAction('write')) {
+    alert('この操作を行う権限がありません');
+    return;
+  }
+  
+  try {
+    // 複数の写真を順次移動
+    for (const photoId of photoIds) {
+      await updatePhotoAlbum(photoId, targetAlbumId);
+    }
+    
+    // 移動完了後、現在のアルバムの写真を再読み込み
+    if (selectedAlbum) {
+      const albumPhotos = await fetchPhotos(selectedAlbum.id);
+      setPhotos(albumPhotos);
+    }
+  } catch (e) {
+    alert("写真の移動に失敗しました");
+    console.error(e);
+  }
+};
+
   // アルバム移動 (ドラッグ＆ドロップ)  
   const handleMoveAlbum = async (albumId: string, targetAlbumId: string) => {
     const isDescendant = (albumId: string, potentialDescendantId: string): boolean => {
@@ -229,7 +252,7 @@ export function AppLayout() {
         return;
       }
       
-      // 修正: 同名チェックを追加
+      // 同名チェック
       const draggedAlbum = findAlbumById(privateAlbumTree, albumId);
       const targetAlbum = findAlbumById(privateAlbumTree, targetAlbumId);
       
@@ -284,7 +307,6 @@ export function AppLayout() {
     if (!album || selectedAlbumContext === 'private') return 'owner';
     
     // 共有アルバムの場合、バックエンドからの権限情報を参照
-    // album.userPermission や album.permission プロパティがあると仮定
     return album.userPermission || 'read';
   };
 
@@ -353,6 +375,7 @@ export function AppLayout() {
               user={null}
               privateAlbumTree={privateAlbumTree}
               sharedAlbumTree={sharedAlbumTree}
+              selectedAlbumId={selectedAlbum?.id}
               onSelectAlbum={handleSelectAlbum}
               onSelectRoot={handleSelectRoot}
               onAddAlbum={handleAddAlbum}
@@ -382,8 +405,11 @@ export function AppLayout() {
                     photos={photos}
                     keyword={searchKeyword}
                     onMovePhoto={handleMovePhoto}
+                    onMoveMultiplePhotos={handleMoveMultiplePhotos} 
                     onDeletePhoto={handleDeletePhoto}
                     onDeleteMultiplePhotos={handleDeleteMultiplePhotos}
+                    privateAlbumTree={privateAlbumTree}
+                    sharedAlbumTree={sharedAlbumTree}
                   />
                 </div>
               </main>

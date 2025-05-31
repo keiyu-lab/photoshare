@@ -1,14 +1,14 @@
 export interface AlbumType {
   id: string;
   name: string;
-  parent_album_id: string | null; // APIのスネークケースに合わせる
-  owner_user_id: string;          // APIのスネークケースに合わせる
+  parent_album_id: string | null;
+  owner_user_id: string;         
   children?: AlbumType[];
-  userPermission: 'owner' | 'write' | 'read'; // 必須フィールドに変更
-  isShared: boolean;              // 必須フィールドに変更
+  userPermission: 'owner' | 'write' | 'read'; 
+  isShared: boolean;              
   sharedWith?: SharedUser[];
   owner?: UserType;
-  role?: 'owner' | 'write' | 'read'; // /shared エンドポイント用
+  role?: 'owner' | 'write' | 'read';
   _count?: {
     photos: number;
     sub_albums: number;

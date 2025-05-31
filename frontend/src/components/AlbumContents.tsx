@@ -17,8 +17,11 @@ interface AlbumContentsProps {
   photos: Photo[];
   keyword: string;
   onMovePhoto?: (photoId: string, targetAlbumId: string) => void;
+  onMoveMultiplePhotos: (photoIds: string[], targetAlbumId: string) => void; 
   onDeletePhoto: (photoId: string) => void;
   onDeleteMultiplePhotos?: (photoIds: string[]) => void;
+  privateAlbumTree: AlbumType[]; 
+  sharedAlbumTree: AlbumType[]; 
 }
 
 export default function AlbumContents({ 
@@ -26,8 +29,11 @@ export default function AlbumContents({
   photos, 
   keyword, 
   onMovePhoto,
+  onMoveMultiplePhotos,
   onDeletePhoto,
   onDeleteMultiplePhotos,
+  sharedAlbumTree, 
+  privateAlbumTree, 
 }: AlbumContentsProps) 
 {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

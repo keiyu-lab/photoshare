@@ -1,5 +1,5 @@
 // src/components/AppSidebar.tsx
-import { Folder, Share, Plus, User, Settings, Home as HomeIcon, Eye, Download, LogOutIcon, PenIcon } from "lucide-react";
+import { Folder, Share, Plus, User, Settings, Home as HomeIcon, Eye, Download, LogOutIcon, PenIcon, CodeSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -19,13 +19,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { updateUserName } from "@/api/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type AppSidebarProps = {
   user?: UserType;
   privateAlbumTree: AlbumType[];
   sharedAlbumTree: AlbumType[];
-  onSelectAlbum: (id: string, isShared?: boolean) => void;  // isShared パラメータ追加
+  selectedAlbumId?: string; 
+  onSelectAlbum: (id: string, isShared?: boolean) => void;
   onSelectRoot: () => void;
   onAddAlbum?: (parentId: string) => void;
   onAddPhoto?: (albumId: string) => void;
@@ -35,14 +36,15 @@ type AppSidebarProps = {
   onMoveAlbum?: (albumId: string, targetAlbumId: string) => void;
   onMovePhoto?: (photoId: string, targetAlbumId: string) => void;
   onSignOut?: () => void;
-  selectedAlbumContext?: 'private' | 'shared';  // 新規追加
-  getCurrentUserPermission?: (album: AlbumType | null) => 'owner' | 'write' | 'read' | null;  // 新規追加
+  selectedAlbumContext?: 'private' | 'shared'; 
+  getCurrentUserPermission?: (album: AlbumType | null) => 'owner' | 'write' | 'read' | null;
 };
 
 export function AppSidebar({ 
   user,
   privateAlbumTree, 
   sharedAlbumTree, 
+  selectedAlbumId,
   onSelectAlbum,
   onSelectRoot,
   onAddAlbum,
@@ -61,24 +63,24 @@ export function AppSidebar({
   // ドロップターゲットのアルバムID
   const [dropTargetId, setDropTargetId] = useState<string | null>(null);
 
-  // ドラッグ開始
+  // ドラッグ開始時の処理
   const handleDragStart = (albumId: string) => {
     setDraggedAlbumId(albumId);
   };
 
-  // ドラッグ終了
+  // ドラッグ終了時の処理
   const handleDragEnd = () => {
     setDraggedAlbumId(null);
     setDropTargetId(null);
   };
 
-  // ドロップターゲットの設定
-  const handleDragOver = (albumId: string) => {
-    if (draggedAlbumId === albumId) return; // 自分自身へのドラッグは無視
-    setDropTargetId(albumId);
+  // ドロップターゲット設定
+  const handleDragEnter = (albumId: string) => {
+    if (draggedAlbumId !== albumId) {
+      setDropTargetId(albumId);
+    }
   };
 
-  // ドロップターゲットのクリア
   const handleDragLeave = () => {
     setDropTargetId(null);
   };
@@ -97,7 +99,10 @@ export function AppSidebar({
         <AlbumTreeNode
           key={album.id}
           album={album}
-          onSelectAlbum={(id) => onSelectAlbum(id, true)}  // 共有アルバムフラグを true に
+          selectedAlbumId={selectedAlbumId}
+          draggedAlbumId={draggedAlbumId}
+          dropTargetId={dropTargetId} 
+          onSelectAlbum={(id) => onSelectAlbum(id, true)}
           onAddAlbum={onAddAlbum}
           onAddPhoto={onAddPhoto}
           onRenameAlbum={onRenameAlbum}
@@ -105,21 +110,26 @@ export function AppSidebar({
           onShareAlbum={onShareAlbum}
           onMoveAlbum={handleMoveAlbum}
           onMovePhoto={onMovePhoto}
-          isDragging={draggedAlbumId === album.id}
-          isDropTarget={dropTargetId === album.id}
-          isSharedAlbum={true}  // 共有アルバムフラグ
-          userPermission={album.userPermission || 'read'}  // 権限情報
+          onDragStart={handleDragStart} 
+          onDragEnd={handleDragEnd} 
+          onDragEnter={handleDragEnter} 
+          onDragLeave={handleDragLeave} 
+          isSharedAlbum={true}
+          userPermission={album.userPermission || 'read'}
         />
       ));
     };
 
   // プライベートアルバム用のレンダリング関数
   const renderAlbumTree = (albums: AlbumType[]) => {
-    return albums.map((album) => (
-      <AlbumTreeNode
+    return albums.map((album) => {
+      return <AlbumTreeNode
         key={album.id}
         album={album}
-        onSelectAlbum={(id) => onSelectAlbum(id, false)}  // プライベートアルバムフラグを false に
+        selectedAlbumId={selectedAlbumId}
+        draggedAlbumId={draggedAlbumId}
+        dropTargetId={dropTargetId}  
+        onSelectAlbum={(id) => onSelectAlbum(id, false)}
         onAddAlbum={onAddAlbum}
         onAddPhoto={onAddPhoto}
         onRenameAlbum={onRenameAlbum}
@@ -127,12 +137,15 @@ export function AppSidebar({
         onShareAlbum={onShareAlbum}
         onMoveAlbum={handleMoveAlbum}
         onMovePhoto={onMovePhoto}
-        isDragging={draggedAlbumId === album.id}
-        isDropTarget={dropTargetId === album.id}
-        isSharedAlbum={false}  // プライベートアルバムフラグ
+        onDragStart={handleDragStart} 
+        onDragEnd={handleDragEnd} 
+        onDragEnter={handleDragEnter} 
+        onDragLeave={handleDragLeave} 
+        isSharedAlbum={false}
         userPermission="owner"  // プライベートアルバムは常にowner
       />
-    ));
+    }
+    );
   };
 
   return (
@@ -147,9 +160,8 @@ export function AppSidebar({
         <SidebarGroup>
           <SidebarGroupLabel
             className="flex justify-between items-center px-2 py-1.5 text-muted-foreground text-xs uppercase font-medium cursor-pointer hover:text-foreground"
-            onClick={onSelectRoot} // ルート（プライベートアルバムのトップ）を選択
+            onClick={onSelectRoot} // ルートを選択
           >
-            {/* ラベルを「My Private Albums」などに変更することを検討 */}
             <span>My Private Albums</span>
             <SidebarMenuButton className="h-5 w-5" onClick={(e) => {
               e.stopPropagation();

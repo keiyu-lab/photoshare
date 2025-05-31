@@ -1,5 +1,5 @@
 import type { AlbumType } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
 import { ChevronDown, ChevronRight, Folder, Pencil, PlusCircle, Trash2, Image, Share, Eye } from "lucide-react";
 import {
@@ -75,7 +75,7 @@ export const normailzeRowAlbum = (albumList: any) => {
     isShared: album.isShared ?? (album.role !== 'owner'),
     sharedWith: album.sharedWith || [],
     owner: album.owner,
-    role: album.role, // 後方互換性
+    role: album.role,
     _count: album._count,
     created_at: album.created_at,
     updated_at: album.updated_at,
@@ -86,6 +86,9 @@ export const normailzeRowAlbum = (albumList: any) => {
 export const AlbumTreeNode = ({ 
   album, 
   level = 0, 
+  selectedAlbumId, 
+  draggedAlbumId,  
+  dropTargetId,  
   onSelectAlbum,
   onAddAlbum,
   onAddPhoto,
@@ -94,13 +97,18 @@ export const AlbumTreeNode = ({
   onShareAlbum,
   onMoveAlbum,
   onMovePhoto,
-  isDragging = false,
-  isDropTarget = false,
+  onDragStart,
+  onDragEnd,
+  onDragEnter,
+  onDragLeave,
   isSharedAlbum = false,        
   userPermission = 'owner'      
 }: { 
   album: AlbumType;
   level?: number;
+  selectedAlbumId?: string; 
+  draggedAlbumId?: string | null;
+  dropTargetId?: string | null;
   onSelectAlbum: (id: string) => void;
   onAddAlbum?: (parentId: string) => void;
   onAddPhoto?: (albumId: string) => void;
@@ -109,10 +117,15 @@ export const AlbumTreeNode = ({
   onShareAlbum?: (albumId: string) => void;
   onMoveAlbum?: (albumId: string, targetAlbumId: string) => void;
   onMovePhoto?: (photoId: string, targetAlbumId: string) => void;
+  onDragStart?: (albumId: string) => void;
+  onDragEnd?: () => void; 
+  onDragEnter?: (albumId: string) => void;
+  onDragLeave?: () => void; 
   isDragging?: boolean;
   isDropTarget?: boolean;
-  isSharedAlbum?: boolean;      // 新規追加
-  userPermission?: 'owner' | 'write' | 'read';  // 新規追加
+  isSelected?: boolean;
+  isSharedAlbum?: boolean;      
+  userPermission?: 'owner' | 'write' | 'read'; 
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isRenaming, setIsRenaming] = useState(false);
@@ -122,11 +135,17 @@ export const AlbumTreeNode = ({
   const canWrite = userPermission === 'owner' || userPermission === 'write';
   const canAdmin = userPermission === 'owner';
 
+  // このノード自身の状態を判断
+  const amISelected = selectedAlbumId === album.id;
+  const amIDragging = draggedAlbumId === album.id;
+  const amIDropTarget = dropTargetId === album.id && draggedAlbumId !== album.id; // 自分自身へのドロップはターゲットにしない
+
+
   const toggleExpand = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(!isExpanded);
   };
-
+ 
   
   const handleAddAlbum = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -203,94 +222,125 @@ export const AlbumTreeNode = ({
     }
   };
   
-  // ドラッグ＆ドロップイベントハンドラ
-  const handleDragStart = (e: React.DragEvent) => {
+  const handleNodeDragStart = (e: React.DragEvent) => {
     e.stopPropagation();
-    // albumIdをドラッグデータに設定
     e.dataTransfer.setData('application/album-id', album.id);
     e.dataTransfer.effectAllowed = 'move';
+    if (onDragStart) { // AppSidebar から渡された onDragStart を呼び出す
+      onDragStart(album.id);
+    }
+  };
+
+  const handleNodeDragEnd = (e: React.DragEvent) => {
+    e.stopPropagation();
+    if (onDragEnd) { // AppSidebar から渡された onDragEnd を呼び出す
+      onDragEnd();
+    }
   };
   
- const handleDragOver = (e: React.DragEvent) => {
+  const handleNodeDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    const draggedAlbumId = e.dataTransfer.types.includes('application/album-id') 
-      ? e.dataTransfer.getData('application/album-id') 
-      : null;
-    
-    // 同名チェックと自分自身へのドロップチェック
-    if (draggedAlbumId === album.id) {
+    if (draggedAlbumId && draggedAlbumId === album.id) { // 自分自身の上はドロップ不可
       e.dataTransfer.dropEffect = 'none';
       return;
     }
-
-    // 同名の子アルバムがある場合はドロップを無効化
-    // ここでは一旦スキップし、ドロップ時にチェック
-    //const hasChildWithSameName = album.children?.some(child => {
-    //  return false;
-    //});
-
     e.dataTransfer.dropEffect = 'move';
   };
+
+  const handleNodeDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const currentDraggedAlbumId = e.dataTransfer.types.includes('application/album-id')
+      ? e.dataTransfer.getData('application/album-id')
+      : null;
+    const currentDraggedPhotoId = e.dataTransfer.types.includes('application/photo-id');
+
+    // 自分自身へのドロップや、ドラッグされていない場合は何もしない
+    if (currentDraggedAlbumId === album.id || (!currentDraggedAlbumId && !currentDraggedPhotoId)) {
+        return;
+    }
+    
+    if (onDragEnter) { // AppSidebar から渡された onDragEnter を呼び出す
+      onDragEnter(album.id);
+    }
+  };
+
+  const handleNodeDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    if (e.clientX < rect.left || e.clientX >= rect.right || e.clientY < rect.top || e.clientY >= rect.bottom) {
+        if (onDragLeave) { // AppSidebar から渡された onDragLeave を呼び出す
+            onDragLeave();
+        }
+    }
+  };
   
-  const handleDrop = (e: React.DragEvent) => {
+  const handleNodeDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    const draggedAlbumId = e.dataTransfer.getData('application/album-id');
+    const droppedAlbumId = e.dataTransfer.getData('application/album-id');
+    if (droppedAlbumId === album.id) return; // 自分自身へのドロップは無視
     
-    if (draggedAlbumId === album.id) return;
-    
-    // 同名チェック
-    if (draggedAlbumId && onMoveAlbum) {
-      // 現在のアルバムツリーから移動対象のアルバムを検索
-      const findDraggedAlbum = (tree: AlbumType[], targetId: string): AlbumType | null => {
-        for (const item of tree) {
-          if (item.id === targetId) return item;
-          if (item.children) {
-            const found = findDraggedAlbum(item.children, targetId);
-            if (found) return found;
-          }
-        }
-        return null;
-      };
-
-      onMoveAlbum(draggedAlbumId, album.id);
+    if (droppedAlbumId && onMoveAlbum) {
+      onMoveAlbum(droppedAlbumId, album.id);
     }
 
-    const draggedPhotoId = e.dataTransfer.getData('application/photo-id');
-    const draggedPhotoName = e.dataTransfer.getData('application/photo-name');
-    
-    if (draggedPhotoId && onMovePhoto) {
-      if (confirm(`"${draggedPhotoName}" を "${album.name}" アルバムに移動しますか？`)) {
-        onMovePhoto(draggedPhotoId, album.id);
+    const droppedPhotoId = e.dataTransfer.getData('application/photo-id');
+    const droppedPhotoName = e.dataTransfer.getData('application/photo-name');
+    if (droppedPhotoId && onMovePhoto) {
+      if (confirm(`"${droppedPhotoName}" を "${album.name}" アルバムに移動しますか？`)) {
+        onMovePhoto(droppedPhotoId, album.id);
       }
     }
+    // ドロップ後、AppSidebar側のdropTargetIdをクリアするためにonDragLeaveを呼ぶか、
+    // onDragEndでdropTargetIdをクリアするならそれでも良い
+    if (onDragLeave) onDragLeave(); 
   };
 
-  // ドラッグターゲット時の強調
-  const itemClassName = `w-full transition-all duration-200 ${
-    isDragging ? 'opacity-40 scale-95' : ''
-  } ${
-    isDropTarget
-      ? 'bg-blue-500 bg-opacity-30 dark:bg-blue-400/30 border-4 border-blue-500 rounded-lg shadow-2xl ring-4 ring-blue-400 transform scale-110'
-      : ''
+  // スタイルクラスの決定
+  const getDynamicItemClassName = () => {
+    let classes = "flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground";
+    if (amISelected) {
+      classes += " bg-accent text-accent-foreground font-semibold"; // 例: 選択時のスタイル
+    }
+    if (amIDropTarget) {
+      classes += " bg-blue-100 dark:bg-blue-900/30 ring-2 ring-blue-300"; //例: ドロップターゲットのスタイル
+    }
+    // isDragging は SidebarMenuItem の親 div に適用した方が良いかもしれない
+    // ここでは SidebarMenuButton に適用
+    if (amIDragging) {
+        // classes += " opacity-40"; // ドラッグ中のスタイル (SidebarMenuButton自体に適用する場合)
+    }
+    return classes;
+  };
+  
+  // SidebarMenuItem の親 div (一番外側のdiv) にドラッグ中のスタイルを適用
+  const outerDivClassName = `w-full transition-all duration-200 ${
+    amIDragging ? 'opacity-40 scale-95' : ''
   }`;
 
+
+
+
   return (
-    <div className={itemClassName}>
+    <div className={outerDivClassName}>
       <SidebarMenuItem>
         <ContextMenu>
           <ContextMenuTrigger>
             <SidebarMenuButton
               onClick={() => onSelectAlbum(album.id)} 
-              className="flex w-full items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+              className={getDynamicItemClassName()}
               style={{ paddingLeft: `${(level * 16) + 8}px` }}
-              draggable
-              onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
+              draggable={canAdmin || !isSharedAlbum} // 共有アルバムで権限がない場合
+              onDragStart={handleNodeDragStart}
+              onDragEnd={handleNodeDragEnd}
+              onDragOver={handleNodeDragOver}
+              onDragEnter={handleNodeDragEnter}
+              onDragLeave={handleNodeDragLeave}
+              onDrop={handleNodeDrop}
             >
               {hasChildren && (
                 <button 
@@ -373,6 +423,9 @@ export const AlbumTreeNode = ({
               key={child.id} 
               album={child} 
               level={level + 1}
+              selectedAlbumId={selectedAlbumId}
+              draggedAlbumId={draggedAlbumId} 
+              dropTargetId={dropTargetId} 
               onSelectAlbum={onSelectAlbum}
               onAddAlbum={onAddAlbum}
               onAddPhoto={onAddPhoto}
@@ -381,7 +434,11 @@ export const AlbumTreeNode = ({
               onShareAlbum={onShareAlbum}
               onMoveAlbum={onMoveAlbum}
               onMovePhoto={onMovePhoto}
-              isSharedAlbum={isSharedAlbum}                    // 親から継承
+              onDragStart={onDragStart} 
+              onDragEnd={onDragEnd} 
+              onDragEnter={onDragEnter} 
+              onDragLeave={onDragLeave} 
+              isSharedAlbum={isSharedAlbum}                   
               userPermission={child.userPermission || userPermission} 
             />
           ))}
