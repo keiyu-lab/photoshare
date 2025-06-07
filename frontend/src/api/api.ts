@@ -1,5 +1,6 @@
 import type { AlbumType } from '@/types';
 import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
+import { AwardIcon } from 'lucide-react';
 
 const API_BASE_URL =  'http://localhost:3001';
 
@@ -154,6 +155,7 @@ export const uploadPhoto = async (file: File, parentAlbumId: string) => {
     }
 };
 
+// ベクトル検索
 export const searchPhotos = async (query: string, limit: number = 20) => {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
 
@@ -168,6 +170,7 @@ export const searchPhotos = async (query: string, limit: number = 20) => {
         });
 
         if (!res.ok) throw new Error('Search failed');
+      
         return await res.json();
     } catch (e) {
         console.error(e);

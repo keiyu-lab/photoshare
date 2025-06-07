@@ -1,12 +1,22 @@
 // utils/vectorSearch.ts
 import { PrismaClient } from '../generated/prisma/client';
-
-const prisma = new PrismaClient();
-
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 interface SearchResult {
   photo: any;
   similarity: number;
 }
+
+const prisma = new PrismaClient();
+
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY!,
+    secretAccessKey: process.env.AWS_SECRET_KEY!,
+  },
+});
 
 // コサイン類似度を計算
 function cosineSimilarity(vecA: number[], vecB: number[]): number {
@@ -34,16 +44,18 @@ export async function searchSimilarPhotos(
   limit: number = 20
 ): Promise<SearchResult[]> {
   try {
-    // ユーザーの写真と埋め込みを取得
+    // ユーザーの写真と埋め込みを取得（uploaderも含める）
     const photosWithEmbeddings = await prisma.photo.findMany({
       where: {
         uploaded_by_user_id: userId,
         embedding: {
           isNot: null
-        }
+        },
+        is_deleted: false
       },
       include: {
-        embedding: true
+        embedding: true,
+        uploader: true // uploaderを含める
       }
     });
 
@@ -53,10 +65,33 @@ export async function searchSimilarPhotos(
         photo,
         similarity: cosineSimilarity(queryVector, photo.embedding!.vector)
       }))
-      .sort((a, b) => b.similarity - a.similarity) // 降順でソート
+      .sort((a, b) => b.similarity - a.similarity)
       .slice(0, limit);
 
-    return results;
+    // 署名付きURLを生成
+    const resultsWithUrls = await Promise.all(
+      results.map(async (result) => {
+        const command = new GetObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME!,
+          Key: result.photo.s3_key,
+          ResponseContentDisposition: `attachment; filename=${result.photo.name}`,
+        });
+
+        const url = await getSignedUrl(s3, command, { expiresIn: 60 * 60 });
+
+        return {
+          ...result,
+          photo: {
+            ...result.photo,
+            url: url
+          }
+        };
+      })
+    );
+
+    console.log("ベクトル検索結果：", resultsWithUrls);
+
+    return resultsWithUrls;
   } catch (error) {
     console.error('Error searching similar photos:', error);
     throw error;

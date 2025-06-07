@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { AlbumType, Photo } from '@/types';
 import { GridIcon, ListIcon, EllipsisIcon, Download, Search, Trash, Eye, X, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,9 @@ interface AlbumContentsProps {
   onDeleteMultiplePhotos?: (photoIds: string[]) => void;
   privateAlbumTree: AlbumType[]; 
   sharedAlbumTree: AlbumType[]; 
+  isVectorSearchMode?: boolean;
+  sortBy: 'name' | 'date' | 'similarity';
+  sortOrder: 'asc' | 'desc';
 }
 
 export default function AlbumContents({ 
@@ -34,6 +37,9 @@ export default function AlbumContents({
   onDeleteMultiplePhotos,
   sharedAlbumTree, 
   privateAlbumTree, 
+  isVectorSearchMode,
+  sortBy,
+  sortOrder,
 }: AlbumContentsProps) 
 {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -66,19 +72,51 @@ export default function AlbumContents({
     };
   }, [photos, album]);
 
+  
+  const sortPhotos = (photos: Photo[]): Photo[] => {
+    return [...photos].sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'date':
+          const dateA = new Date(a.createdAt || 0).getTime();
+          const dateB = new Date(b.createdAt || 0).getTime();
+          comparison = dateA - dateB;
+          break;
+        case 'similarity':
+          const simA = a.similarity || 0;
+          const simB = b.similarity || 0;
+          comparison = simA - simB;
+          break;
+        default:
+          return 0;
+      }
+      // 降順なら逆
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+  };
+
+  // フィルタリングとソートを適用
+  const processedPhotos = useMemo(() => {
+    let filtered = keyword 
+      ? photos.filter(photo => 
+          photo.name.toLowerCase().includes(keyword.toLowerCase())
+        )
+      : photos;
+    
+    return sortPhotos(filtered);
+  }, [photos, keyword, sortBy, sortOrder]);
+
+  const toggleViewMode = () => {
+      setViewMode(prev => prev === 'grid' ? 'list' : 'grid');
+    };
+
   const cancelSelectionMode = () => {
     setIsSelectionMode(false);
     setSelectedPhotos(new Set());
-  };
-
-  const filteredPhotos = keyword 
-    ? photos.filter(photo => 
-        photo.name.toLowerCase().includes(keyword.toLowerCase())
-      )
-    : photos;
-
-  const toggleViewMode = () => {
-    setViewMode(prev => prev === 'grid' ? 'list' : 'grid');
   };
 
   const handleInspect = (photo: Photo) => {
@@ -223,22 +261,22 @@ export default function AlbumContents({
   const navigateToNextPhoto = useCallback(() => {
     if (!inspectPhoto) return;
     
-    const currentIndex = filteredPhotos.findIndex(p => p.id === inspectPhoto.id);
+    const currentIndex = processedPhotos.findIndex(p => p.id === inspectPhoto.id);
     if (currentIndex === -1) return;
     
-    const nextIndex = (currentIndex + 1) % filteredPhotos.length;
-    setInspectPhoto(filteredPhotos[nextIndex]);
-  }, [inspectPhoto, filteredPhotos]);
+    const nextIndex = (currentIndex + 1) % processedPhotos.length;
+    setInspectPhoto(processedPhotos[nextIndex]);
+  }, [inspectPhoto, processedPhotos]);
 
   const navigateToPrevPhoto = useCallback(() => {
     if (!inspectPhoto) return;
     
-    const currentIndex = filteredPhotos.findIndex(p => p.id === inspectPhoto.id);
+    const currentIndex = processedPhotos.findIndex(p => p.id === inspectPhoto.id);
     if (currentIndex === -1) return;
     
-    const prevIndex = (currentIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
-    setInspectPhoto(filteredPhotos[prevIndex]);
-  }, [inspectPhoto, filteredPhotos]);
+    const prevIndex = (currentIndex - 1 + processedPhotos.length) % processedPhotos.length;
+    setInspectPhoto(processedPhotos[prevIndex]);
+  }, [inspectPhoto, processedPhotos]);
 
   if (!album) {
     return (
@@ -321,7 +359,7 @@ export default function AlbumContents({
           ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" 
           : "space-y-2"
         }>
-          {filteredPhotos.map((photo) => (
+          {processedPhotos.map((photo) => (
             viewMode === 'grid' ? (
               <div 
                 key={photo.id} 
@@ -499,8 +537,8 @@ export default function AlbumContents({
         onDelete={handleDelete}
         onNext={navigateToNextPhoto}
         onPrev={navigateToPrevPhoto}
-        photosCount={filteredPhotos.length}
-        currentIndex={inspectPhoto ? filteredPhotos.findIndex(p => p.id === inspectPhoto.id) : -1}
+        photosCount={processedPhotos.length}
+        currentIndex={inspectPhoto ? processedPhotos.findIndex(p => p.id === inspectPhoto.id) : -1}
       />
     </div>
   );

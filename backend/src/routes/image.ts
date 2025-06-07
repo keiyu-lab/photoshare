@@ -107,14 +107,25 @@ router.post('/search', verifyJwt, async (req: AuthenticatedRequest, res: Respons
     // 類似画像を検索
     const { searchSimilarPhotos } = require('../utils/vectorSearch');
     const results = await searchSimilarPhotos(queryVector, userId, limit);
+        
+    const formattedResults = results.map(r => ({
+      id: r.photo.id,
+      albumId: r.photo.album_id,
+      url: r.photo.url,
+      name: r.photo.name,
+      meta: r.photo.meta,
+      uploader: {
+        id: r.photo.uploader.id,
+        name: r.photo.uploader.name || '',
+        email: r.photo.uploader.email
+      },
+      createdAt: r.photo.created_at,
+      similarity: r.similarity
+    }));
     
     res.json({ 
       query,
-      results: results.map(r => ({
-        photo: r.photo,
-        similarity: r.similarity,
-        description: r.photo.embedding?.description
-      }))
+      results: formattedResults
     });
     
   } catch (error) {

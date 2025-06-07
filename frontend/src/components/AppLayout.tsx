@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import type { AlbumType, Photo } from '@/types';
 import { Authenticator } from '@aws-amplify/ui-react';
 import AlbumContents from './AlbumContents';
-import { createAlbum, deleteAlbum, fetchAlbums, fetchPhotos, renameAlbum, syncUserToBackend, updateAlbumParent, updatePhotoAlbum, fetchSharedAlbums, shareAlbum } from '@/api/api';
+import { createAlbum, deleteAlbum, fetchAlbums, fetchPhotos, renameAlbum, syncUserToBackend, updateAlbumParent, updatePhotoAlbum, fetchSharedAlbums, shareAlbum, searchPhotos } from '@/api/api';
 import { buildAlbumTree, findAlbumById, flattenAlbums, normailzeRowAlbum } from '@/components/Album';
 import PhotoUploadModal from './Modal/PhotoUploadModal';
 import AlbumShareModal from './Modal/AlbumShareModal';
@@ -16,6 +16,12 @@ import '@aws-amplify/ui-react/styles.css';
 export function AppLayout() {
 
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [isVectorSearch, setIsVectorSearch] = useState(false);
+  const [vectorSearchResults, setVectorSearchResults] = useState<Photo[]>([]);
+
+  const [sortBy, setSortBy] = useState<'name' | 'date' | 'similarity'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
 
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumType | null>(null);
   const [privateAlbumTree, setPrivateAlbumTree] = useState<AlbumType[]>([]);
@@ -366,6 +372,54 @@ export function AppLayout() {
     }
   };
 
+  const handleSearch = async (keyword: string, isVector: boolean) => {
+    setSearchKeyword(keyword);
+    setIsVectorSearch(isVector);
+    
+    if (!keyword.trim()) {
+      setVectorSearchResults([]);
+      return;
+    }
+    
+    if (isVector) {
+      try {
+        const searchResult = await searchPhotos(keyword);
+        console.log(searchResult)
+        const photos = searchResult.results.map((photo: any) => ({
+          id: photo.id,
+          albumId: photo.album_id,
+          url: photo.url,
+          name: photo.name,
+          meta: photo.meta,
+          uploader: {
+            id: photo.uploaded_by_user_id,
+            name: photo.uploader.name,
+            email: photo.uploader.email
+          },
+          createdAt: photo.created_at,
+          similarity: photo.similarity // 類似度を追加
+        }));
+        
+        // ベクトル検索の場合、類似度でソート（デフォルト）
+        setSortBy('similarity');
+        setSortOrder('desc');
+        setPhotos(photos);
+      } catch (error) {
+        console.error('Vector search failed:', error);
+        setPhotos([]);
+      }
+    } else {
+      // 通常検索の場合は既存の写真から検索（キーワードフィルタリングはAlbumContentsで行う）
+      // 何もしない（AlbumContentsでフィルタリング）
+    }
+
+  };
+
+  const handleSort = (newSortBy: 'name' | 'date' | 'similarity', newSortOrder: 'asc' | 'desc') => {
+    setSortBy(newSortBy);
+    setSortOrder(newSortOrder);
+  };
+
   return (
     <Authenticator socialProviders={['google']}>
       {({ signOut, user }) => (
@@ -393,9 +447,13 @@ export function AppLayout() {
               <div className="border-b p-2 flex items-center">
                 <SidebarTrigger className="mr-2" />
                 <Header
-                  onSearch={setSearchKeyword}
+                  onSearch={handleSearch}
                   onAddAlbum={handleAddAlbum}
                   onAddPhoto={handleAddPhoto}
+                  sortBy={sortBy}
+                  sortOrder={sortOrder}
+                  onSort={handleSort}
+                  showSimilaritySort={isVectorSearch}
                 />
               </div>
               <main className="flex-1 overflow-auto">
@@ -403,13 +461,16 @@ export function AppLayout() {
                   <AlbumContents
                     album={selectedAlbum}
                     photos={photos}
-                    keyword={searchKeyword}
+                    keyword={isVectorSearch ? '' : searchKeyword}
                     onMovePhoto={handleMovePhoto}
                     onMoveMultiplePhotos={handleMoveMultiplePhotos} 
                     onDeletePhoto={handleDeletePhoto}
                     onDeleteMultiplePhotos={handleDeleteMultiplePhotos}
                     privateAlbumTree={privateAlbumTree}
                     sharedAlbumTree={sharedAlbumTree}
+                    isVectorSearchMode={isVectorSearch}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
                   />
                 </div>
               </main>

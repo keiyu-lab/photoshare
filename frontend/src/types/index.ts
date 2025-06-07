@@ -25,6 +25,7 @@ export interface Photo {
   meta?: string;
   uploader: UserType;
   createdAt?: string;
+  similarity?: number// ベクトル検索ソート用
 }
 
 export interface UserType {
