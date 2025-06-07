@@ -283,7 +283,7 @@ export const acceptInvitation = async (token: string) => {
       },
       body: JSON.stringify({ token })
     });
-
+    
     if (!response.ok) {
       throw new Error('Failed to accept invitation');
     }

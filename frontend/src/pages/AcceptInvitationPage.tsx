@@ -46,12 +46,12 @@ const AcceptInvitationPage: React.FC = () => {
       try {
 
         try {
-        //await syncUserToBackend();
+        await syncUserToBackend();
         } catch (e) {
           setMessage('この操作を行うにはログインが必要です。ログイン後、再度招待リンクをお試しください。');
           setStatus('error');
-          // オプション: ログインページにリダイレクト (トークン情報をstateで渡すなど)
-          // navigate('/login', { state: { from: location, tokenToProcess: token } });
+          // ログインページにリダイレクト (トークン情報をstateで渡すなど)
+          // navigate('/')// ログインページ独立させるべきかも
           if (progressInterval) clearInterval(progressInterval);
           setLoadingProgress(100);
           return;
@@ -113,7 +113,7 @@ const AcceptInvitationPage: React.FC = () => {
                   アルバムへ移動
                 </Button>
               )}
-              <Button onClick={() => navigate('/')} className="w-full"> {/* AppLayoutのホームページへ */}
+              <Button onClick={() => navigate('/')} className="w-full">
                 ダッシュボードへ
               </Button>
             </div>
@@ -125,7 +125,7 @@ const AcceptInvitationPage: React.FC = () => {
             <AlertTitle>エラーが発生しました</AlertTitle>
             <AlertDescription>{message}</AlertDescription>
             <div className="mt-4">
-              <Button onClick={() => navigate('/')} variant="outline" className="w-full">
+              <Button onClick={() => navigate('/')} variant="outline">
                 トップページへ戻る
               </Button>
             </div>

@@ -30,7 +30,7 @@ const prisma = new PrismaClient();
  * アップロード用の署名付きURLを発行
  */
 router.post('/', verifyJwt, upload.single('image'), async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user.sub;
+  const userId = req.user!.sub;
   const file = req.file;
   const albumId = req.body.albumId || '';
   

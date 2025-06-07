@@ -399,7 +399,7 @@ router.post('/accept', verifyJwt, async (req: AuthenticatedRequest, res: Respons
 router.get('/shared', verifyJwt, async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.sub;
   try {
-    // 1. 自分がメンバーだがオーナーではないアルバム
+    // 自分がメンバーだがオーナーではないアルバム
     const sharedWithMeAlbums = await prisma.albumMember.findMany({
       where: {
         user_id: userId,
@@ -423,7 +423,7 @@ router.get('/shared', verifyJwt, async (req: AuthenticatedRequest, res: Response
       },
     });
 
-    // 2. 自分がオーナーで、かつ誰か他のユーザーと共有しているアルバム
+    // 自分がオーナーで、かつ誰か他のユーザーと共有しているアルバム
     const ownedAndSharedAlbums = await prisma.album.findMany({
       where: {
         owner_user_id: userId,
