@@ -64,6 +64,16 @@ model Photo {
   created_at          DateTime @default(now())
   updated_at          DateTime @updatedAt
   is_deleted          Boolean  @default(false)
+
+  embedding PhotoEmbedding?
+}
+
+model PhotoEmbedding {
+  id          String  @id @default(uuid())
+  photo_id    String  @unique
+  photo       Photo   @relation(fields: [photo_id], references: [id])
+  description String?
+  vector      Float[] // 512次元ベクトル
 }
 
 model AlbumShare {

@@ -34,6 +34,11 @@ export type AlbumMember = $Result.DefaultSelection<Prisma.$AlbumMemberPayload>
  */
 export type Photo = $Result.DefaultSelection<Prisma.$PhotoPayload>
 /**
+ * Model PhotoEmbedding
+ * 
+ */
+export type PhotoEmbedding = $Result.DefaultSelection<Prisma.$PhotoEmbeddingPayload>
+/**
  * Model AlbumShare
  * 
  */
@@ -203,6 +208,16 @@ export class PrismaClient<
     * ```
     */
   get photo(): Prisma.PhotoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.photoEmbedding`: Exposes CRUD operations for the **PhotoEmbedding** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PhotoEmbeddings
+    * const photoEmbeddings = await prisma.photoEmbedding.findMany()
+    * ```
+    */
+  get photoEmbedding(): Prisma.PhotoEmbeddingDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.albumShare`: Exposes CRUD operations for the **AlbumShare** model.
@@ -657,6 +672,7 @@ export namespace Prisma {
     Album: 'Album',
     AlbumMember: 'AlbumMember',
     Photo: 'Photo',
+    PhotoEmbedding: 'PhotoEmbedding',
     AlbumShare: 'AlbumShare'
   };
 
@@ -676,7 +692,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "album" | "albumMember" | "photo" | "albumShare"
+      modelProps: "user" | "album" | "albumMember" | "photo" | "photoEmbedding" | "albumShare"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -976,6 +992,80 @@ export namespace Prisma {
           }
         }
       }
+      PhotoEmbedding: {
+        payload: Prisma.$PhotoEmbeddingPayload<ExtArgs>
+        fields: Prisma.PhotoEmbeddingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PhotoEmbeddingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PhotoEmbeddingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload>
+          }
+          findFirst: {
+            args: Prisma.PhotoEmbeddingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PhotoEmbeddingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload>
+          }
+          findMany: {
+            args: Prisma.PhotoEmbeddingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload>[]
+          }
+          create: {
+            args: Prisma.PhotoEmbeddingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload>
+          }
+          createMany: {
+            args: Prisma.PhotoEmbeddingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PhotoEmbeddingCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload>[]
+          }
+          delete: {
+            args: Prisma.PhotoEmbeddingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload>
+          }
+          update: {
+            args: Prisma.PhotoEmbeddingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload>
+          }
+          deleteMany: {
+            args: Prisma.PhotoEmbeddingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PhotoEmbeddingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PhotoEmbeddingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload>[]
+          }
+          upsert: {
+            args: Prisma.PhotoEmbeddingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhotoEmbeddingPayload>
+          }
+          aggregate: {
+            args: Prisma.PhotoEmbeddingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePhotoEmbedding>
+          }
+          groupBy: {
+            args: Prisma.PhotoEmbeddingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PhotoEmbeddingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PhotoEmbeddingCountArgs<ExtArgs>
+            result: $Utils.Optional<PhotoEmbeddingCountAggregateOutputType> | number
+          }
+        }
+      }
       AlbumShare: {
         payload: Prisma.$AlbumSharePayload<ExtArgs>
         fields: Prisma.AlbumShareFieldRefs
@@ -1138,6 +1228,7 @@ export namespace Prisma {
     album?: AlbumOmit
     albumMember?: AlbumMemberOmit
     photo?: PhotoOmit
+    photoEmbedding?: PhotoEmbeddingOmit
     albumShare?: AlbumShareOmit
   }
 
@@ -4989,6 +5080,7 @@ export namespace Prisma {
     is_deleted?: boolean
     album?: boolean | AlbumDefaultArgs<ExtArgs>
     uploader?: boolean | UserDefaultArgs<ExtArgs>
+    embedding?: boolean | Photo$embeddingArgs<ExtArgs>
   }, ExtArgs["result"]["photo"]>
 
   export type PhotoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5035,6 +5127,7 @@ export namespace Prisma {
   export type PhotoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     album?: boolean | AlbumDefaultArgs<ExtArgs>
     uploader?: boolean | UserDefaultArgs<ExtArgs>
+    embedding?: boolean | Photo$embeddingArgs<ExtArgs>
   }
   export type PhotoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     album?: boolean | AlbumDefaultArgs<ExtArgs>
@@ -5050,6 +5143,7 @@ export namespace Prisma {
     objects: {
       album: Prisma.$AlbumPayload<ExtArgs>
       uploader: Prisma.$UserPayload<ExtArgs>
+      embedding: Prisma.$PhotoEmbeddingPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5457,6 +5551,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     album<T extends AlbumDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AlbumDefaultArgs<ExtArgs>>): Prisma__AlbumClient<$Result.GetResult<Prisma.$AlbumPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     uploader<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    embedding<T extends Photo$embeddingArgs<ExtArgs> = {}>(args?: Subset<T, Photo$embeddingArgs<ExtArgs>>): Prisma__PhotoEmbeddingClient<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5891,6 +5986,25 @@ export namespace Prisma {
   }
 
   /**
+   * Photo.embedding
+   */
+  export type Photo$embeddingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    where?: PhotoEmbeddingWhereInput
+  }
+
+  /**
    * Photo without action
    */
   export type PhotoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5906,6 +6020,1081 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: PhotoInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PhotoEmbedding
+   */
+
+  export type AggregatePhotoEmbedding = {
+    _count: PhotoEmbeddingCountAggregateOutputType | null
+    _avg: PhotoEmbeddingAvgAggregateOutputType | null
+    _sum: PhotoEmbeddingSumAggregateOutputType | null
+    _min: PhotoEmbeddingMinAggregateOutputType | null
+    _max: PhotoEmbeddingMaxAggregateOutputType | null
+  }
+
+  export type PhotoEmbeddingAvgAggregateOutputType = {
+    vector: number | null
+  }
+
+  export type PhotoEmbeddingSumAggregateOutputType = {
+    vector: number[]
+  }
+
+  export type PhotoEmbeddingMinAggregateOutputType = {
+    id: string | null
+    photo_id: string | null
+    description: string | null
+  }
+
+  export type PhotoEmbeddingMaxAggregateOutputType = {
+    id: string | null
+    photo_id: string | null
+    description: string | null
+  }
+
+  export type PhotoEmbeddingCountAggregateOutputType = {
+    id: number
+    photo_id: number
+    description: number
+    vector: number
+    _all: number
+  }
+
+
+  export type PhotoEmbeddingAvgAggregateInputType = {
+    vector?: true
+  }
+
+  export type PhotoEmbeddingSumAggregateInputType = {
+    vector?: true
+  }
+
+  export type PhotoEmbeddingMinAggregateInputType = {
+    id?: true
+    photo_id?: true
+    description?: true
+  }
+
+  export type PhotoEmbeddingMaxAggregateInputType = {
+    id?: true
+    photo_id?: true
+    description?: true
+  }
+
+  export type PhotoEmbeddingCountAggregateInputType = {
+    id?: true
+    photo_id?: true
+    description?: true
+    vector?: true
+    _all?: true
+  }
+
+  export type PhotoEmbeddingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PhotoEmbedding to aggregate.
+     */
+    where?: PhotoEmbeddingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhotoEmbeddings to fetch.
+     */
+    orderBy?: PhotoEmbeddingOrderByWithRelationInput | PhotoEmbeddingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PhotoEmbeddingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhotoEmbeddings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhotoEmbeddings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PhotoEmbeddings
+    **/
+    _count?: true | PhotoEmbeddingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PhotoEmbeddingAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PhotoEmbeddingSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PhotoEmbeddingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PhotoEmbeddingMaxAggregateInputType
+  }
+
+  export type GetPhotoEmbeddingAggregateType<T extends PhotoEmbeddingAggregateArgs> = {
+        [P in keyof T & keyof AggregatePhotoEmbedding]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePhotoEmbedding[P]>
+      : GetScalarType<T[P], AggregatePhotoEmbedding[P]>
+  }
+
+
+
+
+  export type PhotoEmbeddingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PhotoEmbeddingWhereInput
+    orderBy?: PhotoEmbeddingOrderByWithAggregationInput | PhotoEmbeddingOrderByWithAggregationInput[]
+    by: PhotoEmbeddingScalarFieldEnum[] | PhotoEmbeddingScalarFieldEnum
+    having?: PhotoEmbeddingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PhotoEmbeddingCountAggregateInputType | true
+    _avg?: PhotoEmbeddingAvgAggregateInputType
+    _sum?: PhotoEmbeddingSumAggregateInputType
+    _min?: PhotoEmbeddingMinAggregateInputType
+    _max?: PhotoEmbeddingMaxAggregateInputType
+  }
+
+  export type PhotoEmbeddingGroupByOutputType = {
+    id: string
+    photo_id: string
+    description: string | null
+    vector: number[]
+    _count: PhotoEmbeddingCountAggregateOutputType | null
+    _avg: PhotoEmbeddingAvgAggregateOutputType | null
+    _sum: PhotoEmbeddingSumAggregateOutputType | null
+    _min: PhotoEmbeddingMinAggregateOutputType | null
+    _max: PhotoEmbeddingMaxAggregateOutputType | null
+  }
+
+  type GetPhotoEmbeddingGroupByPayload<T extends PhotoEmbeddingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PhotoEmbeddingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PhotoEmbeddingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PhotoEmbeddingGroupByOutputType[P]>
+            : GetScalarType<T[P], PhotoEmbeddingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PhotoEmbeddingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    photo_id?: boolean
+    description?: boolean
+    vector?: boolean
+    photo?: boolean | PhotoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["photoEmbedding"]>
+
+  export type PhotoEmbeddingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    photo_id?: boolean
+    description?: boolean
+    vector?: boolean
+    photo?: boolean | PhotoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["photoEmbedding"]>
+
+  export type PhotoEmbeddingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    photo_id?: boolean
+    description?: boolean
+    vector?: boolean
+    photo?: boolean | PhotoDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["photoEmbedding"]>
+
+  export type PhotoEmbeddingSelectScalar = {
+    id?: boolean
+    photo_id?: boolean
+    description?: boolean
+    vector?: boolean
+  }
+
+  export type PhotoEmbeddingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "photo_id" | "description" | "vector", ExtArgs["result"]["photoEmbedding"]>
+  export type PhotoEmbeddingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    photo?: boolean | PhotoDefaultArgs<ExtArgs>
+  }
+  export type PhotoEmbeddingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    photo?: boolean | PhotoDefaultArgs<ExtArgs>
+  }
+  export type PhotoEmbeddingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    photo?: boolean | PhotoDefaultArgs<ExtArgs>
+  }
+
+  export type $PhotoEmbeddingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PhotoEmbedding"
+    objects: {
+      photo: Prisma.$PhotoPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      photo_id: string
+      description: string | null
+      vector: number[]
+    }, ExtArgs["result"]["photoEmbedding"]>
+    composites: {}
+  }
+
+  type PhotoEmbeddingGetPayload<S extends boolean | null | undefined | PhotoEmbeddingDefaultArgs> = $Result.GetResult<Prisma.$PhotoEmbeddingPayload, S>
+
+  type PhotoEmbeddingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PhotoEmbeddingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PhotoEmbeddingCountAggregateInputType | true
+    }
+
+  export interface PhotoEmbeddingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PhotoEmbedding'], meta: { name: 'PhotoEmbedding' } }
+    /**
+     * Find zero or one PhotoEmbedding that matches the filter.
+     * @param {PhotoEmbeddingFindUniqueArgs} args - Arguments to find a PhotoEmbedding
+     * @example
+     * // Get one PhotoEmbedding
+     * const photoEmbedding = await prisma.photoEmbedding.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PhotoEmbeddingFindUniqueArgs>(args: SelectSubset<T, PhotoEmbeddingFindUniqueArgs<ExtArgs>>): Prisma__PhotoEmbeddingClient<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PhotoEmbedding that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PhotoEmbeddingFindUniqueOrThrowArgs} args - Arguments to find a PhotoEmbedding
+     * @example
+     * // Get one PhotoEmbedding
+     * const photoEmbedding = await prisma.photoEmbedding.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PhotoEmbeddingFindUniqueOrThrowArgs>(args: SelectSubset<T, PhotoEmbeddingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PhotoEmbeddingClient<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PhotoEmbedding that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhotoEmbeddingFindFirstArgs} args - Arguments to find a PhotoEmbedding
+     * @example
+     * // Get one PhotoEmbedding
+     * const photoEmbedding = await prisma.photoEmbedding.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PhotoEmbeddingFindFirstArgs>(args?: SelectSubset<T, PhotoEmbeddingFindFirstArgs<ExtArgs>>): Prisma__PhotoEmbeddingClient<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PhotoEmbedding that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhotoEmbeddingFindFirstOrThrowArgs} args - Arguments to find a PhotoEmbedding
+     * @example
+     * // Get one PhotoEmbedding
+     * const photoEmbedding = await prisma.photoEmbedding.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PhotoEmbeddingFindFirstOrThrowArgs>(args?: SelectSubset<T, PhotoEmbeddingFindFirstOrThrowArgs<ExtArgs>>): Prisma__PhotoEmbeddingClient<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PhotoEmbeddings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhotoEmbeddingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PhotoEmbeddings
+     * const photoEmbeddings = await prisma.photoEmbedding.findMany()
+     * 
+     * // Get first 10 PhotoEmbeddings
+     * const photoEmbeddings = await prisma.photoEmbedding.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const photoEmbeddingWithIdOnly = await prisma.photoEmbedding.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PhotoEmbeddingFindManyArgs>(args?: SelectSubset<T, PhotoEmbeddingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PhotoEmbedding.
+     * @param {PhotoEmbeddingCreateArgs} args - Arguments to create a PhotoEmbedding.
+     * @example
+     * // Create one PhotoEmbedding
+     * const PhotoEmbedding = await prisma.photoEmbedding.create({
+     *   data: {
+     *     // ... data to create a PhotoEmbedding
+     *   }
+     * })
+     * 
+     */
+    create<T extends PhotoEmbeddingCreateArgs>(args: SelectSubset<T, PhotoEmbeddingCreateArgs<ExtArgs>>): Prisma__PhotoEmbeddingClient<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PhotoEmbeddings.
+     * @param {PhotoEmbeddingCreateManyArgs} args - Arguments to create many PhotoEmbeddings.
+     * @example
+     * // Create many PhotoEmbeddings
+     * const photoEmbedding = await prisma.photoEmbedding.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PhotoEmbeddingCreateManyArgs>(args?: SelectSubset<T, PhotoEmbeddingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PhotoEmbeddings and returns the data saved in the database.
+     * @param {PhotoEmbeddingCreateManyAndReturnArgs} args - Arguments to create many PhotoEmbeddings.
+     * @example
+     * // Create many PhotoEmbeddings
+     * const photoEmbedding = await prisma.photoEmbedding.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PhotoEmbeddings and only return the `id`
+     * const photoEmbeddingWithIdOnly = await prisma.photoEmbedding.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PhotoEmbeddingCreateManyAndReturnArgs>(args?: SelectSubset<T, PhotoEmbeddingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PhotoEmbedding.
+     * @param {PhotoEmbeddingDeleteArgs} args - Arguments to delete one PhotoEmbedding.
+     * @example
+     * // Delete one PhotoEmbedding
+     * const PhotoEmbedding = await prisma.photoEmbedding.delete({
+     *   where: {
+     *     // ... filter to delete one PhotoEmbedding
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PhotoEmbeddingDeleteArgs>(args: SelectSubset<T, PhotoEmbeddingDeleteArgs<ExtArgs>>): Prisma__PhotoEmbeddingClient<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PhotoEmbedding.
+     * @param {PhotoEmbeddingUpdateArgs} args - Arguments to update one PhotoEmbedding.
+     * @example
+     * // Update one PhotoEmbedding
+     * const photoEmbedding = await prisma.photoEmbedding.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PhotoEmbeddingUpdateArgs>(args: SelectSubset<T, PhotoEmbeddingUpdateArgs<ExtArgs>>): Prisma__PhotoEmbeddingClient<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PhotoEmbeddings.
+     * @param {PhotoEmbeddingDeleteManyArgs} args - Arguments to filter PhotoEmbeddings to delete.
+     * @example
+     * // Delete a few PhotoEmbeddings
+     * const { count } = await prisma.photoEmbedding.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PhotoEmbeddingDeleteManyArgs>(args?: SelectSubset<T, PhotoEmbeddingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PhotoEmbeddings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhotoEmbeddingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PhotoEmbeddings
+     * const photoEmbedding = await prisma.photoEmbedding.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PhotoEmbeddingUpdateManyArgs>(args: SelectSubset<T, PhotoEmbeddingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PhotoEmbeddings and returns the data updated in the database.
+     * @param {PhotoEmbeddingUpdateManyAndReturnArgs} args - Arguments to update many PhotoEmbeddings.
+     * @example
+     * // Update many PhotoEmbeddings
+     * const photoEmbedding = await prisma.photoEmbedding.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PhotoEmbeddings and only return the `id`
+     * const photoEmbeddingWithIdOnly = await prisma.photoEmbedding.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PhotoEmbeddingUpdateManyAndReturnArgs>(args: SelectSubset<T, PhotoEmbeddingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PhotoEmbedding.
+     * @param {PhotoEmbeddingUpsertArgs} args - Arguments to update or create a PhotoEmbedding.
+     * @example
+     * // Update or create a PhotoEmbedding
+     * const photoEmbedding = await prisma.photoEmbedding.upsert({
+     *   create: {
+     *     // ... data to create a PhotoEmbedding
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PhotoEmbedding we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PhotoEmbeddingUpsertArgs>(args: SelectSubset<T, PhotoEmbeddingUpsertArgs<ExtArgs>>): Prisma__PhotoEmbeddingClient<$Result.GetResult<Prisma.$PhotoEmbeddingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PhotoEmbeddings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhotoEmbeddingCountArgs} args - Arguments to filter PhotoEmbeddings to count.
+     * @example
+     * // Count the number of PhotoEmbeddings
+     * const count = await prisma.photoEmbedding.count({
+     *   where: {
+     *     // ... the filter for the PhotoEmbeddings we want to count
+     *   }
+     * })
+    **/
+    count<T extends PhotoEmbeddingCountArgs>(
+      args?: Subset<T, PhotoEmbeddingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PhotoEmbeddingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PhotoEmbedding.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhotoEmbeddingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PhotoEmbeddingAggregateArgs>(args: Subset<T, PhotoEmbeddingAggregateArgs>): Prisma.PrismaPromise<GetPhotoEmbeddingAggregateType<T>>
+
+    /**
+     * Group by PhotoEmbedding.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhotoEmbeddingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PhotoEmbeddingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PhotoEmbeddingGroupByArgs['orderBy'] }
+        : { orderBy?: PhotoEmbeddingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PhotoEmbeddingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPhotoEmbeddingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PhotoEmbedding model
+   */
+  readonly fields: PhotoEmbeddingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PhotoEmbedding.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PhotoEmbeddingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    photo<T extends PhotoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PhotoDefaultArgs<ExtArgs>>): Prisma__PhotoClient<$Result.GetResult<Prisma.$PhotoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PhotoEmbedding model
+   */
+  interface PhotoEmbeddingFieldRefs {
+    readonly id: FieldRef<"PhotoEmbedding", 'String'>
+    readonly photo_id: FieldRef<"PhotoEmbedding", 'String'>
+    readonly description: FieldRef<"PhotoEmbedding", 'String'>
+    readonly vector: FieldRef<"PhotoEmbedding", 'Float[]'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PhotoEmbedding findUnique
+   */
+  export type PhotoEmbeddingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which PhotoEmbedding to fetch.
+     */
+    where: PhotoEmbeddingWhereUniqueInput
+  }
+
+  /**
+   * PhotoEmbedding findUniqueOrThrow
+   */
+  export type PhotoEmbeddingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which PhotoEmbedding to fetch.
+     */
+    where: PhotoEmbeddingWhereUniqueInput
+  }
+
+  /**
+   * PhotoEmbedding findFirst
+   */
+  export type PhotoEmbeddingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which PhotoEmbedding to fetch.
+     */
+    where?: PhotoEmbeddingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhotoEmbeddings to fetch.
+     */
+    orderBy?: PhotoEmbeddingOrderByWithRelationInput | PhotoEmbeddingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PhotoEmbeddings.
+     */
+    cursor?: PhotoEmbeddingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhotoEmbeddings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhotoEmbeddings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PhotoEmbeddings.
+     */
+    distinct?: PhotoEmbeddingScalarFieldEnum | PhotoEmbeddingScalarFieldEnum[]
+  }
+
+  /**
+   * PhotoEmbedding findFirstOrThrow
+   */
+  export type PhotoEmbeddingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which PhotoEmbedding to fetch.
+     */
+    where?: PhotoEmbeddingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhotoEmbeddings to fetch.
+     */
+    orderBy?: PhotoEmbeddingOrderByWithRelationInput | PhotoEmbeddingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PhotoEmbeddings.
+     */
+    cursor?: PhotoEmbeddingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhotoEmbeddings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhotoEmbeddings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PhotoEmbeddings.
+     */
+    distinct?: PhotoEmbeddingScalarFieldEnum | PhotoEmbeddingScalarFieldEnum[]
+  }
+
+  /**
+   * PhotoEmbedding findMany
+   */
+  export type PhotoEmbeddingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter, which PhotoEmbeddings to fetch.
+     */
+    where?: PhotoEmbeddingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhotoEmbeddings to fetch.
+     */
+    orderBy?: PhotoEmbeddingOrderByWithRelationInput | PhotoEmbeddingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PhotoEmbeddings.
+     */
+    cursor?: PhotoEmbeddingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhotoEmbeddings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhotoEmbeddings.
+     */
+    skip?: number
+    distinct?: PhotoEmbeddingScalarFieldEnum | PhotoEmbeddingScalarFieldEnum[]
+  }
+
+  /**
+   * PhotoEmbedding create
+   */
+  export type PhotoEmbeddingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PhotoEmbedding.
+     */
+    data: XOR<PhotoEmbeddingCreateInput, PhotoEmbeddingUncheckedCreateInput>
+  }
+
+  /**
+   * PhotoEmbedding createMany
+   */
+  export type PhotoEmbeddingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PhotoEmbeddings.
+     */
+    data: PhotoEmbeddingCreateManyInput | PhotoEmbeddingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PhotoEmbedding createManyAndReturn
+   */
+  export type PhotoEmbeddingCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * The data used to create many PhotoEmbeddings.
+     */
+    data: PhotoEmbeddingCreateManyInput | PhotoEmbeddingCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PhotoEmbedding update
+   */
+  export type PhotoEmbeddingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PhotoEmbedding.
+     */
+    data: XOR<PhotoEmbeddingUpdateInput, PhotoEmbeddingUncheckedUpdateInput>
+    /**
+     * Choose, which PhotoEmbedding to update.
+     */
+    where: PhotoEmbeddingWhereUniqueInput
+  }
+
+  /**
+   * PhotoEmbedding updateMany
+   */
+  export type PhotoEmbeddingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PhotoEmbeddings.
+     */
+    data: XOR<PhotoEmbeddingUpdateManyMutationInput, PhotoEmbeddingUncheckedUpdateManyInput>
+    /**
+     * Filter which PhotoEmbeddings to update
+     */
+    where?: PhotoEmbeddingWhereInput
+    /**
+     * Limit how many PhotoEmbeddings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PhotoEmbedding updateManyAndReturn
+   */
+  export type PhotoEmbeddingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * The data used to update PhotoEmbeddings.
+     */
+    data: XOR<PhotoEmbeddingUpdateManyMutationInput, PhotoEmbeddingUncheckedUpdateManyInput>
+    /**
+     * Filter which PhotoEmbeddings to update
+     */
+    where?: PhotoEmbeddingWhereInput
+    /**
+     * Limit how many PhotoEmbeddings to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PhotoEmbedding upsert
+   */
+  export type PhotoEmbeddingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PhotoEmbedding to update in case it exists.
+     */
+    where: PhotoEmbeddingWhereUniqueInput
+    /**
+     * In case the PhotoEmbedding found by the `where` argument doesn't exist, create a new PhotoEmbedding with this data.
+     */
+    create: XOR<PhotoEmbeddingCreateInput, PhotoEmbeddingUncheckedCreateInput>
+    /**
+     * In case the PhotoEmbedding was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PhotoEmbeddingUpdateInput, PhotoEmbeddingUncheckedUpdateInput>
+  }
+
+  /**
+   * PhotoEmbedding delete
+   */
+  export type PhotoEmbeddingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
+    /**
+     * Filter which PhotoEmbedding to delete.
+     */
+    where: PhotoEmbeddingWhereUniqueInput
+  }
+
+  /**
+   * PhotoEmbedding deleteMany
+   */
+  export type PhotoEmbeddingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PhotoEmbeddings to delete
+     */
+    where?: PhotoEmbeddingWhereInput
+    /**
+     * Limit how many PhotoEmbeddings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PhotoEmbedding without action
+   */
+  export type PhotoEmbeddingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoEmbedding
+     */
+    select?: PhotoEmbeddingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoEmbedding
+     */
+    omit?: PhotoEmbeddingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoEmbeddingInclude<ExtArgs> | null
   }
 
 
@@ -7141,6 +8330,16 @@ export namespace Prisma {
   export type PhotoScalarFieldEnum = (typeof PhotoScalarFieldEnum)[keyof typeof PhotoScalarFieldEnum]
 
 
+  export const PhotoEmbeddingScalarFieldEnum: {
+    id: 'id',
+    photo_id: 'photo_id',
+    description: 'description',
+    vector: 'vector'
+  };
+
+  export type PhotoEmbeddingScalarFieldEnum = (typeof PhotoEmbeddingScalarFieldEnum)[keyof typeof PhotoEmbeddingScalarFieldEnum]
+
+
   export const AlbumShareScalarFieldEnum: {
     id: 'id',
     album_id: 'album_id',
@@ -7219,6 +8418,20 @@ export namespace Prisma {
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
@@ -7445,6 +8658,7 @@ export namespace Prisma {
     is_deleted?: BoolFilter<"Photo"> | boolean
     album?: XOR<AlbumScalarRelationFilter, AlbumWhereInput>
     uploader?: XOR<UserScalarRelationFilter, UserWhereInput>
+    embedding?: XOR<PhotoEmbeddingNullableScalarRelationFilter, PhotoEmbeddingWhereInput> | null
   }
 
   export type PhotoOrderByWithRelationInput = {
@@ -7459,6 +8673,7 @@ export namespace Prisma {
     is_deleted?: SortOrder
     album?: AlbumOrderByWithRelationInput
     uploader?: UserOrderByWithRelationInput
+    embedding?: PhotoEmbeddingOrderByWithRelationInput
   }
 
   export type PhotoWhereUniqueInput = Prisma.AtLeast<{
@@ -7476,6 +8691,7 @@ export namespace Prisma {
     is_deleted?: BoolFilter<"Photo"> | boolean
     album?: XOR<AlbumScalarRelationFilter, AlbumWhereInput>
     uploader?: XOR<UserScalarRelationFilter, UserWhereInput>
+    embedding?: XOR<PhotoEmbeddingNullableScalarRelationFilter, PhotoEmbeddingWhereInput> | null
   }, "id" | "s3_key">
 
   export type PhotoOrderByWithAggregationInput = {
@@ -7506,6 +8722,58 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"Photo"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Photo"> | Date | string
     is_deleted?: BoolWithAggregatesFilter<"Photo"> | boolean
+  }
+
+  export type PhotoEmbeddingWhereInput = {
+    AND?: PhotoEmbeddingWhereInput | PhotoEmbeddingWhereInput[]
+    OR?: PhotoEmbeddingWhereInput[]
+    NOT?: PhotoEmbeddingWhereInput | PhotoEmbeddingWhereInput[]
+    id?: StringFilter<"PhotoEmbedding"> | string
+    photo_id?: StringFilter<"PhotoEmbedding"> | string
+    description?: StringNullableFilter<"PhotoEmbedding"> | string | null
+    vector?: FloatNullableListFilter<"PhotoEmbedding">
+    photo?: XOR<PhotoScalarRelationFilter, PhotoWhereInput>
+  }
+
+  export type PhotoEmbeddingOrderByWithRelationInput = {
+    id?: SortOrder
+    photo_id?: SortOrder
+    description?: SortOrderInput | SortOrder
+    vector?: SortOrder
+    photo?: PhotoOrderByWithRelationInput
+  }
+
+  export type PhotoEmbeddingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    photo_id?: string
+    AND?: PhotoEmbeddingWhereInput | PhotoEmbeddingWhereInput[]
+    OR?: PhotoEmbeddingWhereInput[]
+    NOT?: PhotoEmbeddingWhereInput | PhotoEmbeddingWhereInput[]
+    description?: StringNullableFilter<"PhotoEmbedding"> | string | null
+    vector?: FloatNullableListFilter<"PhotoEmbedding">
+    photo?: XOR<PhotoScalarRelationFilter, PhotoWhereInput>
+  }, "id" | "photo_id">
+
+  export type PhotoEmbeddingOrderByWithAggregationInput = {
+    id?: SortOrder
+    photo_id?: SortOrder
+    description?: SortOrderInput | SortOrder
+    vector?: SortOrder
+    _count?: PhotoEmbeddingCountOrderByAggregateInput
+    _avg?: PhotoEmbeddingAvgOrderByAggregateInput
+    _max?: PhotoEmbeddingMaxOrderByAggregateInput
+    _min?: PhotoEmbeddingMinOrderByAggregateInput
+    _sum?: PhotoEmbeddingSumOrderByAggregateInput
+  }
+
+  export type PhotoEmbeddingScalarWhereWithAggregatesInput = {
+    AND?: PhotoEmbeddingScalarWhereWithAggregatesInput | PhotoEmbeddingScalarWhereWithAggregatesInput[]
+    OR?: PhotoEmbeddingScalarWhereWithAggregatesInput[]
+    NOT?: PhotoEmbeddingScalarWhereWithAggregatesInput | PhotoEmbeddingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PhotoEmbedding"> | string
+    photo_id?: StringWithAggregatesFilter<"PhotoEmbedding"> | string
+    description?: StringNullableWithAggregatesFilter<"PhotoEmbedding"> | string | null
+    vector?: FloatNullableListFilter<"PhotoEmbedding">
   }
 
   export type AlbumShareWhereInput = {
@@ -7802,6 +9070,7 @@ export namespace Prisma {
     is_deleted?: boolean
     album: AlbumCreateNestedOneWithoutPhotosInput
     uploader: UserCreateNestedOneWithoutPhotosInput
+    embedding?: PhotoEmbeddingCreateNestedOneWithoutPhotoInput
   }
 
   export type PhotoUncheckedCreateInput = {
@@ -7814,6 +9083,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
+    embedding?: PhotoEmbeddingUncheckedCreateNestedOneWithoutPhotoInput
   }
 
   export type PhotoUpdateInput = {
@@ -7826,6 +9096,7 @@ export namespace Prisma {
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     album?: AlbumUpdateOneRequiredWithoutPhotosNestedInput
     uploader?: UserUpdateOneRequiredWithoutPhotosNestedInput
+    embedding?: PhotoEmbeddingUpdateOneWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateInput = {
@@ -7838,6 +9109,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
+    embedding?: PhotoEmbeddingUncheckedUpdateOneWithoutPhotoNestedInput
   }
 
   export type PhotoCreateManyInput = {
@@ -7872,6 +9144,54 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PhotoEmbeddingCreateInput = {
+    id?: string
+    description?: string | null
+    vector?: PhotoEmbeddingCreatevectorInput | number[]
+    photo: PhotoCreateNestedOneWithoutEmbeddingInput
+  }
+
+  export type PhotoEmbeddingUncheckedCreateInput = {
+    id?: string
+    photo_id: string
+    description?: string | null
+    vector?: PhotoEmbeddingCreatevectorInput | number[]
+  }
+
+  export type PhotoEmbeddingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    vector?: PhotoEmbeddingUpdatevectorInput | number[]
+    photo?: PhotoUpdateOneRequiredWithoutEmbeddingNestedInput
+  }
+
+  export type PhotoEmbeddingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    photo_id?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    vector?: PhotoEmbeddingUpdatevectorInput | number[]
+  }
+
+  export type PhotoEmbeddingCreateManyInput = {
+    id?: string
+    photo_id: string
+    description?: string | null
+    vector?: PhotoEmbeddingCreatevectorInput | number[]
+  }
+
+  export type PhotoEmbeddingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    vector?: PhotoEmbeddingUpdatevectorInput | number[]
+  }
+
+  export type PhotoEmbeddingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    photo_id?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    vector?: PhotoEmbeddingUpdatevectorInput | number[]
   }
 
   export type AlbumShareCreateInput = {
@@ -8207,6 +9527,11 @@ export namespace Prisma {
     role?: SortOrder
   }
 
+  export type PhotoEmbeddingNullableScalarRelationFilter = {
+    is?: PhotoEmbeddingWhereInput | null
+    isNot?: PhotoEmbeddingWhereInput | null
+  }
+
   export type PhotoCountOrderByAggregateInput = {
     id?: SortOrder
     album_id?: SortOrder
@@ -8241,6 +9566,46 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     is_deleted?: SortOrder
+  }
+
+  export type FloatNullableListFilter<$PrismaModel = never> = {
+    equals?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    has?: number | FloatFieldRefInput<$PrismaModel> | null
+    hasEvery?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    hasSome?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type PhotoScalarRelationFilter = {
+    is?: PhotoWhereInput
+    isNot?: PhotoWhereInput
+  }
+
+  export type PhotoEmbeddingCountOrderByAggregateInput = {
+    id?: SortOrder
+    photo_id?: SortOrder
+    description?: SortOrder
+    vector?: SortOrder
+  }
+
+  export type PhotoEmbeddingAvgOrderByAggregateInput = {
+    vector?: SortOrder
+  }
+
+  export type PhotoEmbeddingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    photo_id?: SortOrder
+    description?: SortOrder
+  }
+
+  export type PhotoEmbeddingMinOrderByAggregateInput = {
+    id?: SortOrder
+    photo_id?: SortOrder
+    description?: SortOrder
+  }
+
+  export type PhotoEmbeddingSumOrderByAggregateInput = {
+    vector?: SortOrder
   }
 
   export type UserNullableScalarRelationFilter = {
@@ -8754,6 +10119,18 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type PhotoEmbeddingCreateNestedOneWithoutPhotoInput = {
+    create?: XOR<PhotoEmbeddingCreateWithoutPhotoInput, PhotoEmbeddingUncheckedCreateWithoutPhotoInput>
+    connectOrCreate?: PhotoEmbeddingCreateOrConnectWithoutPhotoInput
+    connect?: PhotoEmbeddingWhereUniqueInput
+  }
+
+  export type PhotoEmbeddingUncheckedCreateNestedOneWithoutPhotoInput = {
+    create?: XOR<PhotoEmbeddingCreateWithoutPhotoInput, PhotoEmbeddingUncheckedCreateWithoutPhotoInput>
+    connectOrCreate?: PhotoEmbeddingCreateOrConnectWithoutPhotoInput
+    connect?: PhotoEmbeddingWhereUniqueInput
+  }
+
   export type AlbumUpdateOneRequiredWithoutPhotosNestedInput = {
     create?: XOR<AlbumCreateWithoutPhotosInput, AlbumUncheckedCreateWithoutPhotosInput>
     connectOrCreate?: AlbumCreateOrConnectWithoutPhotosInput
@@ -8768,6 +10145,49 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutPhotosInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPhotosInput, UserUpdateWithoutPhotosInput>, UserUncheckedUpdateWithoutPhotosInput>
+  }
+
+  export type PhotoEmbeddingUpdateOneWithoutPhotoNestedInput = {
+    create?: XOR<PhotoEmbeddingCreateWithoutPhotoInput, PhotoEmbeddingUncheckedCreateWithoutPhotoInput>
+    connectOrCreate?: PhotoEmbeddingCreateOrConnectWithoutPhotoInput
+    upsert?: PhotoEmbeddingUpsertWithoutPhotoInput
+    disconnect?: PhotoEmbeddingWhereInput | boolean
+    delete?: PhotoEmbeddingWhereInput | boolean
+    connect?: PhotoEmbeddingWhereUniqueInput
+    update?: XOR<XOR<PhotoEmbeddingUpdateToOneWithWhereWithoutPhotoInput, PhotoEmbeddingUpdateWithoutPhotoInput>, PhotoEmbeddingUncheckedUpdateWithoutPhotoInput>
+  }
+
+  export type PhotoEmbeddingUncheckedUpdateOneWithoutPhotoNestedInput = {
+    create?: XOR<PhotoEmbeddingCreateWithoutPhotoInput, PhotoEmbeddingUncheckedCreateWithoutPhotoInput>
+    connectOrCreate?: PhotoEmbeddingCreateOrConnectWithoutPhotoInput
+    upsert?: PhotoEmbeddingUpsertWithoutPhotoInput
+    disconnect?: PhotoEmbeddingWhereInput | boolean
+    delete?: PhotoEmbeddingWhereInput | boolean
+    connect?: PhotoEmbeddingWhereUniqueInput
+    update?: XOR<XOR<PhotoEmbeddingUpdateToOneWithWhereWithoutPhotoInput, PhotoEmbeddingUpdateWithoutPhotoInput>, PhotoEmbeddingUncheckedUpdateWithoutPhotoInput>
+  }
+
+  export type PhotoEmbeddingCreatevectorInput = {
+    set: number[]
+  }
+
+  export type PhotoCreateNestedOneWithoutEmbeddingInput = {
+    create?: XOR<PhotoCreateWithoutEmbeddingInput, PhotoUncheckedCreateWithoutEmbeddingInput>
+    connectOrCreate?: PhotoCreateOrConnectWithoutEmbeddingInput
+    connect?: PhotoWhereUniqueInput
+  }
+
+  export type PhotoEmbeddingUpdatevectorInput = {
+    set?: number[]
+    push?: number | number[]
+  }
+
+  export type PhotoUpdateOneRequiredWithoutEmbeddingNestedInput = {
+    create?: XOR<PhotoCreateWithoutEmbeddingInput, PhotoUncheckedCreateWithoutEmbeddingInput>
+    connectOrCreate?: PhotoCreateOrConnectWithoutEmbeddingInput
+    upsert?: PhotoUpsertWithoutEmbeddingInput
+    connect?: PhotoWhereUniqueInput
+    update?: XOR<XOR<PhotoUpdateToOneWithWhereWithoutEmbeddingInput, PhotoUpdateWithoutEmbeddingInput>, PhotoUncheckedUpdateWithoutEmbeddingInput>
   }
 
   export type AlbumCreateNestedOneWithoutAlbumSharesInput = {
@@ -8981,6 +10401,7 @@ export namespace Prisma {
     updated_at?: Date | string
     is_deleted?: boolean
     album: AlbumCreateNestedOneWithoutPhotosInput
+    embedding?: PhotoEmbeddingCreateNestedOneWithoutPhotoInput
   }
 
   export type PhotoUncheckedCreateWithoutUploaderInput = {
@@ -8992,6 +10413,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
+    embedding?: PhotoEmbeddingUncheckedCreateNestedOneWithoutPhotoInput
   }
 
   export type PhotoCreateOrConnectWithoutUploaderInput = {
@@ -9334,6 +10756,7 @@ export namespace Prisma {
     updated_at?: Date | string
     is_deleted?: boolean
     uploader: UserCreateNestedOneWithoutPhotosInput
+    embedding?: PhotoEmbeddingCreateNestedOneWithoutPhotoInput
   }
 
   export type PhotoUncheckedCreateWithoutAlbumInput = {
@@ -9345,6 +10768,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     is_deleted?: boolean
+    embedding?: PhotoEmbeddingUncheckedCreateNestedOneWithoutPhotoInput
   }
 
   export type PhotoCreateOrConnectWithoutAlbumInput = {
@@ -9727,6 +11151,23 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutPhotosInput, UserUncheckedCreateWithoutPhotosInput>
   }
 
+  export type PhotoEmbeddingCreateWithoutPhotoInput = {
+    id?: string
+    description?: string | null
+    vector?: PhotoEmbeddingCreatevectorInput | number[]
+  }
+
+  export type PhotoEmbeddingUncheckedCreateWithoutPhotoInput = {
+    id?: string
+    description?: string | null
+    vector?: PhotoEmbeddingCreatevectorInput | number[]
+  }
+
+  export type PhotoEmbeddingCreateOrConnectWithoutPhotoInput = {
+    where: PhotoEmbeddingWhereUniqueInput
+    create: XOR<PhotoEmbeddingCreateWithoutPhotoInput, PhotoEmbeddingUncheckedCreateWithoutPhotoInput>
+  }
+
   export type AlbumUpsertWithoutPhotosInput = {
     update: XOR<AlbumUpdateWithoutPhotosInput, AlbumUncheckedUpdateWithoutPhotosInput>
     create: XOR<AlbumCreateWithoutPhotosInput, AlbumUncheckedCreateWithoutPhotosInput>
@@ -9793,6 +11234,93 @@ export namespace Prisma {
     albumMembers?: AlbumMemberUncheckedUpdateManyWithoutUserNestedInput
     sentShares?: AlbumShareUncheckedUpdateManyWithoutInvited_by_userNestedInput
     receivedShares?: AlbumShareUncheckedUpdateManyWithoutInvited_userNestedInput
+  }
+
+  export type PhotoEmbeddingUpsertWithoutPhotoInput = {
+    update: XOR<PhotoEmbeddingUpdateWithoutPhotoInput, PhotoEmbeddingUncheckedUpdateWithoutPhotoInput>
+    create: XOR<PhotoEmbeddingCreateWithoutPhotoInput, PhotoEmbeddingUncheckedCreateWithoutPhotoInput>
+    where?: PhotoEmbeddingWhereInput
+  }
+
+  export type PhotoEmbeddingUpdateToOneWithWhereWithoutPhotoInput = {
+    where?: PhotoEmbeddingWhereInput
+    data: XOR<PhotoEmbeddingUpdateWithoutPhotoInput, PhotoEmbeddingUncheckedUpdateWithoutPhotoInput>
+  }
+
+  export type PhotoEmbeddingUpdateWithoutPhotoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    vector?: PhotoEmbeddingUpdatevectorInput | number[]
+  }
+
+  export type PhotoEmbeddingUncheckedUpdateWithoutPhotoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    vector?: PhotoEmbeddingUpdatevectorInput | number[]
+  }
+
+  export type PhotoCreateWithoutEmbeddingInput = {
+    id?: string
+    s3_key: string
+    name: string
+    meta?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: boolean
+    album: AlbumCreateNestedOneWithoutPhotosInput
+    uploader: UserCreateNestedOneWithoutPhotosInput
+  }
+
+  export type PhotoUncheckedCreateWithoutEmbeddingInput = {
+    id?: string
+    album_id: string
+    s3_key: string
+    name: string
+    meta?: string | null
+    uploaded_by_user_id: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    is_deleted?: boolean
+  }
+
+  export type PhotoCreateOrConnectWithoutEmbeddingInput = {
+    where: PhotoWhereUniqueInput
+    create: XOR<PhotoCreateWithoutEmbeddingInput, PhotoUncheckedCreateWithoutEmbeddingInput>
+  }
+
+  export type PhotoUpsertWithoutEmbeddingInput = {
+    update: XOR<PhotoUpdateWithoutEmbeddingInput, PhotoUncheckedUpdateWithoutEmbeddingInput>
+    create: XOR<PhotoCreateWithoutEmbeddingInput, PhotoUncheckedCreateWithoutEmbeddingInput>
+    where?: PhotoWhereInput
+  }
+
+  export type PhotoUpdateToOneWithWhereWithoutEmbeddingInput = {
+    where?: PhotoWhereInput
+    data: XOR<PhotoUpdateWithoutEmbeddingInput, PhotoUncheckedUpdateWithoutEmbeddingInput>
+  }
+
+  export type PhotoUpdateWithoutEmbeddingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: BoolFieldUpdateOperationsInput | boolean
+    album?: AlbumUpdateOneRequiredWithoutPhotosNestedInput
+    uploader?: UserUpdateOneRequiredWithoutPhotosNestedInput
+  }
+
+  export type PhotoUncheckedUpdateWithoutEmbeddingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    album_id?: StringFieldUpdateOperationsInput | string
+    s3_key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    uploaded_by_user_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    is_deleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AlbumCreateWithoutAlbumSharesInput = {
@@ -10071,6 +11599,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     album?: AlbumUpdateOneRequiredWithoutPhotosNestedInput
+    embedding?: PhotoEmbeddingUpdateOneWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateWithoutUploaderInput = {
@@ -10082,6 +11611,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
+    embedding?: PhotoEmbeddingUncheckedUpdateOneWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateManyWithoutUploaderInput = {
@@ -10274,6 +11804,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
     uploader?: UserUpdateOneRequiredWithoutPhotosNestedInput
+    embedding?: PhotoEmbeddingUpdateOneWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateWithoutAlbumInput = {
@@ -10285,6 +11816,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
+    embedding?: PhotoEmbeddingUncheckedUpdateOneWithoutPhotoNestedInput
   }
 
   export type PhotoUncheckedUpdateManyWithoutAlbumInput = {

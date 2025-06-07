@@ -155,6 +155,13 @@ exports.Prisma.PhotoScalarFieldEnum = {
   is_deleted: 'is_deleted'
 };
 
+exports.Prisma.PhotoEmbeddingScalarFieldEnum = {
+  id: 'id',
+  photo_id: 'photo_id',
+  description: 'description',
+  vector: 'vector'
+};
+
 exports.Prisma.AlbumShareScalarFieldEnum = {
   id: 'id',
   album_id: 'album_id',
@@ -190,6 +197,7 @@ exports.Prisma.ModelName = {
   Album: 'Album',
   AlbumMember: 'AlbumMember',
   Photo: 'Photo',
+  PhotoEmbedding: 'PhotoEmbedding',
   AlbumShare: 'AlbumShare'
 };
 

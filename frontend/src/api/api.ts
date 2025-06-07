@@ -154,6 +154,27 @@ export const uploadPhoto = async (file: File, parentAlbumId: string) => {
     }
 };
 
+export const searchPhotos = async (query: string, limit: number = 20) => {
+    const { idToken } = (await fetchAuthSession()).tokens ?? {};
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/images/search`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${idToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query, limit }),
+        });
+
+        if (!res.ok) throw new Error('Search failed');
+        return await res.json();
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
 export const fetchPhotos = async (albumId: string) => {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
     try {

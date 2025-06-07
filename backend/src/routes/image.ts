@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import multer from 'multer';
 import { PrismaClient } from '../generated/prisma/client';
 import { AuthenticatedRequest } from '../types';
+import { imageQueue } from '../types/bullmq';
 
 dotenv.config();
 const router = express.Router();
@@ -55,6 +56,10 @@ router.post('/', verifyJwt, upload.single('image'), async (req: AuthenticatedReq
           body: file.buffer,
       });
 
+      if (!res_upload.ok) {
+        throw new Error('S3 upload failed');
+      }
+    
       // dbに格納
       const photo = await prisma.photo.create({
           data: {
@@ -65,11 +70,56 @@ router.post('/', verifyJwt, upload.single('image'), async (req: AuthenticatedReq
               uploaded_by_user_id: userId,
           },
       });
+      
+      // ベクトル化ジョブをキューに追加
+      await imageQueue.add('process-image', {
+        photoId: photo.id,
+        imageBuffer: file.buffer.toString('base64'), // Base64エンコードして送信
+        mimeType: file.mimetype
+      }, {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 5000,
+        },
+      });
 
       res.json({ photo });
   } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Failed to create upload URL' });
+  }
+});
+
+router.post('/search', verifyJwt, async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.sub;
+  const { query, limit = 20 } = req.body;
+  
+  if (!query) {
+    return res.status(400).json({ error: 'Search query is required' });
+  }
+
+  try {
+    // クエリをベクトル化
+    const { vectorizeText } = require('../utils/ollama');
+    const queryVector = await vectorizeText(query);
+    
+    // 類似画像を検索
+    const { searchSimilarPhotos } = require('../utils/vectorSearch');
+    const results = await searchSimilarPhotos(queryVector, userId, limit);
+    
+    res.json({ 
+      query,
+      results: results.map(r => ({
+        photo: r.photo,
+        similarity: r.similarity,
+        description: r.photo.embedding?.description
+      }))
+    });
+    
+  } catch (error) {
+    console.error('Search error:', error);
+    res.status(500).json({ error: 'Search failed' });
   }
 });
 

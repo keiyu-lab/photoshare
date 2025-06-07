@@ -5,6 +5,7 @@ import { PrismaClient } from '../src/generated/prisma/client';
 import { verifyJwt } from "./middleware/jwt";
 import albumRoutes from './routes/album';
 import imageRoutes from './routes/image';
+import './utils/imageProcessor.worker';
 
 dotenv.config();
 const prisma = new PrismaClient();
