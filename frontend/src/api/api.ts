@@ -156,7 +156,7 @@ export const uploadPhoto = async (file: File, parentAlbumId: string) => {
 };
 
 // ベクトル検索
-export const searchPhotos = async (query: string, limit: number = 20) => {
+export const searchPhotos = async (query: string, albumId: string, limit: number = 20) => {
     const { idToken } = (await fetchAuthSession()).tokens ?? {};
 
     try {
@@ -166,7 +166,7 @@ export const searchPhotos = async (query: string, limit: number = 20) => {
                 'Authorization': `Bearer ${idToken}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ query, limit }),
+            body: JSON.stringify({ query, limit, albumId}),
         });
 
         if (!res.ok) throw new Error('Search failed');

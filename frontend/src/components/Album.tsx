@@ -1,5 +1,5 @@
 import type { AlbumType } from "@/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
 import { ChevronDown, ChevronRight, Folder, Pencil, PlusCircle, Trash2, Image, Share, Eye } from "lucide-react";
 import {
@@ -418,7 +418,7 @@ export const AlbumTreeNode = ({
       
       {isExpanded && hasChildren && (
         <div className="w-full">
-          {album.children.map((child) => (
+          {album.children?.map((child) => (
             <AlbumTreeNode 
               key={child.id} 
               album={child} 

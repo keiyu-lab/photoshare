@@ -1,9 +1,8 @@
-//utils/ollama.ts
 import axios from 'axios';
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
 
-// Bufferを直接受け取る
+// Bufferを直接受け取ってllavaに渡す
 export async function llavaDescribeImage(imageBuffer: Buffer, mimeType: string): Promise<string> {
   try {
     const base64Image = imageBuffer.toString('base64');
@@ -14,7 +13,7 @@ export async function llavaDescribeImage(imageBuffer: Buffer, mimeType: string):
       images: [base64Image],
       stream: false
     }, {
-      timeout: 600000 // 600秒のタイムアウト
+      timeout: 600000 // 600秒のタイムアウト(CPU環境下ではllavaの回答は非常に遅い)
     });
 
     return response.data.response;
@@ -24,6 +23,7 @@ export async function llavaDescribeImage(imageBuffer: Buffer, mimeType: string):
   }
 }
 
+// ベクトル化
 export async function vectorizeText(text: string): Promise<number[]> {
   try {
     const response = await axios.post(`${OLLAMA_BASE_URL}/api/embeddings`, {

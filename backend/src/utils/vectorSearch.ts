@@ -1,7 +1,5 @@
-// utils/vectorSearch.ts
 import { PrismaClient } from '../generated/prisma/client';
-import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { getS3Url } from '../middleware/aws';
 interface SearchResult {
   photo: any;
   similarity: number;
@@ -9,14 +7,6 @@ interface SearchResult {
 
 const prisma = new PrismaClient();
 
-
-const s3 = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY!,
-    secretAccessKey: process.env.AWS_SECRET_KEY!,
-  },
-});
 
 // コサイン類似度を計算
 function cosineSimilarity(vecA: number[], vecB: number[]): number {
@@ -41,13 +31,15 @@ function cosineSimilarity(vecA: number[], vecB: number[]): number {
 export async function searchSimilarPhotos(
   queryVector: number[], 
   userId: string, 
-  limit: number = 20
+  limit: number = 20,
+  albumId: string
 ): Promise<SearchResult[]> {
   try {
-    // ユーザーの写真と埋め込みを取得（uploaderも含める）
+    // ユーザーの写真と埋め込みを取得
     const photosWithEmbeddings = await prisma.photo.findMany({
       where: {
         uploaded_by_user_id: userId,
+        album_id: albumId,
         embedding: {
           isNot: null
         },
@@ -55,7 +47,7 @@ export async function searchSimilarPhotos(
       },
       include: {
         embedding: true,
-        uploader: true // uploaderを含める
+        uploader: true 
       }
     });
 
@@ -68,16 +60,11 @@ export async function searchSimilarPhotos(
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, limit);
 
-    // 署名付きURLを生成
+    // 署名付きURLを生成（フロントエンドにはURLも渡さないと）
     const resultsWithUrls = await Promise.all(
       results.map(async (result) => {
-        const command = new GetObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: result.photo.s3_key,
-          ResponseContentDisposition: `attachment; filename=${result.photo.name}`,
-        });
 
-        const url = await getSignedUrl(s3, command, { expiresIn: 60 * 60 });
+        const url = await getS3Url(result.photo);
 
         return {
           ...result,

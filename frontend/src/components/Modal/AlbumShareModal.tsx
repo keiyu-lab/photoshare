@@ -34,7 +34,7 @@ export default function AlbumShareModal({ isOpen, onClose, album, onShare }: Sha
       return;
     }
 
-    // 簡単なメールバリデーション
+    // メールバリデーション
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setMessage({ type: 'error', text: '有効なメールアドレスを入力してください' });

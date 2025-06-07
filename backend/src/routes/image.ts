@@ -1,10 +1,4 @@
 import express, {Response} from 'express';
-import {
-  S3Client,
-  PutObjectCommand,
-  GetObjectCommand,
-} from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { verifyJwt } from '../middleware/jwt';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,17 +6,10 @@ import multer from 'multer';
 import { PrismaClient } from '../generated/prisma/client';
 import { AuthenticatedRequest } from '../types';
 import { imageQueue } from '../types/bullmq';
+import { getS3Url, getUploadUrl } from '../middleware/aws';
 
 dotenv.config();
 const router = express.Router();
-
-const s3 = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY!,
-    secretAccessKey: process.env.AWS_SECRET_KEY!,
-  },
-});
 
 const upload = multer({ storage: multer.memoryStorage() });
 const prisma = new PrismaClient();
@@ -40,13 +27,7 @@ router.post('/', verifyJwt, upload.single('image'), async (req: AuthenticatedReq
   const key = `${userId}/${albumId}/${uuidv4()}-${file.originalname}`;
 
   try {
-      const command = new PutObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: key,
-          ContentType: file.mimetype,
-      });
-
-      const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 5 }); // 5分有効
+      const signedUrl = await getUploadUrl(file, key); 
 
       const res_upload = await fetch(signedUrl, {
           method: 'PUT',
@@ -93,7 +74,7 @@ router.post('/', verifyJwt, upload.single('image'), async (req: AuthenticatedReq
 
 router.post('/search', verifyJwt, async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.sub;
-  const { query, limit = 20 } = req.body;
+  const { query, limit = 20, albumId } = req.body;
   
   if (!query) {
     return res.status(400).json({ error: 'Search query is required' });
@@ -106,21 +87,22 @@ router.post('/search', verifyJwt, async (req: AuthenticatedRequest, res: Respons
     
     // 類似画像を検索
     const { searchSimilarPhotos } = require('../utils/vectorSearch');
-    const results = await searchSimilarPhotos(queryVector, userId, limit);
-        
-    const formattedResults = results.map(r => ({
-      id: r.photo.id,
-      albumId: r.photo.album_id,
-      url: r.photo.url,
-      name: r.photo.name,
-      meta: r.photo.meta,
+    const results = await searchSimilarPhotos(queryVector, userId, limit, albumId);
+    
+    // フロント側の型に合うように調整
+    const formattedResults = results.map(result => ({
+      id: result.photo.id,
+      albumId: result.photo.album_id,
+      url: result.photo.url,
+      name: result.photo.name,
+      meta: result.photo.meta,
       uploader: {
-        id: r.photo.uploader.id,
-        name: r.photo.uploader.name || '',
-        email: r.photo.uploader.email
+        id: result.photo.uploader.id,
+        name: result.photo.uploader.name || '',
+        email: result.photo.uploader.email
       },
-      createdAt: r.photo.created_at,
-      similarity: r.similarity
+      createdAt: result.photo.created_at,
+      similarity: result.similarity
     }));
     
     res.json({ 
@@ -158,13 +140,7 @@ router.get('/:id', verifyJwt, async (req: AuthenticatedRequest, res: Response) =
 
     const signedUrls = await Promise.all(
       photos.map(async (photo) => {
-        const command = new GetObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: photo.s3_key,
-          ResponseContentDisposition: `attachment; filename=${photo.name}`,
-        });
-
-        const url = await getSignedUrl(s3, command, { expiresIn: 60 * 60 }); // 1時間有効
+        const url = await getS3Url(photo);
 
         return {
           id: photo.id,

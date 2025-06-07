@@ -1,4 +1,3 @@
-// utils/imageProcessor.worker.ts
 import { Worker } from 'bullmq';
 import { PrismaClient } from '../generated/prisma/client';
 import { llavaDescribeImage, vectorizeText } from './ollama';
@@ -13,10 +12,10 @@ export const imageWorker = new Worker(
     try {
       console.log(`Processing photo: ${photoId}`);
       
-      // Base64デコードして画像バッファに変換
+      // 画像バッファに変換
       const buffer = Buffer.from(imageBuffer, 'base64');
       
-      // LLaVAで画像を説明（バッファを直接送信）
+      // llavaで画像の説明取得（バッファを直接送信）
       const description = await llavaDescribeImage(buffer, mimeType);
       console.log(`Generated description: ${description}`);
       
@@ -45,6 +44,6 @@ export const imageWorker = new Worker(
       host: process.env.REDIS_HOST || 'localhost', 
       port: Number(process.env.REDIS_PORT) || 6379 
     },
-    concurrency: 2 // 並行処理数を制限
+    concurrency: 2 // 並行処理数はとりあえず2個まで（ハードウェア制限が厳しい）
   }
 );

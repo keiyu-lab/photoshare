@@ -1,5 +1,5 @@
 // src/components/AppLayout.tsx
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { SidebarTrigger, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import Header from '../components/Header';
@@ -7,7 +7,7 @@ import type { AlbumType, Photo } from '@/types';
 import { Authenticator } from '@aws-amplify/ui-react';
 import AlbumContents from './AlbumContents';
 import { createAlbum, deleteAlbum, fetchAlbums, fetchPhotos, renameAlbum, syncUserToBackend, updateAlbumParent, updatePhotoAlbum, fetchSharedAlbums, shareAlbum, searchPhotos } from '@/api/api';
-import { buildAlbumTree, findAlbumById, flattenAlbums, normailzeRowAlbum } from '@/components/Album';
+import { buildAlbumTree, findAlbumById, normailzeRowAlbum } from '@/components/Album';
 import PhotoUploadModal from './Modal/PhotoUploadModal';
 import AlbumShareModal from './Modal/AlbumShareModal';
 import AlbumCreateModal from './Modal/AlbumCreateModal';
@@ -17,7 +17,6 @@ export function AppLayout() {
 
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isVectorSearch, setIsVectorSearch] = useState(false);
-  const [vectorSearchResults, setVectorSearchResults] = useState<Photo[]>([]);
 
   const [sortBy, setSortBy] = useState<'name' | 'date' | 'similarity'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -26,7 +25,7 @@ export function AppLayout() {
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumType | null>(null);
   const [privateAlbumTree, setPrivateAlbumTree] = useState<AlbumType[]>([]);
   const [sharedAlbumTree, setSharedAlbumTree] = useState<AlbumType[]>([]);
-  const [selectedAlbumContext, setSelectedAlbumContext] = useState<'private' | 'shared'>('private'); // 新規追加
+  const [selectedAlbumContext, setSelectedAlbumContext] = useState<'private' | 'shared'>('private'); 
   const [photos, setPhotos] = useState<Photo[]>([]);
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -111,7 +110,7 @@ export function AppLayout() {
     if (!found) return false;
     
     // 同名チェックロジックは既存と同じ
-    const parentId = found.parentAlbumId || '';
+    const parentId = found.parent_album_id || '';
     const existingNames = getExistingAlbumNames(parentId);
     const filteredNames = existingNames.filter(name => name !== found.name);
     
@@ -375,15 +374,10 @@ export function AppLayout() {
   const handleSearch = async (keyword: string, isVector: boolean) => {
     setSearchKeyword(keyword);
     setIsVectorSearch(isVector);
-    
-    if (!keyword.trim()) {
-      setVectorSearchResults([]);
-      return;
-    }
-    
+
     if (isVector) {
       try {
-        const searchResult = await searchPhotos(keyword);
+        const searchResult = await searchPhotos(keyword, selectedAlbum!.id);
         console.log(searchResult)
         const photos = searchResult.results.map((photo: any) => ({
           id: photo.id,
@@ -397,7 +391,7 @@ export function AppLayout() {
             email: photo.uploader.email
           },
           createdAt: photo.created_at,
-          similarity: photo.similarity // 類似度を追加
+          similarity: photo.similarity
         }));
         
         // ベクトル検索の場合、類似度でソート（デフォルト）
@@ -408,11 +402,8 @@ export function AppLayout() {
         console.error('Vector search failed:', error);
         setPhotos([]);
       }
-    } else {
-      // 通常検索の場合は既存の写真から検索（キーワードフィルタリングはAlbumContentsで行う）
-      // 何もしない（AlbumContentsでフィルタリング）
     }
-
+    // 通常検索の場合は既存の写真から検索（キーワードフィルタリングはAlbumContentsで行う）
   };
 
   const handleSort = (newSortBy: 'name' | 'date' | 'similarity', newSortOrder: 'asc' | 'desc') => {
@@ -422,11 +413,11 @@ export function AppLayout() {
 
   return (
     <Authenticator socialProviders={['google']}>
-      {({ signOut, user }) => (
+      {({ signOut }) => (
         <div className="flex h-screen">
           <SidebarProvider>
             <AppSidebar  
-              user={null}
+              user={undefined}
               privateAlbumTree={privateAlbumTree}
               sharedAlbumTree={sharedAlbumTree}
               selectedAlbumId={selectedAlbum?.id}
@@ -494,7 +485,7 @@ export function AppLayout() {
             <AlbumShareModal
               isOpen={isShareModalOpen}
               onClose={() => setIsShareModalOpen(false)}
-              album={selectedAlbum}
+              album={selectedAlbum!}
               onShare={handleConfirmShare}
             />
           </SidebarProvider>

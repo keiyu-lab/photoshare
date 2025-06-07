@@ -1,4 +1,3 @@
-// src/components/Modal/AlbumCreateModal.tsx
 import { useState } from 'react';
 import {
   Dialog,

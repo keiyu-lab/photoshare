@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import jwksRsa from "jwks-rsa";
 
-// --- JWTの認証ミドルウェア ---
+// JWTの認証ミドルウェア
 export const verifyJwt = (req:any, res: any, next: any) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).send("Missing Authorization header");
